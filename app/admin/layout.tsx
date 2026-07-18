@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { AdminPWA } from '@/components/admin/pwa'
 
 export const metadata: Metadata = {
   title: 'Gramamstays Admin',
@@ -10,5 +11,10 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <>{children}</>
+  return (
+    <>
+      <AdminPWA />
+      {children}
+    </>
+  )
 }
