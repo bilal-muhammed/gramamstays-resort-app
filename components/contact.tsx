@@ -2,6 +2,8 @@
 
 import { Mail, Phone, MapPin, Clock } from 'lucide-react'
 import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -11,31 +13,68 @@ export function Contact() {
     message: '',
   })
 
+  const { ref, isVisible } = useScrollAnimation()
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     console.log('Form submitted:', formData)
     setFormData({ name: '', email: '', phone: '', message: '' })
   }
 
+  const infoVariants = {
+    hidden: { opacity: 0, x: -50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.6 },
+    },
+  }
+
+  const formVariants = {
+    hidden: { opacity: 0, x: 50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.6 },
+    },
+  }
+
   return (
-    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 bg-white" ref={ref}>
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6 }}
+        >
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-balance">
             Get in Touch
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Have questions about your stay? Our dedicated team is here to help.
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-2 gap-12">
           {/* Contact Information */}
-          <div className="space-y-8">
-            <div className="flex gap-4">
-              <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+          <motion.div
+            className="space-y-8"
+            variants={infoVariants}
+            initial="hidden"
+            animate={isVisible ? "visible" : "hidden"}
+          >
+            <motion.div
+              className="flex gap-4"
+              whileHover={{ x: 10 }}
+              transition={{ type: 'spring', stiffness: 400 }}
+            >
+              <motion.div
+                className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0"
+                whileHover={{ rotate: 10 }}
+              >
                 <MapPin className="text-secondary" size={24} />
-              </div>
+              </motion.div>
               <div>
                 <h3 className="font-bold text-foreground mb-1">Location</h3>
                 <p className="text-muted-foreground text-sm">
@@ -44,12 +83,19 @@ export function Contact() {
                   United States
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="flex gap-4">
-              <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+            <motion.div
+              className="flex gap-4"
+              whileHover={{ x: 10 }}
+              transition={{ type: 'spring', stiffness: 400 }}
+            >
+              <motion.div
+                className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0"
+                whileHover={{ rotate: 10 }}
+              >
                 <Phone className="text-secondary" size={24} />
-              </div>
+              </motion.div>
               <div>
                 <h3 className="font-bold text-foreground mb-1">Phone</h3>
                 <p className="text-muted-foreground text-sm">
@@ -57,12 +103,19 @@ export function Contact() {
                   +1 (555) 987-6543
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="flex gap-4">
-              <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+            <motion.div
+              className="flex gap-4"
+              whileHover={{ x: 10 }}
+              transition={{ type: 'spring', stiffness: 400 }}
+            >
+              <motion.div
+                className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0"
+                whileHover={{ rotate: 10 }}
+              >
                 <Mail className="text-secondary" size={24} />
-              </div>
+              </motion.div>
               <div>
                 <h3 className="font-bold text-foreground mb-1">Email</h3>
                 <p className="text-muted-foreground text-sm">
@@ -70,12 +123,19 @@ export function Contact() {
                   reservations@gramamstays.com
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="flex gap-4">
-              <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+            <motion.div
+              className="flex gap-4"
+              whileHover={{ x: 10 }}
+              transition={{ type: 'spring', stiffness: 400 }}
+            >
+              <motion.div
+                className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0"
+                whileHover={{ rotate: 10 }}
+              >
                 <Clock className="text-secondary" size={24} />
-              </div>
+              </motion.div>
               <div>
                 <h3 className="font-bold text-foreground mb-1">Availability</h3>
                 <p className="text-muted-foreground text-sm">
@@ -83,11 +143,16 @@ export function Contact() {
                   For reservations & inquiries
                 </p>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Contact Form */}
-          <div className="bg-background rounded-xl p-8 border border-border">
+          <motion.div
+            className="bg-background rounded-xl p-8 border border-border"
+            variants={formVariants}
+            initial="hidden"
+            animate={isVisible ? "visible" : "hidden"}
+          >
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-2">Name</label>
@@ -142,7 +207,7 @@ export function Contact() {
                 Send Message
               </button>
             </form>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
