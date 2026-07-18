@@ -84,7 +84,7 @@ export function AdminRooms() {
         <div className="flex gap-1 bg-gray-100 rounded-lg p-1 overflow-x-auto no-scrollbar">
           {types.map(t => (
             <button key={t} onClick={() => setActiveType(t)}
-              className={`px-3.5 py-2.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap min-h-[40px] ${activeType === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700 active:bg-white/50'}`}>
+              className={`px-3.5 py-2.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap min-h-[44px] ${activeType === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700 active:bg-white/50'}`}>
               {t}
             </button>
           ))}
@@ -92,7 +92,7 @@ export function AdminRooms() {
         <div className="relative flex-1">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search rooms..."
-            className="w-full pl-9 pr-3 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20" />
+            className="w-full pl-9 pr-3 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20" />
         </div>
       </div>
 
@@ -138,71 +138,71 @@ export function AdminRooms() {
       {/* Add/Edit Modal */}
       {showForm && (
         <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowForm(false)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white z-10 px-5 py-4 border-b border-gray-100 flex items-center justify-between">
               <h3 className="font-bold text-gray-900">{editingId ? 'Edit Room' : 'Add Room'}</h3>
               <button onClick={() => setShowForm(false)} className="p-2.5 rounded-lg hover:bg-gray-100 min-w-[44px] min-h-[44px] flex items-center justify-center"><X size={18} /></button>
             </div>
-            <form onSubmit={handleSubmit} className="p-5 space-y-4">
-              <div className="grid sm:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="p-5 space-y-3.5">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Room Number *</label>
+                  <label className="block text-[11px] font-semibold text-gray-500 uppercase mb-1.5">Room Number *</label>
                   <input type="text" required value={form.id} onChange={e => setForm({ ...form, id: e.target.value } as any)}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="e.g. 301" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="e.g. 301" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Type *</label>
+                  <label className="block text-[11px] font-semibold text-gray-500 uppercase mb-1.5">Type *</label>
                   <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-gray-900">
                     <option>Presidential Suite</option>
                     <option>Villa Deluxe</option>
                     <option>Garden Suite</option>
                   </select>
                 </div>
               </div>
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Floor</label>
+                  <label className="block text-[11px] font-semibold text-gray-500 uppercase mb-1.5">Floor</label>
                   <select value={form.floor} onChange={e => setForm({ ...form, floor: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-gray-900">
                     <option>1st</option><option>2nd</option><option>3rd</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Status</label>
+                  <label className="block text-[11px] font-semibold text-gray-500 uppercase mb-1.5">Status</label>
                   <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as Room['status'] })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-gray-900">
                     <option>Available</option><option>Occupied</option><option>Maintenance</option><option>Reserved</option>
                   </select>
                 </div>
               </div>
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Price ($/night) *</label>
                   <input type="number" min="0" required value={form.price} onChange={e => setForm({ ...form, price: Number(e.target.value) })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Guest</label>
                   <input type="text" value={form.guest} onChange={e => setForm({ ...form, guest: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="-" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="-" />
                 </div>
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Amenities</label>
                 <input type="text" value={form.amenities} onChange={e => setForm({ ...form, amenities: e.target.value })}
-                  className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="King Bed, Ocean View, etc." />
+                  className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="King Bed, Ocean View, etc." />
               </div>
               {form.status === 'Maintenance' && (
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Maintenance Note</label>
                   <input type="text" value={form.note} onChange={e => setForm({ ...form, note: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
                 </div>
               )}
-              <div className="flex gap-3 pt-2 pb-2">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-3.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 min-h-[48px]">Cancel</button>
-                <button type="submit" className="flex-1 py-3.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 min-h-[48px]">{editingId ? 'Update' : 'Add'} Room</button>
+              <div className="flex gap-3 pt-2 pb-1">
+                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 min-h-[44px]">Cancel</button>
+                <button type="submit" className="flex-1 py-3 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 min-h-[44px]">{editingId ? 'Update' : 'Add'} Room</button>
               </div>
             </form>
           </div>
@@ -212,12 +212,12 @@ export function AdminRooms() {
       {/* Delete Confirmation */}
       {deleteConfirm && (
         <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setDeleteConfirm(null)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full sm:max-w-sm sm:mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full sm:max-w-sm sm:mx-4 max-h-[90vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
             <h3 className="font-bold text-gray-900 mb-2">Delete Room?</h3>
             <p className="text-sm text-gray-500 mb-5">This action cannot be undone.</p>
             <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 min-h-[48px]">Cancel</button>
-              <button onClick={() => { deleteRoom(deleteConfirm); setDeleteConfirm(null) }} className="flex-1 py-3.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 min-h-[48px]">Delete</button>
+              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 min-h-[44px]">Cancel</button>
+              <button onClick={() => { deleteRoom(deleteConfirm); setDeleteConfirm(null) }} className="flex-1 py-3 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 min-h-[44px]">Delete</button>
             </div>
           </div>
         </div>

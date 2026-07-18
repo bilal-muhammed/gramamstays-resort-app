@@ -34,7 +34,7 @@ export function AdminHeader({ onMenuToggle, activeSection }: Props) {
         <input
           type="text"
           placeholder="Search..."
-          className="bg-transparent text-sm text-gray-700 placeholder:text-gray-400 outline-none w-full"
+          className="bg-transparent text-sm text-gray-900 placeholder:text-gray-400 outline-none w-full"
         />
       </div>
 

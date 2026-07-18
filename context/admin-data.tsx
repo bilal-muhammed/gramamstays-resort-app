@@ -6,11 +6,11 @@ import type { Booking, Room, Guest, Income, Expense, Staff, Activity } from '@/t
 const generateId = (prefix: string) => `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
 
 const initialBookings: Booking[] = [
-  { id: 'BK-1042', guest: 'Eleanor Whitfield', email: 'eleanor@email.com', phone: '+1 555-0101', room: 'Presidential Suite', roomNo: '301', checkIn: 'Jul 18', checkOut: 'Jul 22', nights: 4, status: 'Checked In', amount: 2600, payment: 'Paid' },
-  { id: 'BK-1041', guest: 'James Chen', email: 'james@email.com', phone: '+1 555-0102', room: 'Villa Deluxe', roomNo: '205', checkIn: 'Jul 17', checkOut: 'Jul 20', nights: 3, status: 'Checked In', amount: 1350, payment: 'Paid' },
-  { id: 'BK-1040', guest: 'Sofia Martinez', email: 'sofia@email.com', phone: '+1 555-0103', room: 'Garden Suite', roomNo: '108', checkIn: 'Jul 19', checkOut: 'Jul 21', nights: 2, status: 'Confirmed', amount: 500, payment: 'Deposit' },
-  { id: 'BK-1039', guest: 'Amara Okafor', email: 'amara@email.com', phone: '+1 555-0104', room: 'Presidential Suite', roomNo: '302', checkIn: 'Jul 20', checkOut: 'Jul 25', nights: 5, status: 'Pending', amount: 3250, payment: 'Pending' },
-  { id: 'BK-1038', guest: 'David Kim', email: 'david@email.com', phone: '+1 555-0105', room: 'Garden Suite', roomNo: '109', checkIn: 'Jul 16', checkOut: 'Jul 18', nights: 2, status: 'Checked Out', amount: 500, payment: 'Paid' },
+  { id: 'BK-1042', guest: 'Eleanor Whitfield', email: 'eleanor@email.com', phone: '+1 555-0101', room: 'Presidential Suite', roomNo: '301', checkIn: '2026-07-18', checkOut: '2026-07-22', nights: 4, status: 'Checked In', amount: 2600, paidAmount: 2600, payment: 'Fully Paid' },
+  { id: 'BK-1041', guest: 'James Chen', email: 'james@email.com', phone: '+1 555-0102', room: 'Villa Deluxe', roomNo: '205', checkIn: '2026-07-17', checkOut: '2026-07-20', nights: 3, status: 'Checked In', amount: 1350, paidAmount: 1350, payment: 'Fully Paid' },
+  { id: 'BK-1040', guest: 'Sofia Martinez', email: 'sofia@email.com', phone: '+1 555-0103', room: 'Garden Suite', roomNo: '108', checkIn: '2026-07-19', checkOut: '2026-07-21', nights: 2, status: 'Confirmed', amount: 500, paidAmount: 250, payment: 'Partial' },
+  { id: 'BK-1039', guest: 'Amara Okafor', email: 'amara@email.com', phone: '+1 555-0104', room: 'Presidential Suite', roomNo: '302', checkIn: '2026-07-20', checkOut: '2026-07-25', nights: 5, status: 'Pending', amount: 3250, paidAmount: 0, payment: 'Pending' },
+  { id: 'BK-1038', guest: 'David Kim', email: 'david@email.com', phone: '+1 555-0105', room: 'Garden Suite', roomNo: '109', checkIn: '2026-07-16', checkOut: '2026-07-18', nights: 2, status: 'Checked Out', amount: 500, paidAmount: 500, payment: 'Fully Paid' },
 ]
 
 const initialRooms: Room[] = [
@@ -114,11 +114,30 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     const newBooking = { ...b, id: generateId('BK') }
     setBookings(prev => [newBooking, ...prev])
     addActivity({ time: 'Just now', text: `New booking from ${b.guest}` })
+    if (b.paidAmount > 0) {
+      const now = new Date()
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      const today = `${months[now.getMonth()]} ${now.getDate()}`
+      setIncome(prev => [{ id: generateId('IN'), date: today, source: `Room - ${b.room} #${b.roomNo}`, amount: b.paidAmount, type: 'Room Revenue' }, ...prev])
+      addActivity({ time: 'Just now', text: `Income recorded: $${b.paidAmount.toLocaleString()} from ${b.guest}` })
+    }
   }, [addActivity])
 
   const updateBooking = useCallback((id: string, b: Partial<Booking>) => {
-    setBookings(prev => prev.map(item => item.id === id ? { ...item, ...b } : item))
-  }, [])
+    setBookings(prev => prev.map(item => {
+      if (item.id !== id) return item
+      const updated = { ...item, ...b }
+      if (b.payment === 'Fully Paid' && item.payment !== 'Fully Paid' && updated.amount > item.paidAmount) {
+        const now = new Date()
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        const today = `${months[now.getMonth()]} ${now.getDate()}`
+        const remaining = updated.amount - item.paidAmount
+        setIncome(prev => [{ id: generateId('IN'), date: today, source: `Room - ${updated.room} #${updated.roomNo}`, amount: remaining, type: 'Room Revenue' }, ...prev])
+        addActivity({ time: 'Just now', text: `Payment completed: $${remaining.toLocaleString()} from ${updated.guest}` })
+      }
+      return updated
+    }))
+  }, [addActivity])
 
   const deleteBooking = useCallback((id: string) => {
     setBookings(prev => prev.filter(item => item.id !== id))

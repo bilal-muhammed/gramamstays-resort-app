@@ -97,13 +97,16 @@ export function Amenities() {
             <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-8">
               <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1.5 sm:mb-2">Premium Spa</h3>
               <p className="text-white/70 text-sm mb-4 sm:mb-5 max-w-sm">Signature wellness treatments by expert therapists.</p>
-              <motion.button
+              <motion.a
+                href="https://wa.me/919539222031?text=Hi%2C%20I%20would%20like%20to%20book%20a%20spa%20treatment%20at%20Gramamstays%20Resort.%20Please%20share%20the%20available%20slots."
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.97 }}
-                className="self-start px-6 sm:px-7 py-2 sm:py-2.5 bg-white text-primary rounded-full font-medium text-xs sm:text-sm hover:bg-white/90 transition-all"
+                className="self-start px-6 sm:px-7 py-2 sm:py-2.5 bg-white text-primary rounded-full font-medium text-xs sm:text-sm hover:bg-white/90 transition-all text-center"
               >
                 Book a Treatment
-              </motion.button>
+              </motion.a>
             </div>
           </div>
 

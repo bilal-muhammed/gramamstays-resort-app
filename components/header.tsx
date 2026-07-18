@@ -3,7 +3,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
-import { Menu, X, Phone, Settings } from 'lucide-react'
+import { Menu, X, Phone, MessageCircle } from 'lucide-react'
+
+const WHATSAPP_NUMBER = '919539222031'
+const WHATSAPP_BASE = `https://wa.me/${WHATSAPP_NUMBER}`
+const WHATSAPP_BOOKING = `${WHATSAPP_BASE}?text=${encodeURIComponent('Hi, I would like to book a stay at Gramamstays Resort. Please share the availability and pricing.')}`
 import { motion, AnimatePresence } from 'framer-motion'
 
 const navItems = [
@@ -115,26 +119,22 @@ export function Header() {
 
             {/* Desktop CTA */}
             <div className="hidden lg:flex items-center gap-3 xl:gap-4">
-              <Link
-                href="/admin"
-                className={`flex items-center gap-1.5 text-[11px] font-medium tracking-wider uppercase transition-colors duration-300 ${
-                  scrolled ? 'text-muted-foreground/60 hover:text-muted-foreground' : 'text-white/40 hover:text-white/70'
-                }`}
-              >
-                <Settings size={11} />
-                Admin
-              </Link>
               <motion.a
-                href="tel:+15551234567"
+                href={WHATSAPP_BOOKING}
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`flex items-center gap-1.5 text-[13px] font-medium transition-colors duration-300 ${
                   scrolled ? 'text-muted-foreground hover:text-foreground' : 'text-white/70 hover:text-white'
                 }`}
                 whileHover={{ scale: 1.02 }}
               >
                 <Phone size={13} />
-                <span className="hidden xl:inline">+1 (555) 123-4567</span>
+                <span className="hidden xl:inline">+91 95392 22031</span>
               </motion.a>
-              <motion.button
+              <motion.a
+                href={WHATSAPP_BOOKING}
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.03, boxShadow: '0 8px 30px rgba(212, 165, 116, 0.35)' }}
                 whileTap={{ scale: 0.97 }}
                 className={`px-5 xl:px-6 py-2 sm:py-2.5 rounded-full font-medium text-[13px] tracking-wide transition-all duration-300 ${
@@ -144,7 +144,7 @@ export function Header() {
                 }`}
               >
                 Book Your Stay
-              </motion.button>
+              </motion.a>
             </div>
 
             {/* Mobile Menu Button */}
@@ -199,13 +199,16 @@ export function Header() {
               >
                 <div className="w-10 sm:w-12 h-px bg-secondary" />
                 <p className="text-[10px] sm:text-xs text-muted-foreground tracking-[0.3em] uppercase">Call us</p>
-                <a href="tel:+15551234567" className="text-sm sm:text-base text-foreground font-medium">+1 (555) 123-4567</a>
-                <button
+                <a href={WHATSAPP_BOOKING} target="_blank" rel="noopener noreferrer" className="text-sm sm:text-base text-foreground font-medium">+91 95392 22031</a>
+                <a
+                  href={WHATSAPP_BOOKING}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="mt-3 sm:mt-4 px-8 sm:px-10 py-3 sm:py-3.5 bg-gradient-to-r from-secondary to-accent text-white rounded-full font-medium text-sm tracking-wide shadow-lg"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Book Your Stay
-                </button>
+                </a>
               </motion.div>
             </div>
           </motion.div>

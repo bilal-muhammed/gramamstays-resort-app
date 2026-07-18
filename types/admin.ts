@@ -10,7 +10,8 @@ export interface Booking {
   nights: number
   status: 'Checked In' | 'Confirmed' | 'Pending' | 'Checked Out'
   amount: number
-  payment: 'Paid' | 'Pending' | 'Deposit'
+  paidAmount: number
+  payment: 'Fully Paid' | 'Partial' | 'Pending'
 }
 
 export interface Room {

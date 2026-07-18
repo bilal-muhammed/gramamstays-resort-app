@@ -132,13 +132,16 @@ export function Dining() {
                     <span>{restaurant.hours}</span>
                   </div>
 
-                  <motion.button
+                  <motion.a
+                    href={`https://wa.me/919539222031?text=${encodeURIComponent(`Hi, I would like to reserve a table at ${restaurant.name} (${restaurant.type}) at Gramamstays Resort.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full py-2 sm:py-2.5 bg-primary text-white rounded-xl font-medium text-xs sm:text-sm hover:bg-primary/90 transition-all"
+                    className="w-full py-2 sm:py-2.5 bg-primary text-white rounded-xl font-medium text-xs sm:text-sm hover:bg-primary/90 transition-all text-center block"
                   >
                     Reserve a Table
-                  </motion.button>
+                  </motion.a>
                 </div>
               </motion.div>
             )
@@ -190,12 +193,15 @@ export function Dining() {
               </div>
               <div className="mt-5 sm:mt-6 pt-3 sm:pt-4 border-t border-white/10 flex items-center justify-between">
                 <p className="text-xs sm:text-sm text-white/50">7 courses &middot; $185/person</p>
-                <motion.button
+                <motion.a
+                  href="https://wa.me/919539222031?text=Hi%2C%20I%20would%20like%20to%20reserve%20a%20table%20for%20the%20Chef%27s%20Tasting%20Menu%20at%20Gramamstays%20Resort."
+                  target="_blank"
+                  rel="noopener noreferrer"
                   whileHover={{ x: 4 }}
                   className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-secondary hover:text-accent transition-colors"
                 >
                   Reserve <ArrowRight size={13} />
-                </motion.button>
+                </motion.a>
               </div>
             </div>
           </div>

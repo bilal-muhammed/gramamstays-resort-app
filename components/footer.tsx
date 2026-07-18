@@ -160,13 +160,14 @@ export function Footer() {
             >
               <h4 className="font-bold text-xs sm:text-sm mb-4 sm:mb-5 text-white">Contact</h4>
               <ul className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm text-white/50">
-                <li>Nature Valley, Nevada</li>
-                <li>+1 (555) 123-4567</li>
+                <li>Nature Valley, India</li>
+                <li>+91 95392 22031</li>
+                <li>+91 97447 89195</li>
                 <li>hello@gramamstays.com</li>
                 <li className="pt-1.5 sm:pt-2">
-                  <Link href="#contact" className="text-secondary hover:text-accent transition-colors text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
+                  <a href="https://wa.me/919539222031?text=Hi%2C%20I%20would%20like%20to%20get%20in%20touch%20with%20Gramamstays%20Resort." target="_blank" rel="noopener noreferrer" className="text-secondary hover:text-accent transition-colors text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
                     Get in Touch &rarr;
-                  </Link>
+                  </a>
                 </li>
               </ul>
             </motion.div>
@@ -178,9 +179,6 @@ export function Footer() {
               &copy; {currentYear} Gramamstays Resort & Spa. All rights reserved.
             </p>
             <div className="flex items-center gap-4">
-              <Link href="/admin" className="text-[10px] sm:text-xs text-white/30 hover:text-white/60 transition-colors">
-                Admin
-              </Link>
               <p className="text-[10px] sm:text-xs text-white/40 flex items-center gap-1">
                 Crafted with <Heart size={9} className="text-secondary fill-secondary" /> in Nature Valley
               </p>

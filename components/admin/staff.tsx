@@ -63,7 +63,7 @@ export function AdminStaff() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <h2 className="text-lg font-bold text-gray-900">Staff & Roles</h2>
-        <button onClick={openAdd} className="flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors min-h-[44px]">
+        <button onClick={openAdd} className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors min-h-[44px]">
           <Plus size={15} /> Add Staff
         </button>
       </div>
@@ -84,7 +84,7 @@ export function AdminStaff() {
           <div className="relative">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search staff..."
-              className="w-full pl-9 pr-3 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20" />
+              className="w-full pl-9 pr-3 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20" />
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -152,50 +152,50 @@ export function AdminStaff() {
       {/* Add/Edit Modal */}
       {showForm && (
         <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowForm(false)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white z-10 px-5 py-4 border-b border-gray-100 flex items-center justify-between">
               <h3 className="font-bold text-gray-900">{editingId ? 'Edit Staff' : 'Add Staff'}</h3>
               <button onClick={() => setShowForm(false)} className="p-2.5 rounded-lg hover:bg-gray-100 min-w-[44px] min-h-[44px] flex items-center justify-center"><X size={18} /></button>
             </div>
-            <form onSubmit={handleSubmit} className="p-5 space-y-4">
-              <div className="grid sm:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="p-5 space-y-3.5">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Name *</label>
+                  <label className="block text-[11px] font-semibold text-gray-500 uppercase mb-1.5">Name *</label>
                   <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Email *</label>
+                  <label className="block text-[11px] font-semibold text-gray-500 uppercase mb-1.5">Email *</label>
                   <input type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
                 </div>
               </div>
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Phone</label>
+                  <label className="block text-[11px] font-semibold text-gray-500 uppercase mb-1.5">Phone</label>
                   <input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Status</label>
+                  <label className="block text-[11px] font-semibold text-gray-500 uppercase mb-1.5">Status</label>
                   <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as Staff['status'] })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-gray-900">
                     <option>Active</option><option>Off Duty</option>
                   </select>
                 </div>
               </div>
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Role</label>
                   <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-gray-900">
                     {roles.map(r => <option key={r}>{r}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Department</label>
                   <select value={form.department} onChange={e => setForm({ ...form, department: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-gray-900">
                     {departments.map(d => <option key={d}>{d}</option>)}
                   </select>
                 </div>
@@ -205,15 +205,15 @@ export function AdminStaff() {
                 <div className="flex flex-wrap gap-2">
                   {allPermissions.map(p => (
                     <button key={p} type="button" onClick={() => togglePermission(p)}
-                      className={`px-3.5 py-2 rounded-lg text-xs font-semibold border transition-colors min-h-[40px] ${form.permissions.includes(p) ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100 active:bg-gray-200'}`}>
+                      className={`px-3.5 py-2 rounded-lg text-xs font-semibold border transition-colors min-h-[44px] ${form.permissions.includes(p) ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100 active:bg-gray-200'}`}>
                       {p}
                     </button>
                   ))}
                 </div>
               </div>
-              <div className="flex gap-3 pt-2 pb-2">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-3.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 min-h-[48px]">Cancel</button>
-                <button type="submit" className="flex-1 py-3.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 min-h-[48px]">{editingId ? 'Update' : 'Add'} Staff</button>
+              <div className="flex gap-3 pt-2 pb-1">
+                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 min-h-[44px]">Cancel</button>
+                <button type="submit" className="flex-1 py-3 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 min-h-[44px]">{editingId ? 'Update' : 'Add'} Staff</button>
               </div>
             </form>
           </div>
@@ -223,12 +223,12 @@ export function AdminStaff() {
       {/* Delete Confirmation */}
       {deleteConfirm && (
         <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setDeleteConfirm(null)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full sm:max-w-sm sm:mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full sm:max-w-sm sm:mx-4 max-h-[90vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
             <h3 className="font-bold text-gray-900 mb-2">Delete Staff Member?</h3>
             <p className="text-sm text-gray-500 mb-5">This action cannot be undone.</p>
             <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 min-h-[48px]">Cancel</button>
-              <button onClick={() => { deleteStaff(deleteConfirm); setDeleteConfirm(null) }} className="flex-1 py-3.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 min-h-[48px]">Delete</button>
+              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 min-h-[44px]">Cancel</button>
+              <button onClick={() => { deleteStaff(deleteConfirm); setDeleteConfirm(null) }} className="flex-1 py-3 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 min-h-[44px]">Delete</button>
             </div>
           </div>
         </div>

@@ -6,9 +6,8 @@ import { LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog }
 const navItems: { id: AdminSection; label: string; icon: typeof LayoutDashboard }[] = [
   { id: 'dashboard', label: 'Home', icon: LayoutDashboard },
   { id: 'bookings', label: 'Bookings', icon: CalendarCheck },
-  { id: 'rooms', label: 'Rooms', icon: BedDouble },
-  { id: 'guests', label: 'Guests', icon: Users },
   { id: 'financials', label: 'Finance', icon: DollarSign },
+  { id: 'guests', label: 'Guests', icon: Users },
   { id: 'staff', label: 'Staff', icon: UserCog },
 ]
 

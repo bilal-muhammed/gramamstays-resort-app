@@ -192,13 +192,16 @@ export function Rooms() {
                     </div>
                     <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">per night</p>
                   </div>
-                  <motion.button
+                  <motion.a
+                    href={`https://wa.me/919539222031?text=${encodeURIComponent(`Hi, I would like to book the ${room.name} (${room.price}/night) at Gramamstays Resort. Please share the availability.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     whileHover={{ scale: 1.04 }}
                     whileTap={{ scale: 0.97 }}
-                    className="px-4 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-full text-xs sm:text-sm font-medium hover:shadow-lg transition-all"
+                    className="px-4 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-full text-xs sm:text-sm font-medium hover:shadow-lg transition-all text-center"
                   >
                     Book Now
-                  </motion.button>
+                  </motion.a>
                 </div>
               </div>
             </motion.div>

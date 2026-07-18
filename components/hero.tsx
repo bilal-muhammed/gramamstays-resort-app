@@ -116,13 +116,16 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.9 }}
           className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center"
         >
-          <motion.button
+          <motion.a
+            href="https://wa.me/919539222031?text=Hi%2C%20I%20would%20like%20to%20book%20a%20stay%20at%20Gramamstays%20Resort.%20Please%20share%20the%20availability%20and%20pricing."
+            target="_blank"
+            rel="noopener noreferrer"
             whileHover={{ scale: 1.04, boxShadow: '0 20px 40px rgba(212, 165, 116, 0.3)' }}
             whileTap={{ scale: 0.97 }}
-            className="w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-gradient-to-r from-secondary via-secondary to-accent text-white rounded-full font-medium text-xs sm:text-sm tracking-widest uppercase shadow-xl"
+            className="w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-gradient-to-r from-secondary via-secondary to-accent text-white rounded-full font-medium text-xs sm:text-sm tracking-widest uppercase shadow-xl text-center"
           >
             Reserve Your Escape
-          </motion.button>
+          </motion.a>
           <motion.button
             whileHover={{ scale: 1.04, backgroundColor: 'rgba(255,255,255,0.15)' }}
             whileTap={{ scale: 0.97 }}

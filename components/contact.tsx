@@ -18,15 +18,18 @@ export function Contact() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    const message = `Hi, I'm ${formData.name}.\n\n${formData.message}${formData.phone ? `\n\nPhone: ${formData.phone}` : ''}${formData.email ? `\nEmail: ${formData.email}` : ''}`
+    const whatsappUrl = `https://wa.me/919539222031?text=${encodeURIComponent(message)}`
+    window.open(whatsappUrl, '_blank')
     setIsSubmitted(true)
     setTimeout(() => setIsSubmitted(false), 3000)
     setFormData({ name: '', email: '', phone: '', message: '' })
   }
 
   const contactInfo = [
-    { icon: MapPin, label: 'Location', value: 'Luxury Mountain Road, Nature Valley, NV 12345' },
-    { icon: Phone, label: 'Reservations', value: '+1 (555) 123-4567' },
-    { icon: Mail, label: 'Email', value: 'reservations@gramamstays.com' },
+    { icon: MapPin, label: 'Location', value: 'Nature Valley, India' },
+    { icon: Phone, label: 'Reservations', value: '+91 95392 22031' },
+    { icon: Mail, label: 'Email', value: 'hello@gramamstays.com' },
     { icon: Clock, label: 'Front Desk', value: 'Available 24/7' },
   ]
 
@@ -131,7 +134,7 @@ export function Contact() {
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-border/80 bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-sm"
-                    placeholder="+1 (555) 000-0000"
+                    placeholder="+91 XXXXX XXXXX"
                   />
                 </div>
                 <div>

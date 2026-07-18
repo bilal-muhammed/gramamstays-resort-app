@@ -252,7 +252,7 @@ export function AdminFinancials() {
       {/* Add/Edit Expense Modal */}
       {showExpenseForm && (
         <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowExpenseForm(false)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white z-10 px-5 py-4 border-b border-gray-100 flex items-center justify-between">
               <h3 className="font-bold text-gray-900">{editingExpenseId ? 'Edit Expense' : 'Add Expense'}</h3>
               <button onClick={() => setShowExpenseForm(false)} className="p-2.5 rounded-lg hover:bg-gray-100 min-w-[44px] min-h-[44px] flex items-center justify-center"><X size={18} /></button>
@@ -261,36 +261,36 @@ export function AdminFinancials() {
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Label *</label>
                 <input type="text" required value={expenseForm.label} onChange={e => setExpenseForm({ ...expenseForm, label: e.target.value })}
-                  className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="e.g. Kitchen Supplies" />
+                  className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="e.g. Kitchen Supplies" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Description</label>
                 <textarea value={expenseForm.description} onChange={e => setExpenseForm({ ...expenseForm, description: e.target.value })}
-                  className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none h-24" placeholder="What was this expense for?" />
+                  className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none h-24" placeholder="What was this expense for?" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Amount ($) *</label>
                 <input type="number" min="0" required value={expenseForm.amount || ''} onChange={e => setExpenseForm({ ...expenseForm, amount: Number(e.target.value) })}
-                  className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="0" />
+                  className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="0" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Category</label>
                   <select value={expenseForm.category} onChange={e => setExpenseForm({ ...expenseForm, category: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-gray-900">
                     {expenseCategories.map(c => <option key={c}>{c}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Date</label>
                   <input type="text" value={expenseForm.date} onChange={e => setExpenseForm({ ...expenseForm, date: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder={getToday()} />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder={getToday()} />
                   <p className="text-[10px] text-gray-400 mt-1">Auto-fills today if empty</p>
                 </div>
               </div>
-              <div className="flex gap-3 pt-2 pb-2">
-                <button type="button" onClick={() => setShowExpenseForm(false)} className="flex-1 py-3.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors min-h-[48px]">Cancel</button>
-                <button type="submit" className="flex-1 py-3.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors min-h-[48px]">{editingExpenseId ? 'Update' : 'Add'} Expense</button>
+              <div className="flex gap-3 pt-2 pb-1">
+                <button type="button" onClick={() => setShowExpenseForm(false)} className="flex-1 py-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors min-h-[44px]">Cancel</button>
+                <button type="submit" className="flex-1 py-3 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors min-h-[44px]">{editingExpenseId ? 'Update' : 'Add'} Expense</button>
               </div>
             </form>
           </div>
@@ -300,7 +300,7 @@ export function AdminFinancials() {
       {/* Add Income Modal */}
       {showIncomeForm && (
         <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowIncomeForm(false)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white z-10 px-5 py-4 border-b border-gray-100 flex items-center justify-between">
               <h3 className="font-bold text-gray-900">Add Income</h3>
               <button onClick={() => setShowIncomeForm(false)} className="p-2.5 rounded-lg hover:bg-gray-100 min-w-[44px] min-h-[44px] flex items-center justify-center"><X size={18} /></button>
@@ -309,31 +309,31 @@ export function AdminFinancials() {
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Source *</label>
                 <input type="text" required value={incomeForm.source} onChange={e => setIncomeForm({ ...incomeForm, source: e.target.value })}
-                  className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="e.g. Room - Presidential Suite #301" />
+                  className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="e.g. Room - Presidential Suite #301" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Amount ($) *</label>
                 <input type="number" min="0" required value={incomeForm.amount || ''} onChange={e => setIncomeForm({ ...incomeForm, amount: Number(e.target.value) })}
-                  className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="0" />
+                  className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="0" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Type</label>
                   <select value={incomeForm.type} onChange={e => setIncomeForm({ ...incomeForm, type: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-gray-900">
                     {incomeTypes.map(t => <option key={t}>{t}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Date</label>
                   <input type="text" value={incomeForm.date} onChange={e => setIncomeForm({ ...incomeForm, date: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder={getToday()} />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder={getToday()} />
                   <p className="text-[10px] text-gray-400 mt-1">Auto-fills today if empty</p>
                 </div>
               </div>
-              <div className="flex gap-3 pt-2 pb-2">
-                <button type="button" onClick={() => setShowIncomeForm(false)} className="flex-1 py-3.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors min-h-[48px]">Cancel</button>
-                <button type="submit" className="flex-1 py-3.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-colors min-h-[48px]">Add Income</button>
+              <div className="flex gap-3 pt-2 pb-1">
+                <button type="button" onClick={() => setShowIncomeForm(false)} className="flex-1 py-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors min-h-[44px]">Cancel</button>
+                <button type="submit" className="flex-1 py-3 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-colors min-h-[44px]">Add Income</button>
               </div>
             </form>
           </div>
@@ -343,12 +343,12 @@ export function AdminFinancials() {
       {/* Delete Confirmation */}
       {deleteConfirm && (
         <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setDeleteConfirm(null)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full sm:max-w-sm sm:mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full sm:max-w-sm sm:mx-4 max-h-[90vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
             <h3 className="font-bold text-gray-900 mb-2">Delete Entry?</h3>
             <p className="text-sm text-gray-500 mb-5">This action cannot be undone.</p>
             <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors min-h-[48px]">Cancel</button>
-              <button onClick={handleDelete} className="flex-1 py-3.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-colors min-h-[48px]">Delete</button>
+              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors min-h-[44px]">Cancel</button>
+              <button onClick={handleDelete} className="flex-1 py-3 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-colors min-h-[44px]">Delete</button>
             </div>
           </div>
         </div>
