@@ -48,15 +48,15 @@ export function AdminDashboard({ onNavigate }: Props) {
           return (
             <div key={stat.label} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
               <div className="flex items-center justify-between mb-3">
-                <div className={`w-9 h-9 ${stat.color}/10 rounded-lg flex items-center justify-center`}>
+                <div className={`w-10 h-10 ${stat.color}/10 rounded-lg flex items-center justify-center`}>
                   <Icon size={18} className={`${stat.color.replace('bg-', 'text-')}`} />
                 </div>
-                <div className={`flex items-center gap-0.5 text-xs font-semibold ${stat.up ? 'text-emerald-600' : 'text-red-500'}`}>
-                  {stat.up ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                  {stat.change}
+                <div className={`flex items-center gap-1 text-xs font-semibold ${stat.up ? 'text-emerald-600' : 'text-red-500'}`}>
+                  {stat.up ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                  <span>{stat.change}</span>
                 </div>
               </div>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{stat.value}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900 truncate">{stat.value}</p>
               <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
             </div>
           )
@@ -72,8 +72,9 @@ export function AdminDashboard({ onNavigate }: Props) {
               View All
             </button>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
+          <div className="overflow-x-auto relative">
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none z-10" />
+            <table className="w-full text-left min-w-[500px]">
               <thead>
                 <tr className="border-b border-gray-100">
                   <th className="px-5 py-3 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Guest</th>
@@ -86,18 +87,18 @@ export function AdminDashboard({ onNavigate }: Props) {
               <tbody>
                 {bookings.slice(0, 5).map((booking) => (
                   <tr key={booking.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                    <td className="px-5 py-3">
+                    <td className="px-5 py-3.5">
                       <p className="text-sm font-semibold text-gray-900">{booking.guest}</p>
                       <p className="text-[10px] text-gray-400">{booking.id}</p>
                     </td>
-                    <td className="px-5 py-3 text-sm text-gray-600 hidden sm:table-cell">{booking.room}</td>
-                    <td className="px-5 py-3 text-xs text-gray-500 hidden md:table-cell">{booking.checkIn} - {booking.checkOut}</td>
-                    <td className="px-5 py-3">
+                    <td className="px-5 py-3.5 text-sm text-gray-600 hidden sm:table-cell">{booking.room}</td>
+                    <td className="px-5 py-3.5 text-xs text-gray-500 hidden md:table-cell">{booking.checkIn} - {booking.checkOut}</td>
+                    <td className="px-5 py-3.5">
                       <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-full border ${statusColor[booking.status]}`}>
                         {booking.status}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-sm font-semibold text-gray-900 text-right">${booking.amount.toLocaleString()}</td>
+                    <td className="px-5 py-3.5 text-sm font-semibold text-gray-900 text-right">${booking.amount.toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -142,7 +143,7 @@ export function AdminDashboard({ onNavigate }: Props) {
                 <button
                   key={action.label}
                   onClick={() => onNavigate(action.section)}
-                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-700 font-medium transition-colors"
+                  className="w-full flex items-center justify-between px-3.5 py-3 rounded-lg bg-gray-50 hover:bg-gray-100 active:bg-gray-200 text-sm text-gray-700 font-medium transition-colors min-h-[44px]"
                 >
                   {action.label}
                   <ArrowUpRight size={14} className="text-gray-400" />
@@ -157,10 +158,10 @@ export function AdminDashboard({ onNavigate }: Props) {
             <div className="space-y-3">
               {activities.slice(0, 5).map((activity) => (
                 <div key={activity.id} className="flex gap-3">
-                  <Clock size={13} className="text-gray-400 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-xs text-gray-600">{activity.text}</p>
-                    <p className="text-[10px] text-gray-400">{activity.time}</p>
+                  <Clock size={14} className="text-gray-400 mt-0.5 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-xs text-gray-600 leading-relaxed">{activity.text}</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">{activity.time}</p>
                   </div>
                 </div>
               ))}

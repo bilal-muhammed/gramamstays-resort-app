@@ -1,6 +1,7 @@
 'use client'
 
 import type { AdminSection } from '@/app/admin/page'
+import Image from 'next/image'
 import { LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog, Settings, X } from 'lucide-react'
 
 const navItems: { id: AdminSection; label: string; icon: typeof LayoutDashboard }[] = [
@@ -32,18 +33,18 @@ export function AdminSidebar({ activeSection, onNavigate, isOpen, onClose }: Pro
         isOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         {/* Logo */}
-        <div className="px-5 py-5 flex items-center justify-between border-b border-white/10">
+        <div className="px-5 py-5 flex items-center justify-between border-b border-white/10 pt-[max(1.25rem,env(safe-area-inset-top))]">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-secondary to-accent flex items-center justify-center">
-              <span className="text-white font-bold text-sm">G</span>
+            <div className="w-10 h-10 rounded-lg overflow-hidden relative bg-black">
+              <Image src="/logo.png" alt="Gramamstays Logo" fill className="object-contain" sizes="40px" />
             </div>
             <div>
               <p className="text-sm font-bold text-white">Gramamstays</p>
               <p className="text-[10px] text-white/40 uppercase tracking-wider">Admin Panel</p>
             </div>
           </div>
-          <button onClick={onClose} className="lg:hidden text-white/50 hover:text-white p-2.5 -mr-1">
-            <X size={18} />
+          <button onClick={onClose} className="lg:hidden text-white/50 hover:text-white p-2.5 -mr-1 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-white/10 transition-colors">
+            <X size={20} />
           </button>
         </div>
 
@@ -56,10 +57,10 @@ export function AdminSidebar({ activeSection, onNavigate, isOpen, onClose }: Pro
               <button
                 key={item.id}
                 onClick={() => { onNavigate(item.id); onClose() }}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-lg text-sm font-medium transition-all min-h-[44px] ${
                   isActive
                     ? 'bg-white/10 text-white'
-                    : 'text-white/50 hover:text-white hover:bg-white/5'
+                    : 'text-white/50 hover:text-white hover:bg-white/5 active:bg-white/10'
                 }`}
               >
                 <Icon size={18} strokeWidth={1.5} />
@@ -70,9 +71,9 @@ export function AdminSidebar({ activeSection, onNavigate, isOpen, onClose }: Pro
         </nav>
 
         {/* Footer */}
-        <div className="px-4 py-4 border-t border-white/10">
+        <div className="px-4 py-4 border-t border-white/10 pb-[max(1rem,env(safe-area-inset-bottom))]">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-primary/30 flex items-center justify-center text-xs font-bold text-white">
+            <div className="w-9 h-9 rounded-full bg-primary/30 flex items-center justify-center text-xs font-bold text-white">
               A
             </div>
             <div className="min-w-0">

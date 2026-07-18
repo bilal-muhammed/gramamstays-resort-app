@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { Menu, X, Phone, Settings } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -66,9 +67,8 @@ export function Header() {
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 15 }}
               >
-                <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-full bg-gradient-to-br from-primary via-primary to-sage flex items-center justify-center shadow-lg relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent" />
-                  <span className="text-white font-bold text-sm lg:text-lg relative z-10">G</span>
+                <div className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-lg overflow-hidden shadow-lg relative bg-black">
+                  <Image src="/logo.png" alt="Gramamstays Logo" fill className="object-contain" sizes="48px" priority />
                 </div>
               </motion.div>
               <div className="hidden sm:block">

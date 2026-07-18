@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Heart, ArrowUp, Send, Globe, MessageCircle, Play, Camera } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
@@ -92,8 +93,8 @@ export function Footer() {
               className="col-span-2 md:col-span-1"
             >
               <div className="flex items-center gap-2 sm:gap-2.5 mb-3 sm:mb-4">
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center">
-                  <span className="text-white font-bold text-xs sm:text-sm">G</span>
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg overflow-hidden relative bg-black">
+                  <Image src="/logo.png" alt="Gramamstays Logo" fill className="object-contain" sizes="44px" />
                 </div>
                 <span className="text-base sm:text-lg font-bold text-white">Gramamstays</span>
               </div>

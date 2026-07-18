@@ -47,7 +47,7 @@ export function AdminGuests() {
           <h2 className="text-lg font-bold text-gray-900">Guests</h2>
           <p className="text-xs text-gray-500">{filtered.length} guest{filtered.length !== 1 ? 's' : ''}</p>
         </div>
-        <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">
+        <button onClick={openAdd} className="flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors min-h-[44px]">
           <Plus size={15} /> Add Guest
         </button>
       </div>
@@ -55,13 +55,13 @@ export function AdminGuests() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <button onClick={() => setShowVipOnly(!showVipOnly)}
-          className={`px-4 py-2 rounded-lg text-xs font-semibold border transition-colors ${showVipOnly ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'}`}>
+          className={`px-4 py-3 rounded-lg text-xs font-semibold border transition-colors min-h-[44px] ${showVipOnly ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50 active:bg-gray-100'}`}>
           <Star size={12} className="inline mr-1" />VIP Only
         </button>
         <div className="relative flex-1">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search guests..."
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20" />
+            className="w-full pl-9 pr-3 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20" />
         </div>
       </div>
 
@@ -76,19 +76,19 @@ export function AdminGuests() {
         ) : filtered.map(guest => (
           <div key={guest.id} className="bg-white rounded-xl border border-gray-200 p-5 relative group">
             <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-sm font-bold text-primary">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">
                   {guest.name.split(' ').map(n => n[0]).join('')}
                 </div>
-                <div>
-                  <p className="text-sm font-bold text-gray-900">{guest.name}</p>
-                  <p className="text-[10px] text-gray-400">{guest.id}</p>
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-gray-900 truncate">{guest.name}</p>
+                  <p className="text-[11px] text-gray-400">{guest.id}</p>
                 </div>
               </div>
-              {guest.vip && <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-600 border border-amber-200">VIP</span>}
+              {guest.vip && <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-600 border border-amber-200 shrink-0 ml-2">VIP</span>}
             </div>
             <div className="space-y-1.5 text-xs text-gray-500 mb-3">
-              <p>{guest.email}</p>
+              <p className="truncate">{guest.email}</p>
               <p>{guest.phone}</p>
               <p>{guest.location}</p>
             </div>
@@ -98,13 +98,13 @@ export function AdminGuests() {
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-0.5">
-                {Array.from({ length: guest.rating }).map((_, i) => <Star key={i} size={10} className="text-amber-400 fill-amber-400" />)}
+                {Array.from({ length: guest.rating }).map((_, i) => <Star key={i} size={12} className="text-amber-400 fill-amber-400" />)}
               </div>
-              <span className="text-[10px] text-gray-400">Last: {guest.lastStay}</span>
+              <span className="text-[11px] text-gray-400">Last: {guest.lastStay}</span>
             </div>
-            <div className="flex gap-2 mt-3">
-              <button onClick={() => openEdit(guest)} className="flex-1 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-xs font-semibold text-gray-600 transition-colors"><Pencil size={12} className="inline mr-1" />Edit</button>
-              <button onClick={() => setDeleteConfirm(guest.id)} className="py-2 px-3 rounded-lg bg-red-50 hover:bg-red-100 text-xs font-semibold text-red-600 transition-colors"><Trash2 size={12} /></button>
+            <div className="flex gap-2 mt-3 pt-3 border-t border-gray-100">
+              <button onClick={() => openEdit(guest)} className="flex-1 py-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 active:bg-gray-200 text-xs font-semibold text-gray-600 transition-colors min-h-[44px] flex items-center justify-center"><Pencil size={12} className="inline mr-1" />Edit</button>
+              <button onClick={() => setDeleteConfirm(guest.id)} className="py-2.5 px-3 rounded-lg bg-red-50 hover:bg-red-100 active:bg-red-200 text-xs font-semibold text-red-600 transition-colors min-h-[44px] flex items-center justify-center"><Trash2 size={12} /></button>
             </div>
           </div>
         ))}
@@ -113,65 +113,65 @@ export function AdminGuests() {
       {/* Add/Edit Modal */}
       {showForm && (
         <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowForm(false)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white z-10 px-5 py-4 border-b border-gray-100 flex items-center justify-between">
               <h3 className="font-bold text-gray-900">{editingId ? 'Edit Guest' : 'Add Guest'}</h3>
-              <button onClick={() => setShowForm(false)} className="p-2.5 rounded-lg hover:bg-gray-100"><X size={16} /></button>
+              <button onClick={() => setShowForm(false)} className="p-2.5 rounded-lg hover:bg-gray-100 min-w-[44px] min-h-[44px] flex items-center justify-center"><X size={18} /></button>
             </div>
             <form onSubmit={handleSubmit} className="p-5 space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Name *</label>
                   <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Email *</label>
                   <input type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Phone</label>
                   <input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Location</label>
                   <input type="text" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="City, Country" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="City, Country" />
                 </div>
               </div>
               <div className="grid sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Stays</label>
                   <input type="number" min="0" value={form.stays} onChange={e => setForm({ ...form, stays: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Total Spent ($)</label>
                   <input type="number" min="0" value={form.totalSpent} onChange={e => setForm({ ...form, totalSpent: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Rating</label>
                   <select value={form.rating} onChange={e => setForm({ ...form, rating: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
                     <option value={5}>5</option><option value={4}>4</option><option value={3}>3</option><option value={2}>2</option><option value={1}>1</option>
                   </select>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex items-center gap-2.5 cursor-pointer py-2">
                   <input type="checkbox" checked={form.vip} onChange={e => setForm({ ...form, vip: e.target.checked })}
-                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20" />
+                    className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary/20" />
                   <span className="text-sm text-gray-700">VIP Guest</span>
                 </label>
               </div>
-              <div className="flex gap-3 pt-2 pb-1">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50">Cancel</button>
-                <button type="submit" className="flex-1 py-3 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90">{editingId ? 'Update' : 'Add'} Guest</button>
+              <div className="flex gap-3 pt-2 pb-2">
+                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-3.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 min-h-[48px]">Cancel</button>
+                <button type="submit" className="flex-1 py-3.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 min-h-[48px]">{editingId ? 'Update' : 'Add'} Guest</button>
               </div>
             </form>
           </div>
@@ -185,8 +185,8 @@ export function AdminGuests() {
             <h3 className="font-bold text-gray-900 mb-2">Delete Guest?</h3>
             <p className="text-sm text-gray-500 mb-5">This action cannot be undone.</p>
             <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50">Cancel</button>
-              <button onClick={() => { deleteGuest(deleteConfirm); setDeleteConfirm(null) }} className="flex-1 py-3 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600">Delete</button>
+              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 min-h-[48px]">Cancel</button>
+              <button onClick={() => { deleteGuest(deleteConfirm); setDeleteConfirm(null) }} className="flex-1 py-3.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 min-h-[48px]">Delete</button>
             </div>
           </div>
         </div>

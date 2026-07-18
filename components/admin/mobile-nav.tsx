@@ -19,8 +19,8 @@ interface Props {
 
 export function AdminMobileNav({ activeSection, onNavigate }: Props) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white border-t border-gray-200 safe-area-bottom">
-      <nav className="flex items-center justify-around px-1 py-1">
+    <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-gray-200 safe-area-bottom shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+      <nav className="flex items-center justify-around px-1 py-1.5">
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = activeSection === item.id
@@ -28,12 +28,12 @@ export function AdminMobileNav({ activeSection, onNavigate }: Props) {
             <button
               key={item.id}
               onClick={() => onNavigate(item.id)}
-              className={`flex flex-col items-center gap-0.5 px-2.5 py-2 rounded-lg transition-all min-w-0 ${
-                isActive ? 'text-primary' : 'text-gray-400'
+              className={`flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl transition-all min-w-0 min-h-[48px] justify-center ${
+                isActive ? 'text-primary bg-primary/5' : 'text-gray-400 active:bg-gray-100'
               }`}
             >
-              <Icon size={20} strokeWidth={isActive ? 2 : 1.5} />
-              <span className={`text-[10px] font-medium ${isActive ? 'text-primary' : ''}`}>{item.label}</span>
+              <Icon size={20} strokeWidth={isActive ? 2.2 : 1.5} />
+              <span className={`text-[11px] font-medium leading-none ${isActive ? 'text-primary font-semibold' : ''}`}>{item.label}</span>
             </button>
           )
         })}

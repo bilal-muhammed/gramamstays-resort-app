@@ -63,7 +63,7 @@ export function AdminStaff() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <h2 className="text-lg font-bold text-gray-900">Staff & Roles</h2>
-        <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">
+        <button onClick={openAdd} className="flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors min-h-[44px]">
           <Plus size={15} /> Add Staff
         </button>
       </div>
@@ -72,7 +72,7 @@ export function AdminStaff() {
       <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
         {(['staff', 'roles'] as const).map(tab => (
           <button key={tab} onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-2 text-xs font-semibold rounded-md transition-colors capitalize ${activeTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+            className={`flex-1 py-3 text-xs font-semibold rounded-md transition-colors capitalize min-h-[44px] ${activeTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700 active:bg-white/50'}`}>
             {tab}
           </button>
         ))}
@@ -84,7 +84,7 @@ export function AdminStaff() {
           <div className="relative">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search staff..."
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20" />
+              className="w-full pl-9 pr-3 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20" />
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -97,32 +97,32 @@ export function AdminStaff() {
             ) : filtered.map(member => (
               <div key={member.id} className="bg-white rounded-xl border border-gray-200 p-5 relative group">
                 <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-sm font-bold text-primary">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">
                       {member.name.split(' ').map(n => n[0]).join('')}
                     </div>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">{member.name}</p>
-                      <p className="text-[10px] text-gray-400">{member.id}</p>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-gray-900 truncate">{member.name}</p>
+                      <p className="text-[11px] text-gray-400">{member.id}</p>
                     </div>
                   </div>
-                  <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-full border ${statusColor[member.status]}`}>{member.status}</span>
+                  <span className={`px-2 py-0.5 text-[10px] font-semibold rounded-full border ${statusColor[member.status]} shrink-0 ml-2`}>{member.status}</span>
                 </div>
                 <div className="space-y-1.5 text-xs text-gray-500 mb-3">
                   <p className="font-medium text-gray-700">{member.role}</p>
                   <p>{member.department}</p>
-                  <p>{member.email}</p>
+                  <p className="truncate">{member.email}</p>
                   <p>{member.phone}</p>
                   <p className="text-gray-400">Active: {member.lastActive}</p>
                 </div>
-                <div className="flex flex-wrap gap-1 mb-3">
+                <div className="flex flex-wrap gap-1.5 mb-3">
                   {member.permissions.map(p => (
-                    <span key={p} className="px-1.5 py-0.5 text-[9px] font-semibold rounded bg-gray-100 text-gray-500">{p}</span>
+                    <span key={p} className="px-2 py-0.5 text-[11px] font-semibold rounded bg-gray-100 text-gray-500">{p}</span>
                   ))}
                 </div>
-                <div className="flex gap-2 mt-1">
-                  <button onClick={() => openEdit(member)} className="flex-1 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-xs font-semibold text-gray-600 transition-colors"><Pencil size={12} className="inline mr-1" />Edit</button>
-                  <button onClick={() => setDeleteConfirm(member.id)} className="py-2 px-3 rounded-lg bg-red-50 hover:bg-red-100 text-xs font-semibold text-red-600 transition-colors"><Trash2 size={12} /></button>
+                <div className="flex gap-2 mt-1 pt-3 border-t border-gray-100">
+                  <button onClick={() => openEdit(member)} className="flex-1 py-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 active:bg-gray-200 text-xs font-semibold text-gray-600 transition-colors min-h-[44px] flex items-center justify-center"><Pencil size={12} className="inline mr-1" />Edit</button>
+                  <button onClick={() => setDeleteConfirm(member.id)} className="py-2.5 px-3 rounded-lg bg-red-50 hover:bg-red-100 active:bg-red-200 text-xs font-semibold text-red-600 transition-colors min-h-[44px] flex items-center justify-center"><Trash2 size={12} /></button>
                 </div>
               </div>
             ))}
@@ -152,34 +152,34 @@ export function AdminStaff() {
       {/* Add/Edit Modal */}
       {showForm && (
         <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowForm(false)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white z-10 px-5 py-4 border-b border-gray-100 flex items-center justify-between">
               <h3 className="font-bold text-gray-900">{editingId ? 'Edit Staff' : 'Add Staff'}</h3>
-              <button onClick={() => setShowForm(false)} className="p-2.5 rounded-lg hover:bg-gray-100"><X size={16} /></button>
+              <button onClick={() => setShowForm(false)} className="p-2.5 rounded-lg hover:bg-gray-100 min-w-[44px] min-h-[44px] flex items-center justify-center"><X size={18} /></button>
             </div>
             <form onSubmit={handleSubmit} className="p-5 space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Name *</label>
                   <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Email *</label>
                   <input type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
                 </div>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Phone</label>
                   <input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Status</label>
                   <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as Staff['status'] })}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
                     <option>Active</option><option>Off Duty</option>
                   </select>
                 </div>
@@ -188,14 +188,14 @@ export function AdminStaff() {
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Role</label>
                   <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
                     {roles.map(r => <option key={r}>{r}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Department</label>
                   <select value={form.department} onChange={e => setForm({ ...form, department: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
+                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white">
                     {departments.map(d => <option key={d}>{d}</option>)}
                   </select>
                 </div>
@@ -205,15 +205,15 @@ export function AdminStaff() {
                 <div className="flex flex-wrap gap-2">
                   {allPermissions.map(p => (
                     <button key={p} type="button" onClick={() => togglePermission(p)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${form.permissions.includes(p) ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100'}`}>
+                      className={`px-3.5 py-2 rounded-lg text-xs font-semibold border transition-colors min-h-[40px] ${form.permissions.includes(p) ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100 active:bg-gray-200'}`}>
                       {p}
                     </button>
                   ))}
                 </div>
               </div>
-              <div className="flex gap-3 pt-2 pb-1">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50">Cancel</button>
-                <button type="submit" className="flex-1 py-3 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90">{editingId ? 'Update' : 'Add'} Staff</button>
+              <div className="flex gap-3 pt-2 pb-2">
+                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-3.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 min-h-[48px]">Cancel</button>
+                <button type="submit" className="flex-1 py-3.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 min-h-[48px]">{editingId ? 'Update' : 'Add'} Staff</button>
               </div>
             </form>
           </div>
@@ -227,8 +227,8 @@ export function AdminStaff() {
             <h3 className="font-bold text-gray-900 mb-2">Delete Staff Member?</h3>
             <p className="text-sm text-gray-500 mb-5">This action cannot be undone.</p>
             <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50">Cancel</button>
-              <button onClick={() => { deleteStaff(deleteConfirm); setDeleteConfirm(null) }} className="flex-1 py-3 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600">Delete</button>
+              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 min-h-[48px]">Cancel</button>
+              <button onClick={() => { deleteStaff(deleteConfirm); setDeleteConfirm(null) }} className="flex-1 py-3.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 min-h-[48px]">Delete</button>
             </div>
           </div>
         </div>

@@ -34,7 +34,7 @@ export default function AdminPage() {
   return (
     <AdminDataProvider>
       <ToastProvider>
-        <div className="min-h-screen bg-[#f0f2f5] flex">
+        <div className="min-h-screen bg-[#f0f2f5] flex overflow-x-hidden">
           <AdminSidebar
             activeSection={activeSection}
             onNavigate={setActiveSection}
@@ -45,8 +45,10 @@ export default function AdminPage() {
           <div className="flex-1 flex flex-col min-h-screen lg:ml-64">
             <AdminHeader onMenuToggle={() => setSidebarOpen(!sidebarOpen)} activeSection={activeSection} />
 
-            <main className="flex-1 p-4 sm:p-5 lg:p-6 pb-24 lg:pb-6 overflow-y-auto">
-              {renderSection()}
+            <main className="flex-1 p-4 sm:p-5 lg:p-6 pb-24 lg:pb-6 overflow-y-auto overflow-x-hidden">
+              <div className="max-w-7xl mx-auto">
+                {renderSection()}
+              </div>
             </main>
           </div>
 
