@@ -1,111 +1,216 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
-import { Menu, X } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { Menu, X, Phone, Settings } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+
+const navItems = [
+  { label: 'Experience', href: '#experience' },
+  { label: 'Rooms', href: '#rooms' },
+  { label: 'Amenities', href: '#amenities' },
+  { label: 'Dining', href: '#dining' },
+  { label: 'Stories', href: '#testimonials' },
+  { label: 'Contact', href: '#contact' },
+]
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const [activeSection, setActiveSection] = useState('')
 
-  const navItems = [
-    { label: 'Rooms', href: '#rooms' },
-    { label: 'Amenities', href: '#amenities' },
-    { label: 'Dining', href: '#dining' },
-    { label: 'Contact', href: '#contact' },
-  ]
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 60)
+
+      const sections = navItems.map(item => item.href.slice(1))
+      for (const section of [...sections].reverse()) {
+        const el = document.getElementById(section)
+        if (el && el.getBoundingClientRect().top <= 150) {
+          setActiveSection(section)
+          break
+        }
+      }
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [isMenuOpen])
 
   return (
-    <header className="fixed w-full top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-24">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <motion.div
-              className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-lg"
-              whileHover={{ scale: 1.1 }}
-              transition={{ type: 'spring', stiffness: 400 }}
-            >
-              <span className="text-white font-bold text-xl">G</span>
-            </motion.div>
-            <div className="hidden sm:block">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Gramamstays
-              </h1>
-              <p className="text-xs text-muted-foreground tracking-widest uppercase">Luxury Retreat</p>
-            </div>
-          </Link>
+    <>
+      <motion.header
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className={`fixed w-full top-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? 'bg-background/90 backdrop-blur-xl border-b border-border/50 shadow-lg shadow-black/5'
+            : 'bg-transparent'
+        }`}
+      >
+        <div className="max-w-8xl mx-auto px-5 sm:px-6 lg:px-10">
+          <div className="flex justify-between items-center h-16 sm:h-20 lg:h-24">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2.5 group relative z-10">
+              <motion.div
+                className="relative"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+              >
+                <div className="w-9 h-9 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-full bg-gradient-to-br from-primary via-primary to-sage flex items-center justify-center shadow-lg relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent" />
+                  <span className="text-white font-bold text-sm lg:text-lg relative z-10">G</span>
+                </div>
+              </motion.div>
+              <div className="hidden sm:block">
+                <h1 className={`text-base lg:text-xl font-bold tracking-tight transition-colors duration-500 ${
+                  scrolled ? 'text-foreground' : 'text-white'
+                }`}>
+                  Gramamstays
+                </h1>
+                <p className={`text-[9px] lg:text-[10px] tracking-[0.2em] lg:tracking-[0.25em] uppercase transition-colors duration-500 ${
+                  scrolled ? 'text-muted-foreground' : 'text-white/60'
+                }`}>
+                  Resort & Wellness
+                </p>
+              </div>
+            </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex gap-12 items-center">
-            {navItems.map((item) => (
-              <motion.div key={item.href} whileHover={{ y: -2 }} transition={{ duration: 0.2 }}>
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1">
+              {navItems.map((item) => (
                 <Link
+                  key={item.href}
                   href={item.href}
-                  className="text-foreground hover:text-secondary transition-colors font-medium text-sm tracking-wide relative group"
+                  className={`relative px-3 xl:px-4 py-2 text-[13px] font-medium tracking-wide transition-all duration-300 rounded-full group ${
+                    activeSection === item.href.slice(1)
+                      ? scrolled
+                        ? 'text-primary'
+                        : 'text-white'
+                      : scrolled
+                        ? 'text-muted-foreground hover:text-foreground'
+                        : 'text-white/70 hover:text-white'
+                  }`}
                 >
                   {item.label}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-secondary group-hover:w-full transition-all duration-300" />
+                  <span className={`absolute bottom-1 left-3 xl:left-4 right-3 xl:right-4 h-px transition-all duration-300 ${
+                    activeSection === item.href.slice(1)
+                      ? scrolled
+                        ? 'bg-primary scale-x-100'
+                        : 'bg-white scale-x-100'
+                      : 'bg-current scale-x-0 group-hover:scale-x-100'
+                  }`} />
                 </Link>
-              </motion.div>
-            ))}
-          </nav>
+              ))}
+            </nav>
 
-          <div className="hidden md:flex items-center gap-4">
+            {/* Desktop CTA */}
+            <div className="hidden lg:flex items-center gap-3 xl:gap-4">
+              <Link
+                href="/admin"
+                className={`flex items-center gap-1.5 text-[11px] font-medium tracking-wider uppercase transition-colors duration-300 ${
+                  scrolled ? 'text-muted-foreground/60 hover:text-muted-foreground' : 'text-white/40 hover:text-white/70'
+                }`}
+              >
+                <Settings size={11} />
+                Admin
+              </Link>
+              <motion.a
+                href="tel:+15551234567"
+                className={`flex items-center gap-1.5 text-[13px] font-medium transition-colors duration-300 ${
+                  scrolled ? 'text-muted-foreground hover:text-foreground' : 'text-white/70 hover:text-white'
+                }`}
+                whileHover={{ scale: 1.02 }}
+              >
+                <Phone size={13} />
+                <span className="hidden xl:inline">+1 (555) 123-4567</span>
+              </motion.a>
+              <motion.button
+                whileHover={{ scale: 1.03, boxShadow: '0 8px 30px rgba(212, 165, 116, 0.35)' }}
+                whileTap={{ scale: 0.97 }}
+                className={`px-5 xl:px-6 py-2 sm:py-2.5 rounded-full font-medium text-[13px] tracking-wide transition-all duration-300 ${
+                  scrolled
+                    ? 'bg-gradient-to-r from-secondary to-accent text-white shadow-md'
+                    : 'bg-white/15 text-white backdrop-blur-sm border border-white/25 hover:bg-white/25'
+                }`}
+              >
+                Book Your Stay
+              </motion.button>
+            </div>
+
+            {/* Mobile Menu Button */}
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-7 py-2.5 bg-gradient-to-r from-secondary to-accent text-white rounded-full hover:shadow-lg transition-all font-medium text-sm tracking-wide"
+              className={`lg:hidden p-2 sm:p-2.5 rounded-full transition-colors duration-300 relative z-10 ${
+                scrolled ? 'text-foreground' : 'text-white'
+              }`}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              whileTap={{ scale: 0.9 }}
             >
-              Book Now
+              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </motion.button>
           </div>
-
-          {/* Mobile Menu Button */}
-          <motion.button
-            className="md:hidden text-foreground p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            whileTap={{ scale: 0.9 }}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </motion.button>
         </div>
+      </motion.header>
 
-        {/* Mobile Navigation */}
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: isMenuOpen ? 1 : 0, height: isMenuOpen ? 'auto' : 0 }}
-          transition={{ duration: 0.3 }}
-          className="md:hidden overflow-hidden"
-        >
-          <nav className="pb-6 flex flex-col gap-4 border-t border-border/50 pt-4">
-            {navItems.map((item) => (
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-40 bg-background/98 backdrop-blur-2xl lg:hidden"
+          >
+            <div className="flex flex-col justify-center items-center h-full px-6">
+              <nav className="flex flex-col gap-1.5 items-center">
+                {navItems.map((item, i) => (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ delay: i * 0.06, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <Link
+                      href={item.href}
+                      className="text-2xl sm:text-3xl font-light text-foreground hover:text-secondary transition-colors duration-300 block py-2.5"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.div>
+                ))}
+              </nav>
               <motion.div
-                key={item.href}
-                initial={{ x: -20, opacity: 0 }}
-                animate={isMenuOpen ? { x: 0, opacity: 1 } : { x: -20, opacity: 0 }}
-                transition={{ duration: 0.2 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: navItems.length * 0.06, duration: 0.4 }}
+                className="mt-8 sm:mt-10 flex flex-col items-center gap-3 sm:gap-4"
               >
-                <Link
-                  href={item.href}
-                  className="text-foreground hover:text-secondary transition-colors font-medium text-sm tracking-wide block py-2"
+                <div className="w-10 sm:w-12 h-px bg-secondary" />
+                <p className="text-[10px] sm:text-xs text-muted-foreground tracking-[0.3em] uppercase">Call us</p>
+                <a href="tel:+15551234567" className="text-sm sm:text-base text-foreground font-medium">+1 (555) 123-4567</a>
+                <button
+                  className="mt-3 sm:mt-4 px-8 sm:px-10 py-3 sm:py-3.5 bg-gradient-to-r from-secondary to-accent text-white rounded-full font-medium text-sm tracking-wide shadow-lg"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {item.label}
-                </Link>
+                  Book Your Stay
+                </button>
               </motion.div>
-            ))}
-            <motion.button
-              initial={{ x: -20, opacity: 0 }}
-              animate={isMenuOpen ? { x: 0, opacity: 1 } : { x: -20, opacity: 0 }}
-              transition={{ duration: 0.2, delay: 0.1 }}
-              className="w-full px-6 py-2.5 bg-gradient-to-r from-secondary to-accent text-white rounded-full hover:shadow-lg transition-all font-medium text-sm tracking-wide mt-2"
-            >
-              Book Now
-            </motion.button>
-          </nav>
-        </motion.div>
-      </div>
-    </header>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }

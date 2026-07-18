@@ -1,137 +1,209 @@
 'use client'
 
 import Image from 'next/image'
-import { Star } from 'lucide-react'
+import { Star, ArrowRight, Maximize, Users, BedDouble, Bath } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
+import { useState } from 'react'
 
 const roomTypes = [
   {
     id: 1,
     name: 'Garden Suite',
-    description: 'Spacious suites with private garden views and direct access to landscaped grounds.',
+    tagline: 'Tranquility Redefined',
+    description: 'Wake up to lush garden views in our spacious suites featuring hand-selected furnishings and a private meditation balcony.',
     price: '$250',
+    originalPrice: '$320',
     image: '/luxury-room.png',
-    features: ['King Bed', 'Garden View', 'Jacuzzi', 'Premium Amenities'],
+    features: ['King Bed', 'Garden View', 'Jacuzzi Tub', 'Premium Amenities'],
+    specs: { size: '45 m\u00B2', guests: '2', beds: '1 King', bath: '1' },
     rating: 4.9,
+    reviews: 128,
+    badge: 'Most Popular',
   },
   {
     id: 2,
     name: 'Villa Deluxe',
-    description: 'Private villas with infinity pools and panoramic views of surrounding nature.',
+    tagline: 'Private Paradise',
+    description: 'An exclusive retreat with your own infinity pool, outdoor rain shower, and panoramic views of the mountain range.',
     price: '$450',
+    originalPrice: '$550',
     image: '/luxury-room.png',
-    features: ['2 Bedrooms', 'Infinity Pool', 'Kitchen', 'Private Terrace'],
+    features: ['2 Bedrooms', 'Infinity Pool', 'Full Kitchen', 'Private Terrace'],
+    specs: { size: '95 m\u00B2', guests: '4', beds: '2 King', bath: '2' },
     rating: 5.0,
+    reviews: 89,
+    badge: 'Best Value',
   },
   {
     id: 3,
     name: 'Presidential Suite',
-    description: 'Our most exclusive accommodations with bespoke service and luxury finishes.',
+    tagline: 'The Pinnacle of Luxury',
+    description: 'Our crown jewel — a sprawling suite with butler service, private spa room, rooftop terrace, and 360\u00B0 mountain panoramas.',
     price: '$650',
+    originalPrice: '$800',
     image: '/luxury-room.png',
-    features: ['Master Suite', 'Executive Lounge', 'Personal Concierge', 'Spa Access'],
+    features: ['Master Suite', 'Executive Lounge', 'Personal Concierge', 'Private Spa'],
+    specs: { size: '150 m\u00B2', guests: '6', beds: '3 King', bath: '3' },
     rating: 5.0,
+    reviews: 56,
+    badge: 'Exclusive',
   },
 ]
 
 export function Rooms() {
-  const { ref, isVisible } = useScrollAnimation()
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6 },
-    },
-  }
+  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 })
+  const [hoveredRoom, setHoveredRoom] = useState<number | null>(null)
 
   return (
-    <section id="rooms" className="py-20 px-4 sm:px-6 lg:px-8 bg-background" ref={ref}>
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-balance">
-            Exquisite Accommodations
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Choose from our curated collection of luxurious rooms and suites, each designed for ultimate comfort and elegance.
-          </p>
-        </motion.div>
+    <section id="rooms" className="py-20 sm:py-28 px-5 sm:px-6 lg:px-10 bg-ivory/50 relative" ref={ref}>
+      <div className="max-w-8xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-10 sm:mb-16 gap-4 sm:gap-6">
+          <div className="max-w-2xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6 }}
+              className="flex items-center gap-3 mb-4 sm:mb-5"
+            >
+              <div className="w-8 sm:w-10 h-px bg-secondary" />
+              <span className="text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase text-secondary font-medium">Accommodations</span>
+            </motion.div>
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-3 sm:mb-4 leading-tight"
+            >
+              Exquisite Rooms &{' '}
+              <span className="italic font-light" style={{ WebkitTextFillColor: 'transparent', WebkitBackgroundClip: 'text', backgroundImage: 'linear-gradient(135deg, #d4a574, #c8956b)', backgroundClip: 'text' }}>Suites</span>
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-sm sm:text-base text-muted-foreground"
+            >
+              Each room is a masterpiece of design, blending local artisanship with international luxury standards.
+            </motion.p>
+          </div>
+          <motion.a
+            href="#"
+            initial={{ opacity: 0 }}
+            animate={isVisible ? { opacity: 1 } : {}}
+            transition={{ delay: 0.4 }}
+            whileHover={{ x: 4 }}
+            className="flex items-center gap-2 text-secondary font-medium text-sm hover:text-accent transition-colors shrink-0"
+          >
+            View all rooms <ArrowRight size={16} />
+          </motion.a>
+        </div>
 
-        <motion.div
-          className="grid md:grid-cols-3 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          animate={isVisible ? "visible" : "hidden"}
-        >
-          {roomTypes.map((room) => (
+        {/* Room Cards */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {roomTypes.map((room, i) => (
             <motion.div
               key={room.id}
-              variants={itemVariants}
-              className="group bg-card rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-border"
-              whileHover={{ y: -10 }}
+              initial={{ opacity: 0, y: 50 }}
+              animate={isVisible ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.7, delay: 0.15 + i * 0.12 }}
+              onMouseEnter={() => setHoveredRoom(room.id)}
+              onMouseLeave={() => setHoveredRoom(null)}
+              className="group bg-card rounded-2xl overflow-hidden border border-border/60 hover:border-secondary/40 transition-all duration-500 premium-shadow hover:premium-shadow-lg relative"
             >
-              <div className="relative h-64 overflow-hidden">
+              {/* Badge */}
+              <div className="absolute top-4 left-4 z-10">
+                <span className={`px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold tracking-wider uppercase ${
+                  room.badge === 'Exclusive'
+                    ? 'bg-gradient-to-r from-secondary to-accent text-white'
+                    : room.badge === 'Best Value'
+                    ? 'bg-primary/90 text-white'
+                    : 'bg-white/90 text-foreground backdrop-blur-sm border border-border/30'
+                }`}>
+                  {room.badge}
+                </span>
+              </div>
+
+              {/* Image */}
+              <div className="relative h-56 sm:h-64 lg:h-72 overflow-hidden">
                 <Image
                   src={room.image}
                   alt={room.name}
                   fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+
+                {/* Quick Specs Overlay - hidden on mobile */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={hoveredRoom === room.id ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute bottom-3 left-3 right-3 hidden sm:flex gap-2"
+                >
+                  {[
+                    { icon: Maximize, label: room.specs.size },
+                    { icon: Users, label: room.specs.guests + ' Guests' },
+                    { icon: BedDouble, label: room.specs.beds },
+                    { icon: Bath, label: room.specs.bath + ' Bath' },
+                  ].map((spec) => (
+                    <div key={spec.label} className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-2.5 py-1">
+                      <spec.icon size={11} className="text-primary" />
+                      <span className="text-[10px] font-medium text-foreground">{spec.label}</span>
+                    </div>
+                  ))}
+                </motion.div>
               </div>
 
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-2xl font-bold text-foreground">{room.name}</h3>
-                  <div className="flex items-center gap-1">
-                    <Star size={18} className="fill-secondary text-secondary" />
-                    <span className="text-sm font-semibold text-foreground">{room.rating}</span>
+              {/* Content */}
+              <div className="p-5 sm:p-7">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="min-w-0">
+                    <h3 className="text-xl sm:text-2xl font-bold text-foreground">{room.name}</h3>
+                    <p className="text-xs sm:text-sm text-secondary font-medium italic">{room.tagline}</p>
+                  </div>
+                  <div className="flex items-center gap-1 bg-primary/5 rounded-full px-2.5 py-1 shrink-0">
+                    <Star size={12} className="fill-secondary text-secondary" />
+                    <span className="text-xs sm:text-sm font-bold text-foreground">{room.rating}</span>
                   </div>
                 </div>
 
-                <p className="text-muted-foreground mb-4 text-sm">{room.description}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground my-3 sm:my-4 leading-relaxed">{room.description}</p>
 
-                <div className="flex flex-wrap gap-2 mb-6">
+                {/* Features */}
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-5 sm:mb-6">
                   {room.features.map((feature) => (
                     <span
                       key={feature}
-                      className="px-3 py-1 bg-secondary/20 text-primary text-xs rounded-full font-medium"
+                      className="px-2.5 py-1 bg-primary/5 text-primary text-[10px] sm:text-xs rounded-full font-medium border border-primary/10"
                     >
                       {feature}
                     </span>
                   ))}
                 </div>
 
-                <div className="flex justify-between items-center">
+                {/* Price + CTA */}
+                <div className="flex items-end justify-between pt-4 sm:pt-5 border-t border-border/50">
                   <div>
-                    <p className="text-xs text-muted-foreground">per night</p>
-                    <p className="text-2xl font-bold text-primary">{room.price}</p>
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <span className="text-2xl sm:text-3xl font-bold text-foreground">{room.price}</span>
+                      <span className="text-xs sm:text-sm text-muted-foreground line-through">{room.originalPrice}</span>
+                    </div>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">per night</p>
                   </div>
-                  <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90 transition-all font-medium">
-                    Details
-                  </button>
+                  <motion.button
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="px-4 sm:px-6 py-2 sm:py-2.5 bg-gradient-to-r from-primary to-primary/90 text-white rounded-full text-xs sm:text-sm font-medium hover:shadow-lg transition-all"
+                  >
+                    Book Now
+                  </motion.button>
                 </div>
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   )

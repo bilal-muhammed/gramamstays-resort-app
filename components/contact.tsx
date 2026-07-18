@@ -1,6 +1,6 @@
 'use client'
 
-import { Mail, Phone, MapPin, Clock } from 'lucide-react'
+import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
@@ -12,201 +12,159 @@ export function Contact() {
     phone: '',
     message: '',
   })
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
-  const { ref, isVisible } = useScrollAnimation()
+  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
+    setIsSubmitted(true)
+    setTimeout(() => setIsSubmitted(false), 3000)
     setFormData({ name: '', email: '', phone: '', message: '' })
   }
 
-  const infoVariants = {
-    hidden: { opacity: 0, x: -50 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.6 },
-    },
-  }
-
-  const formVariants = {
-    hidden: { opacity: 0, x: 50 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.6 },
-    },
-  }
+  const contactInfo = [
+    { icon: MapPin, label: 'Location', value: 'Luxury Mountain Road, Nature Valley, NV 12345' },
+    { icon: Phone, label: 'Reservations', value: '+1 (555) 123-4567' },
+    { icon: Mail, label: 'Email', value: 'reservations@gramamstays.com' },
+    { icon: Clock, label: 'Front Desk', value: 'Available 24/7' },
+  ]
 
   return (
-    <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 bg-white" ref={ref}>
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-balance">
-            Get in Touch
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Have questions about your stay? Our dedicated team is here to help.
-          </p>
-        </motion.div>
+    <section id="contact" className="py-20 sm:py-28 px-5 sm:px-6 lg:px-10 relative" ref={ref}>
+      {/* Background */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0" style={{ backgroundImage: 'url(/luxury-room.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/96 via-background/94 to-background/96" />
+      </div>
 
-        <div className="grid md:grid-cols-2 gap-12">
-          {/* Contact Information */}
+      <div className="max-w-8xl mx-auto relative z-10">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
           <motion.div
-            className="space-y-8"
-            variants={infoVariants}
-            initial="hidden"
-            animate={isVisible ? "visible" : "hidden"}
+            initial={{ opacity: 0, y: 20 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+            className="flex items-center justify-center gap-3 mb-4 sm:mb-5"
           >
-            <motion.div
-              className="flex gap-4"
-              whileHover={{ x: 10 }}
-              transition={{ type: 'spring', stiffness: 400 }}
-            >
-              <motion.div
-                className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0"
-                whileHover={{ rotate: 10 }}
-              >
-                <MapPin className="text-secondary" size={24} />
-              </motion.div>
-              <div>
-                <h3 className="font-bold text-foreground mb-1">Location</h3>
-                <p className="text-muted-foreground text-sm">
-                  Luxury Mountain Road<br />
-                  Nature Valley, NV 12345<br />
-                  United States
-                </p>
-              </div>
-            </motion.div>
+            <div className="w-8 sm:w-10 h-px bg-secondary" />
+            <span className="text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase text-secondary font-medium">Reach Out</span>
+            <div className="w-8 sm:w-10 h-px bg-secondary" />
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 sm:mb-5 leading-tight"
+          >
+            Begin Your{' '}
+            <span className="italic font-light" style={{ WebkitTextFillColor: 'transparent', WebkitBackgroundClip: 'text', backgroundImage: 'linear-gradient(135deg, #d4a574, #c8956b)', backgroundClip: 'text' }}>Journey</span>
+          </motion.h2>
+        </div>
 
-            <motion.div
-              className="flex gap-4"
-              whileHover={{ x: 10 }}
-              transition={{ type: 'spring', stiffness: 400 }}
-            >
-              <motion.div
-                className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0"
-                whileHover={{ rotate: 10 }}
-              >
-                <Phone className="text-secondary" size={24} />
-              </motion.div>
-              <div>
-                <h3 className="font-bold text-foreground mb-1">Phone</h3>
-                <p className="text-muted-foreground text-sm">
-                  +1 (555) 123-4567<br />
-                  +1 (555) 987-6543
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              className="flex gap-4"
-              whileHover={{ x: 10 }}
-              transition={{ type: 'spring', stiffness: 400 }}
-            >
-              <motion.div
-                className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0"
-                whileHover={{ rotate: 10 }}
-              >
-                <Mail className="text-secondary" size={24} />
-              </motion.div>
-              <div>
-                <h3 className="font-bold text-foreground mb-1">Email</h3>
-                <p className="text-muted-foreground text-sm">
-                  hello@gramamstays.com<br />
-                  reservations@gramamstays.com
-                </p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              className="flex gap-4"
-              whileHover={{ x: 10 }}
-              transition={{ type: 'spring', stiffness: 400 }}
-            >
-              <motion.div
-                className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0"
-                whileHover={{ rotate: 10 }}
-              >
-                <Clock className="text-secondary" size={24} />
-              </motion.div>
-              <div>
-                <h3 className="font-bold text-foreground mb-1">Availability</h3>
-                <p className="text-muted-foreground text-sm">
-                  Available 24/7<br />
-                  For reservations & inquiries
-                </p>
-              </div>
-            </motion.div>
+        <div className="grid lg:grid-cols-5 gap-8 sm:gap-10">
+          {/* Contact Info */}
+          <motion.div
+            className="lg:col-span-2 space-y-4 sm:space-y-5"
+            initial={{ opacity: 0, x: -30 }}
+            animate={isVisible ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            {contactInfo.map((info) => {
+              const Icon = info.icon
+              return (
+                <motion.div
+                  key={info.label}
+                  whileHover={{ x: 6 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                  className="flex gap-3 sm:gap-4 group"
+                >
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-secondary/10 flex items-center justify-center shrink-0 group-hover:bg-secondary/20 transition-colors">
+                    <Icon className="text-secondary" size={17} strokeWidth={1.5} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-0.5">{info.label}</p>
+                    <p className="text-foreground font-medium text-xs sm:text-sm">{info.value}</p>
+                  </div>
+                </motion.div>
+              )
+            })}
           </motion.div>
 
           {/* Contact Form */}
           <motion.div
-            className="bg-background rounded-xl p-8 border border-border"
-            variants={formVariants}
-            initial="hidden"
-            animate={isVisible ? "visible" : "hidden"}
+            className="lg:col-span-3"
+            initial={{ opacity: 0, x: 30 }}
+            animate={isVisible ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">Name</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-border bg-white focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-                  placeholder="Your name"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">Email</label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-border bg-white focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-                  placeholder="your@email.com"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">Phone</label>
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-border bg-white focus:outline-none focus:ring-2 focus:ring-primary transition-all"
-                  placeholder="+1 (555) 000-0000"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">Message</label>
-                <textarea
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-border bg-white focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none h-32"
-                  placeholder="Tell us about your inquiry..."
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full px-6 py-3 bg-primary text-white rounded-lg hover:bg-opacity-90 transition-all font-semibold"
-              >
-                Send Message
-              </button>
-            </form>
+            <div className="bg-card/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-border/60 premium-shadow">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+                <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
+                  <div>
+                    <label className="block text-[10px] sm:text-xs font-semibold text-foreground mb-1.5 sm:mb-2 uppercase tracking-wider">Name *</label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-border/80 bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-sm"
+                      placeholder="Your name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] sm:text-xs font-semibold text-foreground mb-1.5 sm:mb-2 uppercase tracking-wider">Email *</label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-border/80 bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-sm"
+                      placeholder="your@email.com"
+                      required
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[10px] sm:text-xs font-semibold text-foreground mb-1.5 sm:mb-2 uppercase tracking-wider">Phone</label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-border/80 bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all text-sm"
+                    placeholder="+1 (555) 000-0000"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] sm:text-xs font-semibold text-foreground mb-1.5 sm:mb-2 uppercase tracking-wider">Message *</label>
+                  <textarea
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    className="w-full px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl border border-border/80 bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all resize-none h-24 sm:h-28 text-sm"
+                    placeholder="Tell us about your ideal stay..."
+                    required
+                  />
+                </div>
+                <motion.button
+                  type="submit"
+                  whileHover={{ scale: 1.01, boxShadow: '0 10px 30px rgba(74, 103, 65, 0.25)' }}
+                  whileTap={{ scale: 0.99 }}
+                  disabled={isSubmitted}
+                  className={`w-full py-3 sm:py-3.5 rounded-lg sm:rounded-xl font-semibold text-sm tracking-wide flex items-center justify-center gap-2 transition-all ${
+                    isSubmitted
+                      ? 'bg-green-500 text-white'
+                      : 'bg-gradient-to-r from-primary to-primary/90 text-white hover:shadow-xl'
+                  }`}
+                >
+                  {isSubmitted ? (
+                    <>Sent Successfully!</>
+                  ) : (
+                    <>
+                      Send Message <Send size={14} />
+                    </>
+                  )}
+                </motion.button>
+              </form>
+            </div>
           </motion.div>
         </div>
       </div>

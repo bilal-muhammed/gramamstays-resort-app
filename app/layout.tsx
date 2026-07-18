@@ -1,10 +1,23 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
+import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+})
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-serif',
+  display: 'swap',
+})
+
 export const metadata: Metadata = {
-  title: 'Gramamstays - Luxury Resort Retreat',
-  description: 'Experience luxury at Gramamstays, a premier resort offering world-class amenities, breathtaking views, and unforgettable moments.',
+  title: 'Gramamstays | Luxury Resort & Wellness Retreat',
+  description: 'An exclusive sanctuary where luxury meets nature. Experience world-class dining, rejuvenating spa treatments, and breathtaking mountain views at Gramamstays.',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -38,8 +51,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="bg-background">
-      <body className="antialiased font-sans">
+    <html lang="en" className={`${inter.variable} ${playfair.variable} bg-background scroll-smooth`}>
+      <body className="antialiased font-sans text-foreground">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
