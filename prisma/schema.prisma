@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Booking {
+  id         String   @id @default(cuid())
+  guest      String
+  email      String
+  phone      String
+  room       String
+  roomNo     String
+  checkIn    DateTime
+  checkOut   DateTime
+  nights     Int
+  status     String
+  amount     Float
+  paidAmount Float
+  payment    String
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([status])
+  @@index([guest])
+  @@index([room])
+}
+
+model Room {
+  id       String @id @default(cuid())
+  type     String
+  floor    String
+  status   String
+  guest    String
+  price    Float
+  amenities String
+  until    String?
+  from     String?
+  note     String?
+
+  @@index([status])
+  @@index([type])
+}
+
+model Guest {
+  id         String @id @default(cuid())
+  name       String
+  email      String
+  phone      String
+  location   String
+  stays      Int
+  totalSpent Float
+  rating     Int
+  lastStay   String
+  vip        Boolean
+
+  @@index([name])
+  @@index([email])
+  @@index([lastStay])
+}
+
+model Income {
+  id        String   @id @default(cuid())
+  date      String
+  source    String
+  amount    Float
+  type      String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([type])
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  date        String
+  label       String
+  description String
+  amount      Float
+  category    String
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([category])
+}
+
+model Staff {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String
+  role        String
+  department  String
+  status      String
+  lastActive  String
+  permissions String
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([role])
+  @@index([department])
+  @@index([status])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  time      String
+  text      String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

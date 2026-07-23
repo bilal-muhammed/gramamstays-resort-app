@@ -1,45 +1,38 @@
 const CACHE_NAME = 'gramamstays-admin-v1'
-const ADMIN_ROUTES = ['/admin']
+const PRECACHE_URLS = ['/admin', '/manifest.json', '/icon-192.png', '/icon-512.png']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ADMIN_ROUTES)
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS))
   )
   self.skipWaiting()
 })
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
-      )
-    })
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
+    )
   )
   self.clients.claim()
 })
 
 self.addEventListener('fetch', (event) => {
-  const { request } = event
-  const url = new URL(request.url)
+  const url = new URL(event.request.url)
 
   if (url.pathname.startsWith('/admin')) {
     event.respondWith(
-      fetch(request)
+      fetch(event.request)
         .then((response) => {
           const clone = response.clone()
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone))
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone))
           return response
         })
-        .catch(() => caches.match(request))
+        .catch(() => caches.match(event.request))
     )
   } else {
     event.respondWith(
-      caches.match(request).then((cached) => {
-        return cached || fetch(request)
-      })
+      caches.match(event.request).then((cached) => cached || fetch(event.request))
     )
   }
 })

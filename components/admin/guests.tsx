@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useAdminData } from '@/context/admin-data'
 import { useToast } from '@/context/toast'
-import { Search, Plus, Pencil, Trash2, X, Star, Users } from 'lucide-react'
+import { Search, Plus, Pencil, Trash2, X, Star, Users, Mail, Phone, MapPin } from 'lucide-react'
 import type { Guest } from '@/types/admin'
 
 const emptyGuest = { name: '', email: '', phone: '', location: '', stays: 1, totalSpent: 0, rating: 5, lastStay: '', vip: false }
@@ -40,71 +40,123 @@ export function AdminGuests() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-bold text-gray-900">Guests</h2>
-          <p className="text-xs text-gray-500">{filtered.length} guest{filtered.length !== 1 ? 's' : ''}</p>
+          <p className="text-xs text-gray-500 mt-0.5">{filtered.length} of {guests.length} guests</p>
         </div>
-        <button onClick={openAdd} className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors min-h-[44px]">
-          <Plus size={15} /> Add Guest
+        <button onClick={openAdd} className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all min-h-[44px] shadow-sm">
+          <Plus size={16} /> Add Guest
         </button>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <button onClick={() => setShowVipOnly(!showVipOnly)}
-          className={`px-4 py-3 rounded-lg text-xs font-semibold border transition-colors min-h-[44px] ${showVipOnly ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50 active:bg-gray-100'}`}>
-          <Star size={12} className="inline mr-1" />VIP Only
-        </button>
-        <div className="relative flex-1">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search guests..."
-            className="w-full pl-9 pr-3 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+      <div className="bg-white rounded-xl border border-gray-200 p-3">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button onClick={() => setShowVipOnly(!showVipOnly)}
+            className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold border transition-all min-h-[40px] ${
+              showVipOnly 
+                ? 'bg-amber-50 border-amber-200 text-amber-700' 
+                : 'bg-gray-100 border-transparent text-gray-500 hover:bg-gray-200'
+            }`}>
+            <Star size={12} className={showVipOnly ? 'fill-amber-400' : ''} />
+            VIP Only
+          </button>
+          <div className="relative flex-1">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search guests..."
+              className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+          </div>
         </div>
       </div>
 
       {/* Guest Grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.length === 0 ? (
-          <div className="sm:col-span-2 lg:col-span-3 bg-white rounded-xl border border-gray-200 p-10 text-center">
-            <Users size={32} className="mx-auto text-gray-300 mb-3" />
-            <p className="text-sm font-medium text-gray-500">No guests found</p>
-            <p className="text-xs text-gray-400 mt-1">{searchQuery ? 'Try a different search' : 'Click "Add Guest" to get started'}</p>
+          <div className="sm:col-span-2 lg:col-span-3 bg-white rounded-xl border border-gray-200 p-12 text-center">
+            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+              <Users size={24} className="text-gray-300" />
+            </div>
+            <p className="text-sm font-medium text-gray-900 mb-1">No guests found</p>
+            <p className="text-xs text-gray-500 mb-4">{searchQuery ? 'Try a different search' : 'Add your first guest'}</p>
+            {!searchQuery && (
+              <button onClick={openAdd} className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all">
+                <Plus size={14} /> Add Guest
+              </button>
+            )}
           </div>
         ) : filtered.map(guest => (
-          <div key={guest.id} className="bg-white rounded-xl border border-gray-200 p-5 relative group">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-3 min-w-0 flex-1">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-sm font-bold text-primary shrink-0">
+          <div key={guest.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-gray-300 transition-all group">
+            {/* Guest Header */}
+            <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-5">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-sm font-bold text-primary">
                   {guest.name.split(' ').map(n => n[0]).join('')}
                 </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-gray-900 truncate">{guest.name}</p>
-                  <p className="text-[11px] text-gray-400">{guest.id}</p>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-bold text-gray-900 truncate">{guest.name}</p>
+                    {guest.vip && (
+                      <span className="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-bold rounded-lg bg-amber-100 text-amber-700">
+                        <Star size={8} className="fill-amber-400" /> VIP
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-gray-500">{guest.id}</p>
                 </div>
               </div>
-              {guest.vip && <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-50 text-amber-600 border border-amber-200 shrink-0 ml-2">VIP</span>}
             </div>
-            <div className="space-y-1.5 text-xs text-gray-500 mb-3">
-              <p className="truncate">{guest.email}</p>
-              <p>{guest.phone}</p>
-              <p>{guest.location}</p>
-            </div>
-            <div className="flex items-center justify-between text-xs mb-3">
-              <span className="text-gray-400">{guest.stays} stay{guest.stays !== 1 ? 's' : ''}</span>
-              <span className="font-semibold text-gray-900">${guest.totalSpent.toLocaleString()}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-0.5">
-                {Array.from({ length: guest.rating }).map((_, i) => <Star key={i} size={12} className="text-amber-400 fill-amber-400" />)}
+
+            <div className="p-5">
+              {/* Contact Info */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <Mail size={12} className="text-gray-400" />
+                  <span className="truncate">{guest.email}</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <Phone size={12} className="text-gray-400" />
+                  <span>{guest.phone}</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-600">
+                  <MapPin size={12} className="text-gray-400" />
+                  <span>{guest.location}</span>
+                </div>
               </div>
-              <span className="text-[11px] text-gray-400">Last: {guest.lastStay}</span>
-            </div>
-            <div className="flex gap-2 mt-3 pt-3 border-t border-gray-100">
-              <button onClick={() => openEdit(guest)} className="flex-1 py-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 active:bg-gray-200 text-xs font-semibold text-gray-600 transition-colors min-h-[44px] flex items-center justify-center"><Pencil size={12} className="inline mr-1" />Edit</button>
-              <button onClick={() => setDeleteConfirm(guest.id)} className="py-2.5 px-3 rounded-lg bg-red-50 hover:bg-red-100 active:bg-red-200 text-xs font-semibold text-red-600 transition-colors min-h-[44px] flex items-center justify-center"><Trash2 size={12} /></button>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-3 mb-4 p-3 bg-gray-50 rounded-xl">
+                <div className="text-center">
+                  <p className="text-base font-bold text-gray-900">{guest.stays}</p>
+                  <p className="text-[10px] text-gray-500">Stays</p>
+                </div>
+                <div className="text-center border-x border-gray-200">
+                  <p className="text-base font-bold text-primary">₹{guest.totalSpent.toLocaleString()}</p>
+                  <p className="text-[10px] text-gray-500">Spent</p>
+                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-0.5">
+                    {Array.from({ length: guest.rating }).map((_, i) => (
+                      <Star key={i} size={10} className="text-amber-400 fill-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-gray-500 mt-0.5">{guest.rating}/5</p>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-gray-400 mb-3">Last stay: {guest.lastStay}</p>
+
+              {/* Actions */}
+              <div className="flex gap-2 pt-3 border-t border-gray-100">
+                <button onClick={() => openEdit(guest)} className="flex-1 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-xs font-semibold text-gray-700 transition-colors flex items-center justify-center gap-1.5">
+                  <Pencil size={12} /> Edit
+                </button>
+                <button onClick={() => setDeleteConfirm(guest.id)} className="py-2.5 px-4 rounded-xl bg-red-50 hover:bg-red-100 text-xs font-semibold text-red-600 transition-colors flex items-center justify-center">
+                  <Trash2 size={12} />
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -113,65 +165,80 @@ export function AdminGuests() {
       {/* Add/Edit Modal */}
       {showForm && (
         <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowForm(false)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white z-10 px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h3 className="font-bold text-gray-900">{editingId ? 'Edit Guest' : 'Add Guest'}</h3>
-              <button onClick={() => setShowForm(false)} className="p-2.5 rounded-lg hover:bg-gray-100 min-w-[44px] min-h-[44px] flex items-center justify-center"><X size={18} /></button>
+          <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-gray-900 text-lg">{editingId ? 'Edit Guest' : 'New Guest'}</h3>
+                <p className="text-xs text-gray-500 mt-0.5">{editingId ? 'Update guest details' : 'Add a new guest to directory'}</p>
+              </div>
+              <button onClick={() => setShowForm(false)} className="p-2.5 rounded-xl hover:bg-gray-100 transition-colors">
+                <X size={20} className="text-gray-500" />
+              </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-5 space-y-3.5">
-              <div className="grid grid-cols-2 gap-3">
+            <form onSubmit={handleSubmit} className="p-6 space-y-5">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 uppercase mb-1.5">Name *</label>
+                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Name *</label>
                   <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 uppercase mb-1.5">Email *</label>
+                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Email *</label>
                   <input type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 uppercase mb-1.5">Phone</label>
+                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Phone</label>
                   <input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-500 uppercase mb-1.5">Location</label>
+                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Location</label>
                   <input type="text" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="City, Country" />
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="City, Country" />
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Stays</label>
+                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Stays</label>
                   <input type="number" min="0" value={form.stays} onChange={e => setForm({ ...form, stays: Number(e.target.value) })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Total Spent ($)</label>
-                  <input type="number" min="0" value={form.totalSpent} onChange={e => setForm({ ...form, totalSpent: Number(e.target.value) })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Total Spent (₹)</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
+                    <input type="number" min="0" value={form.totalSpent} onChange={e => setForm({ ...form, totalSpent: Number(e.target.value) })}
+                      className="w-full pl-8 pr-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">Rating</label>
+                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Rating</label>
                   <select value={form.rating} onChange={e => setForm({ ...form, rating: Number(e.target.value) })}
-                    className="w-full px-3.5 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white text-gray-900">
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
                     <option value={5}>5</option><option value={4}>4</option><option value={3}>3</option><option value={2}>2</option><option value={1}>1</option>
                   </select>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <label className="flex items-center gap-2.5 cursor-pointer py-2">
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                <label className="flex items-center gap-3 cursor-pointer">
                   <input type="checkbox" checked={form.vip} onChange={e => setForm({ ...form, vip: e.target.checked })}
                     className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary/20" />
-                  <span className="text-sm text-gray-700">VIP Guest</span>
+                  <div>
+                    <span className="text-sm font-medium text-gray-900">VIP Guest</span>
+                    <p className="text-[11px] text-gray-500">Mark as a VIP for priority handling</p>
+                  </div>
                 </label>
               </div>
-              <div className="flex gap-3 pt-2 pb-1">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 min-h-[44px]">Cancel</button>
-                <button type="submit" className="flex-1 py-3 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 min-h-[44px]">{editingId ? 'Update' : 'Add'} Guest</button>
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-3.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
+                  Cancel
+                </button>
+                <button type="submit" className="flex-1 py-3.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-all shadow-sm">
+                  {editingId ? 'Update' : 'Add'} Guest
+                </button>
               </div>
             </form>
           </div>
@@ -181,12 +248,19 @@ export function AdminGuests() {
       {/* Delete Confirmation */}
       {deleteConfirm && (
         <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setDeleteConfirm(null)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full sm:max-w-sm sm:mx-4 max-h-[90vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
-            <h3 className="font-bold text-gray-900 mb-2">Delete Guest?</h3>
-            <p className="text-sm text-gray-500 mb-5">This action cannot be undone.</p>
+          <div className="bg-white rounded-t-3xl sm:rounded-2xl p-6 w-full sm:max-w-sm sm:mx-4 safe-area-bottom" onClick={e => e.stopPropagation()}>
+            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+              <Trash2 size={20} className="text-red-600" />
+            </div>
+            <h3 className="font-bold text-gray-900 mb-1 text-center">Delete Guest?</h3>
+            <p className="text-sm text-gray-500 mb-5 text-center">This action cannot be undone.</p>
             <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 min-h-[44px]">Cancel</button>
-              <button onClick={() => { deleteGuest(deleteConfirm); setDeleteConfirm(null) }} className="flex-1 py-3 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 min-h-[44px]">Delete</button>
+              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
+                Cancel
+              </button>
+              <button onClick={() => { deleteGuest(deleteConfirm); setDeleteConfirm(null) }} className="flex-1 py-3.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-all shadow-sm">
+                Delete
+              </button>
             </div>
           </div>
         </div>

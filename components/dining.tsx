@@ -12,7 +12,7 @@ const restaurants = [
     description: 'Intimate 32-seat space with nightly tasting menus from estate-garden ingredients.',
     hours: 'Dinner: 6 PM - 11 PM',
     rating: 4.9,
-    priceRange: '$$$$',
+    priceRange: '₹₹₹₹',
     menuHighlights: ['Wagyu Tartare', 'Saffron Risotto', 'Chocolate Fondant'],
     image: '/luxury-room.png',
   },
@@ -23,7 +23,7 @@ const restaurants = [
     description: 'Hand-crafted cocktails, rare vintings, and 500+ curated labels from 12 countries.',
     hours: '10 AM - Midnight',
     rating: 4.8,
-    priceRange: '$$$',
+    priceRange: '₹₹₹',
     menuHighlights: ['Old Fashioned', 'Truffle Fries', 'Cheese Board'],
     image: '/spa-wellness.png',
   },
@@ -34,7 +34,7 @@ const restaurants = [
     description: 'Al fresco dining under century-old oaks with panoramic garden vistas.',
     hours: '7 AM - 10 PM',
     rating: 4.7,
-    priceRange: '$$',
+    priceRange: '₹₹',
     menuHighlights: ['Eggs Benedict', 'Grilled Sea Bass', 'A\u00E7a\u00ED Bowl'],
     image: '/hero-resort.png',
   },
@@ -192,7 +192,7 @@ export function Dining() {
                 ))}
               </div>
               <div className="mt-5 sm:mt-6 pt-3 sm:pt-4 border-t border-white/10 flex items-center justify-between">
-                <p className="text-xs sm:text-sm text-white/50">7 courses &middot; $185/person</p>
+                <p className="text-xs sm:text-sm text-white/50">7 courses &middot; ₹185/person</p>
                 <motion.a
                   href="https://wa.me/919539222031?text=Hi%2C%20I%20would%20like%20to%20reserve%20a%20table%20for%20the%20Chef%27s%20Tasting%20Menu%20at%20Gramamstays%20Resort."
                   target="_blank"
