@@ -45,6 +45,12 @@
   "pnpm": {
     "overrides": {
       "hono": "4.12.25"
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "@prisma/engines",
+      "esbuild",
+      "prisma",
+      "sharp"
+    ]
   }
 }
