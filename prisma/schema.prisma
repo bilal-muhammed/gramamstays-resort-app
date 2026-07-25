@@ -21,6 +21,8 @@ model Booking {
   amount     Float
   paidAmount Float
   payment    String
+  addons     String?
+  addonNote  String?
   createdAt  DateTime @default(now())
 
   @@index([createdAt])
@@ -112,4 +114,18 @@ model Activity {
   createdAt DateTime @default(now())
 
   @@index([createdAt])
+}
+
+model Property {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  status      String
+  amenities   String
+  image       String?
+  createdAt   DateTime @default(now())
+
+  @@index([name])
+  @@index([status])
 }

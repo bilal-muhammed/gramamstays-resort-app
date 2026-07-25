@@ -3,11 +3,8 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
-  "env": {
-    "PRISMA_ENGINES_BINARY_CACHE_DIR": ".vercel/cache/prisma"
-  },
   "functions": {
-    "app/api/**/*.ts": {
+    "app/api/**/route.ts": {
       "maxDuration": 30
     }
   }

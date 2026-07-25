@@ -4,10 +4,10 @@ import { NextResponse } from 'next/server'
 export async function GET() {
   if (!prisma) return NextResponse.json([])
   try {
-    const activities = await prisma.activity.findMany({ orderBy: { createdAt: 'desc' }, take: 20 })
-    return NextResponse.json(activities)
+    const properties = await prisma.property.findMany({ orderBy: { createdAt: 'desc' } })
+    return NextResponse.json(properties)
   } catch (error) {
-    console.error('[Activities] GET error:', error)
+    console.error('[Properties] GET error:', error)
     return NextResponse.json([])
   }
 }
@@ -17,10 +17,10 @@ export async function POST(request: Request) {
   try {
     const data = await request.json()
     const { id: _, ...createData } = data
-    const activity = await prisma.activity.create({ data: createData })
-    return NextResponse.json(activity, { status: 201 })
+    const property = await prisma.property.create({ data: createData })
+    return NextResponse.json(property, { status: 201 })
   } catch (error) {
-    console.error('[Activities] POST error:', error)
-    return NextResponse.json({ error: 'Failed to create activity' }, { status: 500 })
+    console.error('[Properties] POST error:', error)
+    return NextResponse.json({ error: 'Failed to create property' }, { status: 500 })
   }
 }

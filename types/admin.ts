@@ -12,6 +12,8 @@ export interface Booking {
   amount: number
   paidAmount: number
   payment: 'Fully Paid' | 'Partial' | 'Pending'
+  addons?: string[]
+  addonNote?: string
 }
 
 export interface Room {
@@ -73,4 +75,14 @@ export interface Activity {
   id: string
   time: string
   text: string
+}
+
+export interface Property {
+  id: string
+  name: string
+  description: string
+  price: number
+  status: string
+  amenities: string
+  image?: string
 }

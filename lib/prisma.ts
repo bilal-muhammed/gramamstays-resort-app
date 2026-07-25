@@ -1,29 +1,34 @@
 import { PrismaClient } from '@/lib/generated/prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
+import pg from 'pg'
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 
-function createPrismaClient() {
+function createClient() {
   const url = process.env.DATABASE_URL
   if (!url) {
-    console.error('[Prisma] DATABASE_URL is missing from .env')
+    console.error('[Prisma] DATABASE_URL not set')
     return null
   }
-  console.log('[Prisma] Connecting to database...')
   try {
-    const adapter = new PrismaPg({ connectionString: url })
-    const client = new PrismaClient({ adapter })
-    console.log('[Prisma] Client created successfully')
-    return client
+    const pool = new pg.Pool({
+      connectionString: url,
+      ssl: url.includes('localhost') ? false : { rejectUnauthorized: false },
+      max: 1,
+      idleTimeoutMillis: 10000,
+      connectionTimeoutMillis: 15000,
+    })
+    const adapter = new PrismaPg(pool)
+    return new PrismaClient({ adapter })
   } catch (error) {
     console.error('[Prisma] Failed to create client:', error)
     return null
   }
 }
 
-export const prisma = globalForPrisma.prisma || createPrismaClient()
+export const prisma = globalForPrisma.prisma || createClient()
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+if (prisma) globalForPrisma.prisma = prisma
 
 export function isDbConnected(): boolean {
   return prisma !== null

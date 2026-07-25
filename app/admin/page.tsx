@@ -11,8 +11,9 @@ import { AdminBookings } from '@/components/admin/bookings'
 import { AdminGuests } from '@/components/admin/guests'
 import { AdminFinancials } from '@/components/admin/financials'
 import { AdminStaff } from '@/components/admin/staff'
+import { AdminProperties } from '@/components/admin/properties'
 
-export type AdminSection = 'dashboard' | 'bookings' | 'guests' | 'financials' | 'staff'
+export type AdminSection = 'dashboard' | 'bookings' | 'properties' | 'guests' | 'financials' | 'staff'
 
 export default function AdminPage() {
   const [activeSection, setActiveSection] = useState<AdminSection>('dashboard')
@@ -22,6 +23,7 @@ export default function AdminPage() {
     switch (activeSection) {
       case 'dashboard': return <AdminDashboard onNavigate={setActiveSection} />
       case 'bookings': return <AdminBookings />
+      case 'properties': return <AdminProperties />
       case 'guests': return <AdminGuests />
       case 'financials': return <AdminFinancials />
       case 'staff': return <AdminStaff />

@@ -26,8 +26,9 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     const member = await prisma.staff.findUnique({ where: { id } })
     if (!member) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     return NextResponse.json(deserializeStaff(member as Record<string, unknown>))
-  } catch {
-    return NextResponse.json({ error: 'Failed' }, { status: 500 })
+  } catch (error) {
+    console.error('[Staff] GET error:', error)
+    return NextResponse.json({ error: 'Failed to fetch staff' }, { status: 500 })
   }
 }
 
@@ -36,11 +37,13 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   try {
     const { id } = await params
     const data = await request.json()
-    serializePermissions(data)
-    const member = await prisma.staff.update({ where: { id }, data })
+    const { id: _, ...updateData } = data
+    serializePermissions(updateData as Record<string, unknown>)
+    const member = await prisma.staff.update({ where: { id }, data: updateData })
     return NextResponse.json(deserializeStaff(member as Record<string, unknown>))
-  } catch {
-    return NextResponse.json({ error: 'Failed' }, { status: 500 })
+  } catch (error) {
+    console.error('[Staff] PATCH error:', error)
+    return NextResponse.json({ error: 'Failed to update staff' }, { status: 500 })
   }
 }
 
@@ -50,7 +53,8 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
     const { id } = await params
     await prisma.staff.delete({ where: { id } })
     return NextResponse.json({ success: true })
-  } catch {
-    return NextResponse.json({ error: 'Failed' }, { status: 500 })
+  } catch (error) {
+    console.error('[Staff] DELETE error:', error)
+    return NextResponse.json({ error: 'Failed to delete staff' }, { status: 500 })
   }
 }

@@ -1,11 +1,12 @@
 'use client'
 
 import type { AdminSection } from '@/app/admin/page'
-import { Menu, Bell, Search, LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog } from 'lucide-react'
+import { Menu, Bell, Search, LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog, Home } from 'lucide-react'
 
 const sectionConfig: Record<AdminSection, { title: string; subtitle: string; icon: typeof LayoutDashboard }> = {
   dashboard: { title: 'Dashboard', subtitle: 'Overview & insights', icon: LayoutDashboard },
   bookings: { title: 'Bookings', subtitle: 'Manage reservations', icon: CalendarCheck },
+  properties: { title: 'Properties', subtitle: 'Manage properties', icon: Home },
   guests: { title: 'Guests', subtitle: 'Guest directory', icon: Users },
   financials: { title: 'Financials', subtitle: 'Income & expenses', icon: DollarSign },
   staff: { title: 'Staff', subtitle: 'Team management', icon: UserCog },

@@ -1,7 +1,14 @@
+import 'dotenv/config'
 import { PrismaClient } from '../lib/generated/prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
+import pg from 'pg'
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
+const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL!,
+  ssl: { rejectUnauthorized: false },
+  max: 1,
+})
+const adapter = new PrismaPg(pool)
 const prisma = new PrismaClient({ adapter })
 
 async function main() {
@@ -12,28 +19,37 @@ async function main() {
   await prisma.expense.deleteMany()
   await prisma.staff.deleteMany()
   await prisma.activity.deleteMany()
+  await prisma.property.deleteMany()
+
+  await prisma.property.createMany({
+    data: [
+      { id: 'prop-001', name: 'The Chedi', description: 'A luxurious retreat blending traditional elegance with modern comfort. Features panoramic views, private gardens, and world-class amenities.', price: 850, status: 'Active', amenities: 'King Bed, River View, Private Pool, Butler Service, Outdoor Shower' },
+      { id: 'prop-002', name: 'British Bungalow', description: 'Heritage bungalow with colonial architecture, wrap-around verandah, and lush manicured lawns. Perfect for a serene escape.', price: 650, status: 'Active', amenities: 'Queen Bed, Garden View, Fireplace, Antique Furnishings, Tea Lounge' },
+      { id: 'prop-003', name: 'River Resort', description: 'Nestled along the riverbank with stunning water views. Ideal for nature lovers seeking tranquility and adventure.', price: 550, status: 'Active', amenities: 'Double Bed, River View, Kayak Access, Campfire Area, Hammock Deck' },
+    ],
+  })
 
   await prisma.booking.createMany({
     data: [
-      { id: 'BK-1042', guest: 'Eleanor Whitfield', email: 'eleanor@email.com', phone: '+1 555-0101', room: 'Presidential Suite', roomNo: '301', checkIn: new Date('2026-07-18'), checkOut: new Date('2026-07-22'), nights: 4, status: 'Checked In', amount: 2600, paidAmount: 2600, payment: 'Fully Paid' },
-      { id: 'BK-1041', guest: 'James Chen', email: 'james@email.com', phone: '+1 555-0102', room: 'Villa Deluxe', roomNo: '205', checkIn: new Date('2026-07-17'), checkOut: new Date('2026-07-20'), nights: 3, status: 'Checked In', amount: 1350, paidAmount: 1350, payment: 'Fully Paid' },
-      { id: 'BK-1040', guest: 'Sofia Martinez', email: 'sofia@email.com', phone: '+1 555-0103', room: 'Garden Suite', roomNo: '108', checkIn: new Date('2026-07-19'), checkOut: new Date('2026-07-21'), nights: 2, status: 'Confirmed', amount: 500, paidAmount: 250, payment: 'Partial' },
-      { id: 'BK-1039', guest: 'Amara Okafor', email: 'amara@email.com', phone: '+1 555-0104', room: 'Presidential Suite', roomNo: '302', checkIn: new Date('2026-07-20'), checkOut: new Date('2026-07-25'), nights: 5, status: 'Pending', amount: 3250, paidAmount: 0, payment: 'Pending' },
-      { id: 'BK-1038', guest: 'David Kim', email: 'david@email.com', phone: '+1 555-0105', room: 'Garden Suite', roomNo: '109', checkIn: new Date('2026-07-16'), checkOut: new Date('2026-07-18'), nights: 2, status: 'Checked Out', amount: 500, paidAmount: 500, payment: 'Fully Paid' },
+      { id: 'BK-1042', guest: 'Eleanor Whitfield', email: 'eleanor@email.com', phone: '+1 555-0101', room: 'The Chedi', roomNo: '301', checkIn: new Date('2026-07-18'), checkOut: new Date('2026-07-22'), nights: 4, status: 'Checked In', amount: 3400, paidAmount: 3400, payment: 'Fully Paid', addons: JSON.stringify(['trekking', 'spa']), addonNote: '' },
+      { id: 'BK-1041', guest: 'James Chen', email: 'james@email.com', phone: '+1 555-0102', room: 'British Bungalow', roomNo: '205', checkIn: new Date('2026-07-17'), checkOut: new Date('2026-07-20'), nights: 3, status: 'Checked In', amount: 1950, paidAmount: 1950, payment: 'Fully Paid', addons: JSON.stringify(['campfire']), addonNote: '' },
+      { id: 'BK-1040', guest: 'Sofia Martinez', email: 'sofia@email.com', phone: '+1 555-0103', room: 'River Resort', roomNo: '108', checkIn: new Date('2026-07-19'), checkOut: new Date('2026-07-21'), nights: 2, status: 'Confirmed', amount: 1100, paidAmount: 550, payment: 'Partial', addons: JSON.stringify(['nature-walk', 'food']), addonNote: 'Vegetarian meals only' },
+      { id: 'BK-1039', guest: 'Amara Okafor', email: 'amara@email.com', phone: '+1 555-0104', room: 'The Chedi', roomNo: '302', checkIn: new Date('2026-07-20'), checkOut: new Date('2026-07-25'), nights: 5, status: 'Pending', amount: 4250, paidAmount: 0, payment: 'Pending', addons: JSON.stringify(['extra-bed', 'spa', 'campfire']), addonNote: 'Anniversary celebration setup' },
+      { id: 'BK-1038', guest: 'David Kim', email: 'david@email.com', phone: '+1 555-0105', room: 'River Resort', roomNo: '109', checkIn: new Date('2026-07-16'), checkOut: new Date('2026-07-18'), nights: 2, status: 'Checked Out', amount: 1100, paidAmount: 1100, payment: 'Fully Paid', addons: JSON.stringify([]), addonNote: '' },
     ],
   })
 
   await prisma.room.createMany({
     data: [
-      { id: '301', type: 'Presidential Suite', floor: '3rd', status: 'Occupied', guest: 'EW', price: 650, amenities: 'King Bed, Ocean View, Private Pool, Butler', until: 'Jul 22' },
-      { id: '302', type: 'Presidential Suite', floor: '3rd', status: 'Reserved', guest: '-', price: 650, amenities: 'King Bed, Ocean View, Private Pool, Butler', from: 'Jul 20' },
-      { id: '303', type: 'Presidential Suite', floor: '3rd', status: 'Available', guest: '-', price: 650, amenities: 'King Bed, Ocean View, Private Pool, Butler' },
-      { id: '205', type: 'Villa Deluxe', floor: '2nd', status: 'Occupied', guest: 'JC', price: 450, amenities: 'Queen Bed, Garden View, Balcony, Minibar', until: 'Jul 20' },
-      { id: '206', type: 'Villa Deluxe', floor: '2nd', status: 'Available', guest: '-', price: 450, amenities: 'Queen Bed, Garden View, Balcony, Minibar' },
-      { id: '207', type: 'Villa Deluxe', floor: '2nd', status: 'Maintenance', guest: '-', price: 450, amenities: 'Queen Bed, Garden View, Balcony, Minibar', note: 'AC Repair' },
-      { id: '108', type: 'Garden Suite', floor: '1st', status: 'Occupied', guest: 'SM', price: 250, amenities: 'Double Bed, Courtyard, Kitchenette', until: 'Jul 21' },
-      { id: '109', type: 'Garden Suite', floor: '1st', status: 'Available', guest: '-', price: 250, amenities: 'Double Bed, Courtyard, Kitchenette' },
-      { id: '110', type: 'Garden Suite', floor: '1st', status: 'Available', guest: '-', price: 250, amenities: 'Double Bed, Courtyard, Kitchenette' },
+      { id: '301', type: 'The Chedi', floor: '3rd', status: 'Occupied', guest: 'EW', price: 850, amenities: 'King Bed, River View, Private Pool, Butler', until: 'Jul 22' },
+      { id: '302', type: 'The Chedi', floor: '3rd', status: 'Reserved', guest: '-', price: 850, amenities: 'King Bed, River View, Private Pool, Butler', from: 'Jul 20' },
+      { id: '303', type: 'The Chedi', floor: '3rd', status: 'Available', guest: '-', price: 850, amenities: 'King Bed, River View, Private Pool, Butler' },
+      { id: '205', type: 'British Bungalow', floor: '2nd', status: 'Occupied', guest: 'JC', price: 650, amenities: 'Queen Bed, Garden View, Fireplace, Tea Lounge', until: 'Jul 20' },
+      { id: '206', type: 'British Bungalow', floor: '2nd', status: 'Available', guest: '-', price: 650, amenities: 'Queen Bed, Garden View, Fireplace, Tea Lounge' },
+      { id: '207', type: 'British Bungalow', floor: '2nd', status: 'Maintenance', guest: '-', price: 650, amenities: 'Queen Bed, Garden View, Fireplace, Tea Lounge', note: 'Fireplace Repair' },
+      { id: '108', type: 'River Resort', floor: '1st', status: 'Occupied', guest: 'SM', price: 550, amenities: 'Double Bed, River View, Kayak Access', until: 'Jul 21' },
+      { id: '109', type: 'River Resort', floor: '1st', status: 'Available', guest: '-', price: 550, amenities: 'Double Bed, River View, Kayak Access' },
+      { id: '110', type: 'River Resort', floor: '1st', status: 'Available', guest: '-', price: 550, amenities: 'Double Bed, River View, Kayak Access' },
     ],
   })
 
@@ -49,13 +65,13 @@ async function main() {
 
   await prisma.income.createMany({
     data: [
-      { id: 'IN-001', date: 'Jul 18', source: 'Room - Presidential Suite #301', amount: 650, type: 'Room Revenue' },
+      { id: 'IN-001', date: 'Jul 18', source: 'Room - The Chedi #301', amount: 850, type: 'Room Revenue' },
       { id: 'IN-002', date: 'Jul 18', source: 'Spa - Deep Tissue Massage', amount: 180, type: 'Spa' },
-      { id: 'IN-003', date: 'Jul 17', source: 'Room - Villa Deluxe #205', amount: 450, type: 'Room Revenue' },
+      { id: 'IN-003', date: 'Jul 17', source: 'Room - British Bungalow #205', amount: 650, type: 'Room Revenue' },
       { id: 'IN-004', date: 'Jul 17', source: 'Dining - Harvest & Hearth', amount: 320, type: 'F&B' },
-      { id: 'IN-005', date: 'Jul 16', source: 'Room - Garden Suite #108', amount: 250, type: 'Room Revenue' },
+      { id: 'IN-005', date: 'Jul 16', source: 'Room - River Resort #108', amount: 550, type: 'Room Revenue' },
       { id: 'IN-006', date: 'Jul 16', source: 'Wine Tasting Experience', amount: 120, type: 'Experience' },
-      { id: 'IN-007', date: 'Jul 15', source: 'Room - Villa Deluxe #206', amount: 450, type: 'Room Revenue' },
+      { id: 'IN-007', date: 'Jul 15', source: 'Room - British Bungalow #206', amount: 650, type: 'Room Revenue' },
       { id: 'IN-008', date: 'Jul 15', source: 'Pool Cabana Rental', amount: 75, type: 'Amenity' },
     ],
   })
@@ -68,7 +84,7 @@ async function main() {
       { id: 'EX-004', date: 'Jul 16', label: 'Spa Products', description: 'Essential oils and treatment supplies', amount: 480, category: 'Supplies' },
       { id: 'EX-005', date: 'Jul 16', label: 'Utilities', description: 'Electricity and water bill', amount: 1200, category: 'Utilities' },
       { id: 'EX-006', date: 'Jul 15', label: 'Marketing Campaign', description: 'Social media and Google ads', amount: 2500, category: 'Marketing' },
-      { id: 'EX-007', date: 'Jul 15', label: 'AC Unit Maintenance', description: 'Repair of Presidential Suite AC', amount: 780, category: 'Maintenance' },
+      { id: 'EX-007', date: 'Jul 15', label: 'Fireplace Maintenance', description: 'Repair of British Bungalow fireplace', amount: 780, category: 'Maintenance' },
     ],
   })
 

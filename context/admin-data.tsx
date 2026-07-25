@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
-import type { Booking, Room, Guest, Income, Expense, Staff, Activity } from '@/types/admin'
+import type { Booking, Room, Guest, Income, Expense, Staff, Activity, Property } from '@/types/admin'
 
 interface AdminDataContextType {
   bookings: Booking[]
@@ -11,6 +11,7 @@ interface AdminDataContextType {
   expenses: Expense[]
   staff: Staff[]
   activities: Activity[]
+  properties: Property[]
   loading: boolean
   addBooking: (b: Omit<Booking, 'id'>) => Promise<void>
   updateBooking: (id: string, b: Partial<Booking>) => Promise<void>
@@ -30,6 +31,9 @@ interface AdminDataContextType {
   updateStaff: (id: string, s: Partial<Staff>) => Promise<void>
   deleteStaff: (id: string) => Promise<void>
   addActivity: (a: Omit<Activity, 'id'>) => Promise<void>
+  addProperty: (p: Omit<Property, 'id'>) => Promise<void>
+  updateProperty: (id: string, p: Partial<Property>) => Promise<void>
+  deleteProperty: (id: string) => Promise<void>
 }
 
 const AdminDataContext = createContext<AdminDataContextType | null>(null)
@@ -56,6 +60,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
   const [expenses, setExpenses] = useState<Expense[]>([])
   const [staffList, setStaffList] = useState<Staff[]>([])
   const [activities, setActivities] = useState<Activity[]>([])
+  const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -67,7 +72,8 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       api<Expense[]>('/api/expenses'),
       api<Staff[]>('/api/staff'),
       api<Activity[]>('/api/activities'),
-    ]).then(([b, r, g, i, e, s, a]) => {
+      api<Property[]>('/api/properties'),
+    ]).then(([b, r, g, i, e, s, a, p]) => {
       if (b) setBookings(b)
       if (r) setRooms(r)
       if (g) setGuests(g)
@@ -75,6 +81,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       if (e) setExpenses(e)
       if (s) setStaffList(s)
       if (a) setActivities(a)
+      if (p) setProperties(p)
     }).finally(() => setLoading(false))
   }, [])
 
@@ -205,9 +212,24 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     if (result) setStaffList(prev => prev.filter(item => item.id !== id))
   }, [])
 
+  const addProperty = useCallback(async (p: Omit<Property, 'id'>) => {
+    const property = await api<Property>('/api/properties', { method: 'POST', body: JSON.stringify(p) })
+    if (property) setProperties(prev => [property, ...prev])
+  }, [])
+
+  const updateProperty = useCallback(async (id: string, p: Partial<Property>) => {
+    const updated = await api<Property>(`/api/properties/${id}`, { method: 'PATCH', body: JSON.stringify(p) })
+    if (updated) setProperties(prev => prev.map(item => item.id === id ? updated : item))
+  }, [])
+
+  const deleteProperty = useCallback(async (id: string) => {
+    const result = await api(`/api/properties/${id}`, { method: 'DELETE' })
+    if (result) setProperties(prev => prev.filter(item => item.id !== id))
+  }, [])
+
   return (
     <AdminDataContext.Provider value={{
-      bookings, rooms, guests, income, expenses, staff: staffList, activities, loading,
+      bookings, rooms, guests, income, expenses, staff: staffList, activities, properties, loading,
       addBooking, updateBooking, deleteBooking,
       addRoom, updateRoom, deleteRoom,
       addGuest, updateGuest, deleteGuest,
@@ -215,6 +237,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       addExpense, updateExpense, deleteExpense,
       addStaff, updateStaff, deleteStaff,
       addActivity,
+      addProperty, updateProperty, deleteProperty,
     }}>
       {children}
     </AdminDataContext.Provider>

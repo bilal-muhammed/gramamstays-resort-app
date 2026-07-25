@@ -5,12 +5,12 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   if (!prisma) return NextResponse.json({ error: 'Database not connected' }, { status: 503 })
   try {
     const { id } = await params
-    const room = await prisma.room.findUnique({ where: { id } })
-    if (!room) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-    return NextResponse.json(room)
+    const property = await prisma.property.findUnique({ where: { id } })
+    if (!property) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    return NextResponse.json(property)
   } catch (error) {
-    console.error('[Room] GET error:', error)
-    return NextResponse.json({ error: 'Failed to fetch room' }, { status: 500 })
+    console.error('[Property] GET error:', error)
+    return NextResponse.json({ error: 'Failed to fetch property' }, { status: 500 })
   }
 }
 
@@ -20,11 +20,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     const { id } = await params
     const data = await request.json()
     const { id: _, ...updateData } = data
-    const room = await prisma.room.update({ where: { id }, data: updateData })
-    return NextResponse.json(room)
+    const property = await prisma.property.update({ where: { id }, data: updateData })
+    return NextResponse.json(property)
   } catch (error) {
-    console.error('[Room] PATCH error:', error)
-    return NextResponse.json({ error: 'Failed to update room' }, { status: 500 })
+    console.error('[Property] PATCH error:', error)
+    return NextResponse.json({ error: 'Failed to update property' }, { status: 500 })
   }
 }
 
@@ -32,10 +32,10 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
   if (!prisma) return NextResponse.json({ error: 'Database not connected' }, { status: 503 })
   try {
     const { id } = await params
-    await prisma.room.delete({ where: { id } })
+    await prisma.property.delete({ where: { id } })
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('[Room] DELETE error:', error)
-    return NextResponse.json({ error: 'Failed to delete room' }, { status: 500 })
+    console.error('[Property] DELETE error:', error)
+    return NextResponse.json({ error: 'Failed to delete property' }, { status: 500 })
   }
 }

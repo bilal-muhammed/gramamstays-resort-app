@@ -24,7 +24,7 @@ const statusBg: Record<string, string> = {
 const emptyRoom = { type: 'Garden Suite', floor: '1st', status: 'Available' as const, guest: '-', price: 250, amenities: '', until: '', from: '', note: '' }
 
 export function AdminRooms() {
-  const { rooms, addRoom, updateRoom, deleteRoom } = useAdminData()
+  const { rooms, addRoom, updateRoom, deleteRoom, properties } = useAdminData()
   const { toast } = useToast()
   const [activeType, setActiveType] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
@@ -33,7 +33,7 @@ export function AdminRooms() {
   const [form, setForm] = useState(emptyRoom)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
 
-  const types = ['All', 'Presidential Suite', 'Villa Deluxe', 'Garden Suite']
+  const types = ['All', ...properties.map(p => p.name)]
 
   const filtered = rooms.filter(r => {
     const matchType = activeType === 'All' || r.type === activeType
@@ -219,9 +219,9 @@ export function AdminRooms() {
                   <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Type *</label>
                   <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
-                    <option>Presidential Suite</option>
-                    <option>Villa Deluxe</option>
-                    <option>Garden Suite</option>
+                    {properties.map(p => (
+                      <option key={p.id} value={p.name}>{p.name}</option>
+                    ))}
                   </select>
                 </div>
               </div>

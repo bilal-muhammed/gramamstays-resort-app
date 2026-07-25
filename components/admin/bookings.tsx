@@ -3,8 +3,23 @@
 import { useState, useRef, useCallback } from 'react'
 import { useAdminData } from '@/context/admin-data'
 import { useToast } from '@/context/toast'
-import { Search, Plus, Pencil, Trash2, X, CalendarCheck, Filter, Users } from 'lucide-react'
+import { Search, Plus, Pencil, Trash2, X, CalendarCheck, Filter, Users, Compass, Flame, UtensilsCrossed, BedDouble, Sparkles, TreePine } from 'lucide-react'
 import type { Booking } from '@/types/admin'
+
+const addonOptions = [
+  { id: 'trekking', label: 'Trekking', icon: Compass },
+  { id: 'campfire', label: 'Campfire Night', icon: Flame },
+  { id: 'food', label: 'Special Food', icon: UtensilsCrossed },
+  { id: 'extra-bed', label: 'Extra Bed', icon: BedDouble },
+  { id: 'spa', label: 'Spa Session', icon: Sparkles },
+  { id: 'nature-walk', label: 'Nature Walk', icon: TreePine },
+  { id: 'picnic', label: 'Picnic', icon: UtensilsCrossed },
+  { id: 'tour', label: 'Guided Tour', icon: Compass },
+  { id: 'yoga', label: 'Yoga Class', icon: Sparkles },
+  { id: 'birdwatching', label: 'Bird Watching', icon: TreePine },
+  { id: 'boating', label: 'Boating', icon: Compass },
+  { id: 'fishing', label: 'Fishing', icon: TreePine },
+]
 
 function fmtDate(d: string) {
   if (!d) return ''
@@ -39,12 +54,13 @@ const paymentColor: Record<string, string> = {
 }
 
 const emptyBooking = {
-  guest: '', email: '', phone: '', room: 'Garden Suite', roomNo: '',
+  guest: '', email: '', phone: '', room: '', roomNo: '',
   checkIn: '', checkOut: '', nights: 1, status: 'Pending' as const, amount: 0, paidAmount: 0, payment: 'Pending' as const,
+  addons: [] as string[], addonNote: '',
 }
 
 export function AdminBookings() {
-  const { bookings, addBooking, updateBooking, deleteBooking } = useAdminData()
+  const { bookings, addBooking, updateBooking, deleteBooking, properties } = useAdminData()
   const { toast } = useToast()
   const [activeFilter, setActiveFilter] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
@@ -85,7 +101,7 @@ export function AdminBookings() {
 
   const openEdit = (b: Booking) => {
     setEditingId(b.id)
-    setForm({ guest: b.guest, email: b.email, phone: b.phone, room: b.room, roomNo: b.roomNo, checkIn: toDateInput(b.checkIn), checkOut: toDateInput(b.checkOut), nights: b.nights, status: b.status, amount: b.amount, paidAmount: b.paidAmount, payment: b.payment })
+    setForm({ guest: b.guest, email: b.email, phone: b.phone, room: b.room, roomNo: b.roomNo, checkIn: toDateInput(b.checkIn), checkOut: toDateInput(b.checkOut), nights: b.nights, status: b.status, amount: b.amount, paidAmount: b.paidAmount, payment: b.payment, addons: Array.isArray(b.addons) ? b.addons : [], addonNote: b.addonNote || '' })
     setShowForm(true)
   }
 
@@ -174,6 +190,7 @@ export function AdminBookings() {
                   <th className="px-5 py-3.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Guest</th>
                   <th className="px-5 py-3.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Room</th>
                   <th className="px-5 py-3.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Dates</th>
+                  <th className="px-5 py-3.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Add-ons</th>
                   <th className="px-5 py-3.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                   <th className="px-5 py-3.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Payment</th>
                   <th className="px-5 py-3.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-right">Amount</th>
@@ -195,6 +212,25 @@ export function AdminBookings() {
                     <td className="px-5 py-4">
                       <p className="text-sm text-gray-700">{fmtDate(b.checkIn)}</p>
                       <p className="text-[11px] text-gray-400">{b.nights} nights</p>
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="flex flex-wrap gap-1">
+                        {Array.isArray(b.addons) && b.addons.slice(0, 2).map(id => {
+                          const opt = addonOptions.find(o => o.id === id)
+                          return opt ? (
+                            <span key={id} className="px-1.5 py-0.5 text-[9px] font-semibold rounded bg-primary/10 text-primary">{opt.label}</span>
+                          ) : null
+                        })}
+                        {Array.isArray(b.addons) && b.addons.length > 2 && (
+                          <span className="px-1.5 py-0.5 text-[9px] font-semibold rounded bg-gray-100 text-gray-500">+{b.addons.length - 2}</span>
+                        )}
+                        {b.addonNote && (
+                          <span className="px-1.5 py-0.5 text-[9px] font-semibold rounded bg-amber-50 text-amber-700">Note</span>
+                        )}
+                        {(!Array.isArray(b.addons) || b.addons.length === 0) && !b.addonNote && (
+                          <span className="text-gray-300">—</span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-5 py-4">
                       <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold rounded-lg ${statusColor[b.status]}`}>
@@ -284,6 +320,20 @@ export function AdminBookings() {
               </div>
             </div>
 
+            {(Array.isArray(b.addons) && b.addons.length > 0) || b.addonNote ? (
+              <div className="mb-3 flex flex-wrap gap-1">
+                {Array.isArray(b.addons) && b.addons.map(id => {
+                  const opt = addonOptions.find(o => o.id === id)
+                  return opt ? (
+                    <span key={id} className="inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-semibold rounded bg-primary/10 text-primary">{opt.label}</span>
+                  ) : null
+                })}
+                {b.addonNote && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-semibold rounded bg-amber-50 text-amber-700">Custom</span>
+                )}
+              </div>
+            ) : null}
+
             <div className="flex items-center justify-between pt-3 border-t border-gray-100">
               <div>
                 <p className="text-[10px] text-gray-400 uppercase tracking-wide">Total</p>
@@ -347,9 +397,10 @@ export function AdminBookings() {
                   <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Room *</label>
                   <select value={form.room} onChange={e => setForm({ ...form, room: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
-                    <option>Garden Suite</option>
-                    <option>Villa Deluxe</option>
-                    <option>Presidential Suite</option>
+                    <option value="">Select property</option>
+                    {properties.filter(p => p.status === 'Active').map(p => (
+                      <option key={p.id} value={p.name}>{p.name} — ₹{p.price.toLocaleString()}/night</option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -449,6 +500,63 @@ export function AdminBookings() {
                     )}
                   </div>
                 </div>
+              </div>
+
+              {/* Add-ons */}
+              <div className="bg-gray-50 rounded-xl p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Add-ons & Extras</h4>
+                  {form.addons.length > 0 && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">{form.addons.length} selected</span>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {addonOptions.map(opt => {
+                    const Icon = opt.icon
+                    const isSelected = form.addons.includes(opt.id)
+                    return (
+                      <button key={opt.id} type="button" onClick={() => {
+                        setForm(prev => ({
+                          ...prev,
+                          addons: isSelected
+                            ? prev.addons.filter(a => a !== opt.id)
+                            : [...prev.addons, opt.id],
+                        }))
+                      }}
+                        className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-medium transition-all ${
+                          isSelected
+                            ? 'bg-primary/10 border-primary/30 text-primary'
+                            : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                        }`}>
+                        <Icon size={14} className={isSelected ? 'text-primary' : 'text-gray-400'} />
+                        <span className="flex-1 text-left">{opt.label}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Custom Add-on / Notes</label>
+                  <textarea value={form.addonNote} onChange={e => setForm({ ...form, addonNote: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none h-20 transition-all" placeholder="e.g. Birthday cake decoration, airport transfer..." />
+                </div>
+                {(form.addons.length > 0 || form.addonNote) && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {form.addons.map(id => {
+                      const opt = addonOptions.find(o => o.id === id)
+                      return opt ? (
+                        <span key={id} className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold rounded-lg bg-primary/10 text-primary">
+                          {opt.label}
+                          <button type="button" onClick={() => setForm(prev => ({ ...prev, addons: prev.addons.filter(a => a !== id) }))} className="ml-0.5 hover:text-primary/70">×</button>
+                        </span>
+                      ) : null
+                    })}
+                    {form.addonNote && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold rounded-lg bg-amber-50 text-amber-700">
+                        Note: {form.addonNote.length > 30 ? form.addonNote.slice(0, 30) + '...' : form.addonNote}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Buttons */}

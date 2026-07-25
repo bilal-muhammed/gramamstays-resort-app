@@ -2,11 +2,12 @@
 
 import type { AdminSection } from '@/app/admin/page'
 import Image from 'next/image'
-import { LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog, Settings, X } from 'lucide-react'
+import { LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog, Settings, X, Home } from 'lucide-react'
 
 const navItems: { id: AdminSection; label: string; icon: typeof LayoutDashboard }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'bookings', label: 'Bookings', icon: CalendarCheck },
+  { id: 'properties', label: 'Properties', icon: Home },
   { id: 'financials', label: 'Financials', icon: DollarSign },
   { id: 'guests', label: 'Guests', icon: Users },
   { id: 'staff', label: 'Staff & Roles', icon: UserCog },

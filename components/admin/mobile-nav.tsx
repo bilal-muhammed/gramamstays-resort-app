@@ -1,11 +1,12 @@
 'use client'
 
 import type { AdminSection } from '@/app/admin/page'
-import { LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog } from 'lucide-react'
+import { LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog, Home } from 'lucide-react'
 
 const navItems: { id: AdminSection; label: string; icon: typeof LayoutDashboard }[] = [
   { id: 'dashboard', label: 'Home', icon: LayoutDashboard },
   { id: 'bookings', label: 'Bookings', icon: CalendarCheck },
+  { id: 'properties', label: 'Properties', icon: Home },
   { id: 'financials', label: 'Finance', icon: DollarSign },
   { id: 'guests', label: 'Guests', icon: Users },
   { id: 'staff', label: 'Staff', icon: UserCog },
