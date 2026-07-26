@@ -7,25 +7,45 @@ import { TrendingUp, TrendingDown, DollarSign, Plus, Pencil, Trash2, X, Calendar
 import type { Expense, Income } from '@/types/admin'
 
 const categoryColors: Record<string, string> = {
-  'Room Revenue': 'bg-blue-500', 'Spa': 'bg-purple-500',
+  'Room Revenue': 'bg-blue-500', 'Spa': 'bg-purple-500', 'Spa & Wellness': 'bg-purple-500',
   'F&B': 'bg-amber-500', 'Experience': 'bg-emerald-500',
-  'Amenity': 'bg-cyan-500', 'Payroll': 'bg-red-500',
-  'Supplies': 'bg-orange-500', 'Utilities': 'bg-gray-500',
+  'Amenity': 'bg-cyan-500', 'Trekking & Adventure': 'bg-orange-500',
+  'Yoga & Fitness': 'bg-pink-500', 'Tours & Excursions': 'bg-teal-500',
+  'Airport Transfer': 'bg-indigo-500', 'Laundry Service': 'bg-sky-500',
+  'Photography': 'bg-rose-500', 'Minibar': 'bg-lime-500',
+  'Events & Celebrations': 'bg-violet-500', 'Commissions': 'bg-fuchsia-500',
+  'Payroll': 'bg-red-500', 'Food & Ingredients': 'bg-orange-500',
+  'Supplies': 'bg-amber-500', 'Utilities': 'bg-gray-500',
   'Marketing': 'bg-pink-500', 'Maintenance': 'bg-yellow-500',
-  'Other': 'bg-slate-500',
+  'Cleaning': 'bg-cyan-500', 'Laundry': 'bg-sky-500',
+  'Guest Amenities': 'bg-emerald-500', 'Equipment': 'bg-indigo-500',
+  'Insurance': 'bg-violet-500', 'IT & Software': 'bg-blue-500',
+  'Travel & Transport': 'bg-teal-500', 'Furniture & Fixtures': 'bg-amber-600',
+  'Landscaping': 'bg-green-500', 'Security': 'bg-slate-500',
+  'Licenses & Permits': 'bg-purple-600', 'Other': 'bg-slate-500',
 }
 
 const categoryBg: Record<string, string> = {
-  'Room Revenue': 'bg-blue-50 text-blue-700', 'Spa': 'bg-purple-50 text-purple-700',
+  'Room Revenue': 'bg-blue-50 text-blue-700', 'Spa': 'bg-purple-50 text-purple-700', 'Spa & Wellness': 'bg-purple-50 text-purple-700',
   'F&B': 'bg-amber-50 text-amber-700', 'Experience': 'bg-emerald-50 text-emerald-700',
-  'Amenity': 'bg-cyan-50 text-cyan-700', 'Payroll': 'bg-red-50 text-red-700',
-  'Supplies': 'bg-orange-50 text-orange-700', 'Utilities': 'bg-gray-50 text-gray-700',
+  'Amenity': 'bg-cyan-50 text-cyan-700', 'Trekking & Adventure': 'bg-orange-50 text-orange-700',
+  'Yoga & Fitness': 'bg-pink-50 text-pink-700', 'Tours & Excursions': 'bg-teal-50 text-teal-700',
+  'Airport Transfer': 'bg-indigo-50 text-indigo-700', 'Laundry Service': 'bg-sky-50 text-sky-700',
+  'Photography': 'bg-rose-50 text-rose-700', 'Minibar': 'bg-lime-50 text-lime-700',
+  'Events & Celebrations': 'bg-violet-50 text-violet-700', 'Commissions': 'bg-fuchsia-50 text-fuchsia-700',
+  'Payroll': 'bg-red-50 text-red-700', 'Food & Ingredients': 'bg-orange-50 text-orange-700',
+  'Supplies': 'bg-amber-50 text-amber-700', 'Utilities': 'bg-gray-50 text-gray-700',
   'Marketing': 'bg-pink-50 text-pink-700', 'Maintenance': 'bg-yellow-50 text-yellow-700',
-  'Other': 'bg-slate-50 text-slate-700',
+  'Cleaning': 'bg-cyan-50 text-cyan-700', 'Laundry': 'bg-sky-50 text-sky-700',
+  'Guest Amenities': 'bg-emerald-50 text-emerald-700', 'Equipment': 'bg-indigo-50 text-indigo-700',
+  'Insurance': 'bg-violet-50 text-violet-700', 'IT & Software': 'bg-blue-50 text-blue-700',
+  'Travel & Transport': 'bg-teal-50 text-teal-700', 'Furniture & Fixtures': 'bg-amber-50 text-amber-700',
+  'Landscaping': 'bg-green-50 text-green-700', 'Security': 'bg-slate-50 text-slate-700',
+  'Licenses & Permits': 'bg-purple-50 text-purple-700', 'Other': 'bg-slate-50 text-slate-700',
 }
 
-const expenseCategories = ['Payroll', 'Supplies', 'Utilities', 'Marketing', 'Maintenance', 'Other']
-const incomeTypes = ['Room Revenue', 'Spa', 'F&B', 'Experience', 'Amenity', 'Other']
+const expenseCategories = ['Payroll', 'Food & Ingredients', 'Supplies', 'Cleaning', 'Laundry', 'Guest Amenities', 'Utilities', 'Marketing', 'Maintenance', 'Equipment', 'Insurance', 'IT & Software', 'Travel & Transport', 'Furniture & Fixtures', 'Landscaping', 'Security', 'Licenses & Permits', 'Other']
+const incomeTypes = ['Room Revenue', 'Spa & Wellness', 'F&B', 'Experience', 'Amenity', 'Trekking & Adventure', 'Yoga & Fitness', 'Tours & Excursions', 'Airport Transfer', 'Laundry Service', 'Photography', 'Minibar', 'Events & Celebrations', 'Commissions', 'Other']
 
 function getTodayISO() {
   return new Date().toISOString().split('T')[0]
