@@ -23,9 +23,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null)
 
 const ROLE_SECTIONS: Record<UserRole, string[]> = {
-  super_admin: ['dashboard', 'bookings', 'properties', 'guests', 'financials', 'staff', 'register', 'logs'],
-  admin: ['dashboard', 'bookings', 'properties', 'guests', 'financials', 'staff', 'logs'],
-  staff: ['dashboard', 'bookings', 'guests', 'logs'],
+  super_admin: ['dashboard', 'bookings', 'properties', 'financials', 'register', 'logs'],
+  admin: ['dashboard', 'bookings', 'properties', 'financials', 'logs'],
+  staff: ['dashboard', 'bookings', 'logs'],
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {

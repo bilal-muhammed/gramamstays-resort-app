@@ -36,12 +36,3 @@ export function getUserFromRequest(request: Request): { userId: string; username
   if (!payload) return null
   return { userId: payload.userId, username: payload.username }
 }
-
-export function parseDetails(details: string | null): Record<string, unknown> | null {
-  if (!details) return null
-  try {
-    return JSON.parse(details)
-  } catch {
-    return null
-  }
-}

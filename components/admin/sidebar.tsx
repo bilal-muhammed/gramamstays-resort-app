@@ -10,8 +10,6 @@ const allNavItems: { id: AdminSection; label: string; icon: typeof LayoutDashboa
   { id: 'bookings', label: 'Bookings', icon: CalendarCheck },
   { id: 'properties', label: 'Properties', icon: Home },
   { id: 'financials', label: 'Financials', icon: DollarSign },
-  { id: 'guests', label: 'Guests', icon: Users },
-  { id: 'staff', label: 'Staff & Roles', icon: UserCog },
   { id: 'logs', label: 'Activity Logs', icon: ScrollText },
   { id: 'register', label: 'User Management', icon: UserPlus, minRole: 'super_admin' },
 ]

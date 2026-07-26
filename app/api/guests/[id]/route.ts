@@ -31,11 +31,13 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 }
 
-export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!prisma) return NextResponse.json({ error: 'Database not connected' }, { status: 503 })
   try {
     const { id } = await params
     await prisma.guest.delete({ where: { id } })
+    const user = getUserFromRequest(request)
+    if (user) createAuditLog({ userId: user.userId, username: user.username, action: 'guest.deleted', entity: 'guest', entityId: id })
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('[Guests] DELETE error:', error)

@@ -8,9 +8,7 @@ const sectionConfig: Record<AdminSection, { title: string; subtitle: string; ico
   dashboard: { title: 'Dashboard', subtitle: 'Overview & insights', icon: LayoutDashboard },
   bookings: { title: 'Bookings', subtitle: 'Manage reservations', icon: CalendarCheck },
   properties: { title: 'Properties', subtitle: 'Manage properties', icon: Home },
-  guests: { title: 'Guests', subtitle: 'Guest directory', icon: Users },
   financials: { title: 'Financials', subtitle: 'Income & expenses', icon: DollarSign },
-  staff: { title: 'Staff', subtitle: 'Team management', icon: UserCog },
   register: { title: 'User Management', subtitle: 'Manage admin users', icon: UserPlus },
   logs: { title: 'Activity Logs', subtitle: 'Track all actions', icon: ScrollText },
 }

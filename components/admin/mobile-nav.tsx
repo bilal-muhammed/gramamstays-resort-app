@@ -9,8 +9,6 @@ const allNavItems: { id: AdminSection; label: string; icon: typeof LayoutDashboa
   { id: 'bookings', label: 'Bookings', icon: CalendarCheck },
   { id: 'properties', label: 'Properties', icon: Home },
   { id: 'financials', label: 'Finance', icon: DollarSign },
-  { id: 'guests', label: 'Guests', icon: Users },
-  { id: 'staff', label: 'Staff', icon: UserCog },
 ]
 
 interface Props {

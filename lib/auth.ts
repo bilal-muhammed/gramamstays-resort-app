@@ -13,9 +13,9 @@ export interface TokenPayload {
 }
 
 const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
-  super_admin: ['dashboard', 'bookings', 'properties', 'guests', 'financials', 'staff', 'register'],
-  admin: ['dashboard', 'bookings', 'properties', 'guests', 'financials', 'staff'],
-  staff: ['dashboard', 'bookings', 'guests'],
+  super_admin: ['dashboard', 'bookings', 'properties', 'financials', 'register', 'logs'],
+  admin: ['dashboard', 'bookings', 'properties', 'financials', 'logs'],
+  staff: ['dashboard', 'bookings', 'logs'],
 }
 
 export function getRolePermissions(role: UserRole): string[] {
