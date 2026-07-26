@@ -107,6 +107,10 @@ export function AdminBookings() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    if (form.status === 'Checked Out' && form.amount > 0 && form.paidAmount < form.amount) {
+      toast('error', `Cannot check out — ₹${(form.amount - form.paidAmount).toLocaleString()} balance pending. Clear the balance first.`)
+      return
+    }
     if (editingId) {
       updateBooking(editingId, form)
       toast('success', 'Booking updated')
@@ -446,6 +450,9 @@ export function AdminBookings() {
                     <option>Checked In</option>
                     <option>Checked Out</option>
                   </select>
+                  {form.status === 'Checked Out' && form.amount > 0 && form.paidAmount < form.amount && (
+                    <p className="text-[11px] text-red-600 font-medium mt-1.5">Cannot check out with ₹{(form.amount - form.paidAmount).toLocaleString()} balance pending</p>
+                  )}
                 </div>
               </div>
 

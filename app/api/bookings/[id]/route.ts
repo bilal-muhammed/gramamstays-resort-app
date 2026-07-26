@@ -51,6 +51,18 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     if (updateData.checkIn) updateData.checkIn = toISODateTime(updateData.checkIn)
     if (updateData.checkOut) updateData.checkOut = toISODateTime(updateData.checkOut)
     serializeBooking(updateData)
+
+    if (updateData.status === 'Checked Out') {
+      const current = await prisma.booking.findUnique({ where: { id } })
+      if (current) {
+        const amount = updateData.amount ?? current.amount
+        const paidAmount = updateData.paidAmount ?? current.paidAmount
+        if (amount > paidAmount) {
+          return NextResponse.json({ error: `Cannot check out — ₹${amount - paidAmount} balance pending` }, { status: 400 })
+        }
+      }
+    }
+
     const booking = await prisma.booking.update({ where: { id }, data: updateData })
     return NextResponse.json(deserializeBooking(booking as Record<string, unknown>))
   } catch (error) {
