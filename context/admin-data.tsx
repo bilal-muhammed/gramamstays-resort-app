@@ -94,42 +94,32 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     const booking = await api<Booking>('/api/bookings', { method: 'POST', body: JSON.stringify(b) })
     if (booking) {
       setBookings(prev => [booking, ...prev])
-      const calls = [
-        api<Activity>('/api/activities', { method: 'POST', body: JSON.stringify({ time: 'Just now', text: `New booking from ${b.guest}` }) }),
-      ]
+      await api<Activity>('/api/activities', { method: 'POST', body: JSON.stringify({ time: 'Just now', text: `New booking from ${b.guest}` }) })
       if (b.paidAmount > 0) {
-        calls.push(
-          api<Income>('/api/income', { method: 'POST', body: JSON.stringify({ date: todayStr(), source: `Room - ${b.room} #${b.roomNo}`, amount: b.paidAmount, type: 'Room Revenue' }) }),
-          api<Activity>('/api/activities', { method: 'POST', body: JSON.stringify({ time: 'Just now', text: `Income recorded: ₹${b.paidAmount.toLocaleString()} from ${b.guest}` }) }),
-        )
+        const incomeEntry = await api<Income>('/api/income', { method: 'POST', body: JSON.stringify({ date: todayStr(), source: `Room - ${b.room} #${b.roomNo}`, amount: b.paidAmount, type: 'Room Revenue' }) })
+        if (incomeEntry) {
+          setIncome(prev => [incomeEntry, ...prev])
+          await api<Activity>('/api/activities', { method: 'POST', body: JSON.stringify({ time: 'Just now', text: `Income recorded: ₹${b.paidAmount.toLocaleString()} from ${b.guest}` }) })
+        }
       }
-      const results = await Promise.all(calls)
-      const newActivities = results.filter((r): r is Activity => r !== null && 'text' in (r as object))
-      if (newActivities.length) setActivities(prev => [...newActivities, ...prev].slice(0, 20))
-      const incomeResult = results[1]
-      if (incomeResult && 'amount' in (incomeResult as object)) setIncome(prev => [incomeResult as Income, ...prev])
     }
   }, [])
 
   const updateBooking = useCallback(async (id: string, b: Partial<Booking>) => {
     const updated = await api<Booking>(`/api/bookings/${id}`, { method: 'PATCH', body: JSON.stringify(b) })
     if (updated) {
-      setBookings(prev => {
-        const original = prev.find(item => item.id === id)
-        if (original && b.paidAmount !== undefined && updated.paidAmount > original.paidAmount) {
-          const additional = updated.paidAmount - original.paidAmount
-          Promise.all([
-            api<Income>('/api/income', { method: 'POST', body: JSON.stringify({ date: todayStr(), source: `Room - ${updated.room} #${updated.roomNo}`, amount: additional, type: 'Room Revenue' }) }),
-            api<Activity>('/api/activities', { method: 'POST', body: JSON.stringify({ time: 'Just now', text: `Payment of ₹${additional.toLocaleString()} from ${updated.guest}` }) }),
-          ]).then(([incomeRes, activityRes]) => {
-            if (incomeRes && 'amount' in (incomeRes as object)) setIncome(prev => [incomeRes as Income, ...prev])
-            if (activityRes && 'text' in (activityRes as object)) setActivities(prev => [activityRes as Activity, ...prev].slice(0, 20))
-          })
+      const original = bookings.find(item => item.id === id)
+      setBookings(prev => prev.map(item => item.id === id ? updated : item))
+      if (original && b.paidAmount !== undefined && updated.paidAmount > original.paidAmount) {
+        const additional = updated.paidAmount - original.paidAmount
+        const incomeEntry = await api<Income>('/api/income', { method: 'POST', body: JSON.stringify({ date: todayStr(), source: `Room - ${updated.room} #${updated.roomNo}`, amount: additional, type: 'Room Revenue' }) })
+        if (incomeEntry) {
+          setIncome(prev => [incomeEntry, ...prev])
+          await api<Activity>('/api/activities', { method: 'POST', body: JSON.stringify({ time: 'Just now', text: `Payment of ₹${additional.toLocaleString()} from ${updated.guest}` }) })
         }
-        return prev.map(item => item.id === id ? updated : item)
-      })
+      }
     }
-  }, [])
+  }, [bookings])
 
   const deleteBooking = useCallback(async (id: string) => {
     const result = await api(`/api/bookings/${id}`, { method: 'DELETE' })
