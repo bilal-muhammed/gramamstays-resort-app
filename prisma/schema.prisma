@@ -129,3 +129,33 @@ model Property {
   @@index([name])
   @@index([status])
 }
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  phone     String
+  password  String
+  role      String   @default("staff")
+  createdAt DateTime @default(now())
+
+  @@index([username])
+  @@index([email])
+  @@index([role])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  username  String
+  action    String
+  entity    String
+  entityId  String?
+  details   String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId])
+  @@index([action])
+  @@index([entity])
+}

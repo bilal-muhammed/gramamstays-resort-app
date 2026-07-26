@@ -21,63 +21,63 @@ export function Amenities() {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 })
 
   return (
-    <section id="amenities" className="py-20 sm:py-28 px-5 sm:px-6 lg:px-10 relative" ref={ref}>
+    <section id="amenities" className="py-14 sm:py-20 px-5 sm:px-6 lg:px-10 relative" ref={ref}>
       {/* Background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0" style={{ backgroundImage: 'url(/spa-wellness.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/96 via-background/93 to-background/96" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/96 via-background/94 to-background/96" />
       </div>
 
-      <div className="max-w-8xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-11">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className="flex items-center justify-center gap-3 mb-4 sm:mb-5"
+            transition={{ duration: 0.5 }}
+            className="flex items-center justify-center gap-3 mb-3 sm:mb-4"
           >
-            <div className="w-8 sm:w-10 h-px bg-secondary" />
-            <span className="text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase text-secondary font-medium">Facilities & Services</span>
-            <div className="w-8 sm:w-10 h-px bg-secondary" />
+            <div className="w-8 h-px bg-secondary" />
+            <span className="text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-secondary font-medium">Facilities & Services</span>
+            <div className="w-8 h-px bg-secondary" />
           </motion.div>
           <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            animate={isVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 sm:mb-5 leading-tight"
-          >
-            World-Class{' '}
-            <span className="italic font-light" style={{ WebkitTextFillColor: 'transparent', WebkitBackgroundClip: 'text', backgroundImage: 'linear-gradient(135deg, #d4a574, #c8956b)', backgroundClip: 'text' }}>Amenities</span>
-          </motion.h2>
-          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-sm sm:text-base text-muted-foreground"
+            transition={{ duration: 0.6, delay: 0.08 }}
+            className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 sm:mb-4 leading-tight"
+          >
+            World-Class{' '}
+            <span className="italic font-light text-gradient-gold">Amenities</span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={isVisible ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            className="text-xs sm:text-sm text-muted-foreground"
           >
             Premium facilities designed to elevate every moment of your stay.
           </motion.p>
         </div>
 
-        {/* Amenities Grid - 2 cols on mobile, 3 on md, 5 on lg */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-5">
+        {/* Amenities Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4">
           {amenities.map((amenity, i) => {
             const Icon = amenity.icon
             return (
               <motion.div
                 key={amenity.name}
-                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                initial={{ opacity: 0, y: 20, scale: 0.97 }}
                 animate={isVisible ? { opacity: 1, y: 0, scale: 1 } : {}}
-                transition={{ duration: 0.5, delay: 0.1 + i * 0.06 }}
-                whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                className="group p-4 sm:p-6 rounded-2xl bg-card/80 backdrop-blur-sm border border-border/60 hover:border-secondary/40 transition-all duration-500 premium-shadow hover:premium-shadow-lg cursor-default text-center"
+                transition={{ duration: 0.4, delay: 0.08 + i * 0.05 }}
+                whileHover={{ y: -5, transition: { duration: 0.25 } }}
+                className="group p-3.5 sm:p-5 rounded-lg bg-card/80 backdrop-blur-sm border border-border/50 hover:border-secondary/35 transition-all duration-400 premium-shadow hover:premium-shadow-lg cursor-default text-center"
               >
-                <div className={`inline-flex items-center justify-center w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br ${amenity.accent} mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-500`}>
-                  <Icon size={20} className="text-primary" strokeWidth={1.5} />
+                <div className={`inline-flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-md bg-gradient-to-br ${amenity.accent} mb-2.5 sm:mb-3 group-hover:scale-105 transition-transform duration-400`}>
+                  <Icon size={17} className="text-primary" strokeWidth={1.5} />
                 </div>
-                <h3 className="text-xs sm:text-sm font-bold text-foreground mb-1.5 sm:mb-2">{amenity.name}</h3>
-                <p className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed hidden sm:block">{amenity.description}</p>
+                <h3 className="text-[11px] sm:text-xs font-bold text-foreground mb-1">{amenity.name}</h3>
+                <p className="text-[10px] sm:text-[11px] text-muted-foreground leading-relaxed hidden sm:block">{amenity.description}</p>
               </motion.div>
             )
           })}
@@ -85,25 +85,25 @@ export function Amenities() {
 
         {/* Highlight Banners */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={isVisible ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-10 sm:mt-14 grid sm:grid-cols-2 gap-4 sm:gap-6"
+          transition={{ duration: 0.7, delay: 0.5 }}
+          className="mt-8 sm:mt-11 grid sm:grid-cols-2 gap-3 sm:gap-5"
         >
           {/* Spa Banner */}
-          <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden h-60 sm:h-72 group">
-            <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: 'url(/spa-wellness.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-            <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-8">
-              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1.5 sm:mb-2">Premium Spa</h3>
-              <p className="text-white/70 text-sm mb-4 sm:mb-5 max-w-sm">Signature wellness treatments by expert therapists.</p>
+          <div className="relative rounded-lg overflow-hidden h-52 sm:h-64 group">
+            <div className="absolute inset-0 transition-transform duration-600 group-hover:scale-105" style={{ backgroundImage: 'url(/spa-wellness.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
+            <div className="relative z-10 h-full flex flex-col justify-end p-5 sm:p-6">
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-1">Premium Spa</h3>
+              <p className="text-white/65 text-xs sm:text-sm mb-3 sm:mb-4 max-w-xs">Signature wellness treatments by expert therapists.</p>
               <motion.a
                 href="https://wa.me/919539222031?text=Hi%2C%20I%20would%20like%20to%20book%20a%20spa%20treatment%20at%20Gramamstays%20Resort.%20Please%20share%20the%20available%20slots."
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.04 }}
+                whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="self-start px-6 sm:px-7 py-2 sm:py-2.5 bg-white text-primary rounded-full font-medium text-xs sm:text-sm hover:bg-white/90 transition-all text-center"
+                className="self-start px-5 py-2 bg-white text-primary rounded-md font-medium text-xs sm:text-sm text-center"
               >
                 Book a Treatment
               </motion.a>
@@ -111,28 +111,28 @@ export function Amenities() {
           </div>
 
           {/* Pool Banner */}
-          <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden h-60 sm:h-72 group">
-            <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-110" style={{ backgroundImage: 'url(/hero-resort.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-            <div className="relative z-10 h-full flex flex-col justify-end p-6 sm:p-8">
-              <div className="flex gap-3 sm:gap-4 mb-3 sm:mb-4">
+          <div className="relative rounded-lg overflow-hidden h-52 sm:h-64 group">
+            <div className="absolute inset-0 transition-transform duration-600 group-hover:scale-105" style={{ backgroundImage: 'url(/hero-resort.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
+            <div className="relative z-10 h-full flex flex-col justify-end p-5 sm:p-6">
+              <div className="flex gap-3 sm:gap-4 mb-2.5 sm:mb-3">
                 {[
                   { value: '50m', label: 'Length' },
-                  { value: '28\u00B0C', label: 'Heated' },
+                  { value: '28°C', label: 'Heated' },
                   { value: '24/7', label: 'Access' },
                 ].map((stat) => (
                   <div key={stat.label} className="text-center">
-                    <p className="text-lg sm:text-xl font-bold text-white">{stat.value}</p>
-                    <p className="text-[9px] sm:text-[10px] text-white/60 tracking-wider uppercase">{stat.label}</p>
+                    <p className="text-base sm:text-lg font-bold text-white">{stat.value}</p>
+                    <p className="text-[9px] text-white/55 tracking-wider uppercase">{stat.label}</p>
                   </div>
                 ))}
               </div>
-              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-1.5 sm:mb-2">Infinity Pool</h3>
-              <p className="text-white/70 text-sm mb-4 sm:mb-5 max-w-sm">Heated pool that seamlessly blends with the horizon.</p>
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-1">Infinity Pool</h3>
+              <p className="text-white/65 text-xs sm:text-sm mb-3 sm:mb-4 max-w-xs">Heated pool that seamlessly blends with the horizon.</p>
               <motion.button
-                whileHover={{ scale: 1.04 }}
+                whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="self-start px-6 sm:px-7 py-2 sm:py-2.5 bg-white text-secondary rounded-full font-medium text-xs sm:text-sm hover:bg-white/90 transition-all"
+                className="self-start px-5 py-2 bg-white text-secondary rounded-md font-medium text-xs sm:text-sm"
               >
                 Learn More
               </motion.button>

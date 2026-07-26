@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, useMemo, useRef, type ReactNode } from 'react'
 import type { Booking, Room, Guest, Income, Expense, Staff, Activity, Property } from '@/types/admin'
 
 interface AdminDataContextType {
@@ -63,6 +63,9 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
 
+  const bookingsRef = useRef(bookings)
+  bookingsRef.current = bookings
+
   useEffect(() => {
     Promise.all([
       api<Booking[]>('/api/bookings'),
@@ -108,7 +111,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
   const updateBooking = useCallback(async (id: string, b: Partial<Booking>) => {
     const updated = await api<Booking>(`/api/bookings/${id}`, { method: 'PATCH', body: JSON.stringify(b) })
     if (updated) {
-      const original = bookings.find(item => item.id === id)
+      const original = bookingsRef.current.find(item => item.id === id)
       setBookings(prev => prev.map(item => item.id === id ? updated : item))
       if (original && b.paidAmount !== undefined && updated.paidAmount > original.paidAmount) {
         const additional = updated.paidAmount - original.paidAmount
@@ -119,7 +122,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
         }
       }
     }
-  }, [bookings])
+  }, [])
 
   const deleteBooking = useCallback(async (id: string) => {
     const result = await api(`/api/bookings/${id}`, { method: 'DELETE' })
@@ -217,18 +220,20 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     if (result) setProperties(prev => prev.filter(item => item.id !== id))
   }, [])
 
+  const value = useMemo(() => ({
+    bookings, rooms, guests, income, expenses, staff: staffList, activities, properties, loading,
+    addBooking, updateBooking, deleteBooking,
+    addRoom, updateRoom, deleteRoom,
+    addGuest, updateGuest, deleteGuest,
+    addIncome, deleteIncome,
+    addExpense, updateExpense, deleteExpense,
+    addStaff, updateStaff, deleteStaff,
+    addActivity,
+    addProperty, updateProperty, deleteProperty,
+  }), [bookings, rooms, guests, income, expenses, staffList, activities, properties, loading, addBooking, updateBooking, deleteBooking, addRoom, updateRoom, deleteRoom, addGuest, updateGuest, deleteGuest, addIncome, deleteIncome, addExpense, updateExpense, deleteExpense, addStaff, updateStaff, deleteStaff, addActivity, addProperty, updateProperty, deleteProperty])
+
   return (
-    <AdminDataContext.Provider value={{
-      bookings, rooms, guests, income, expenses, staff: staffList, activities, properties, loading,
-      addBooking, updateBooking, deleteBooking,
-      addRoom, updateRoom, deleteRoom,
-      addGuest, updateGuest, deleteGuest,
-      addIncome, deleteIncome,
-      addExpense, updateExpense, deleteExpense,
-      addStaff, updateStaff, deleteStaff,
-      addActivity,
-      addProperty, updateProperty, deleteProperty,
-    }}>
+    <AdminDataContext.Provider value={value}>
       {children}
     </AdminDataContext.Provider>
   )

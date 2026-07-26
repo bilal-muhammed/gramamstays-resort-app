@@ -12,16 +12,14 @@ const adapter = new PrismaPg(pool)
 const prisma = new PrismaClient({ adapter })
 
 async function main() {
-  await prisma.booking.deleteMany()
-  await prisma.room.deleteMany()
-  await prisma.guest.deleteMany()
-  await prisma.income.deleteMany()
-  await prisma.expense.deleteMany()
-  await prisma.staff.deleteMany()
-  await prisma.activity.deleteMany()
-  await prisma.property.deleteMany()
+  // Check if data already exists — skip seeding if so
+  const existingBookings = await prisma.booking.count()
+  if (existingBookings > 0) {
+    console.log('Database already seeded — skipping.')
+    return
+  }
 
-  await prisma.property.createMany({
+  await prisma.booking.createMany({
     data: [
       { id: 'prop-001', name: 'The Chedi', description: 'A luxurious retreat blending traditional elegance with modern comfort. Features panoramic views, private gardens, and world-class amenities.', price: 850, status: 'Active', amenities: 'King Bed, River View, Private Pool, Butler Service, Outdoor Shower' },
       { id: 'prop-002', name: 'British Bungalow', description: 'Heritage bungalow with colonial architecture, wrap-around verandah, and lush manicured lawns. Perfect for a serene escape.', price: 650, status: 'Active', amenities: 'Queen Bed, Garden View, Fireplace, Antique Furnishings, Tea Lounge' },
@@ -106,6 +104,25 @@ async function main() {
       { id: 'A-004', time: '3 hr ago', text: 'Payment received: $2,600' },
     ],
   })
+
+  // Seed default Super Admin user
+  const bcrypt = await import('bcryptjs')
+  const existingUser = await prisma.user.findUnique({ where: { username: 'admin' } })
+  if (!existingUser) {
+    const hashed = await bcrypt.hash('admin123', 12)
+    await prisma.user.create({
+      data: {
+        username: 'admin',
+        email: 'admin@gramamstays.com',
+        phone: '+91 99999 99999',
+        password: hashed,
+        role: 'super_admin',
+      },
+    })
+    console.log('Default Super Admin created: admin / admin123')
+  } else {
+    console.log('Super Admin user already exists — skipping.')
+  }
 
   console.log('Database seeded!')
 }

@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
+import { createAuditLog, getUserFromRequest } from '@/lib/audit'
 
 function serializeBooking(data: Record<string, unknown>) {
   if (data.addons && Array.isArray(data.addons)) {
@@ -64,6 +65,22 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     }
 
     const booking = await prisma.booking.update({ where: { id }, data: updateData })
+
+    const user = getUserFromRequest(request)
+    if (user) {
+      const action = updateData.status === 'Checked In' ? 'booking.checked_in'
+        : updateData.status === 'Checked Out' ? 'booking.checked_out'
+        : 'booking.updated'
+      createAuditLog({
+        userId: user.userId,
+        username: user.username,
+        action,
+        entity: 'booking',
+        entityId: id,
+        details: updateData.status ? { status: updateData.status } : undefined,
+      })
+    }
+
     return NextResponse.json(deserializeBooking(booking as Record<string, unknown>))
   } catch (error) {
     console.error('[Booking] PATCH error:', error)

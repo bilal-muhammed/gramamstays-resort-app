@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
+import { createAuditLog, getUserFromRequest } from '@/lib/audit'
 
 function toISODateTime(val: unknown): Date | undefined {
   if (val === undefined || val === null) return undefined
@@ -52,6 +53,19 @@ export async function POST(request: Request) {
     if (createData.checkOut) createData.checkOut = toISODateTime(createData.checkOut)
     serializeBooking(createData)
     const booking = await prisma.booking.create({ data: createData })
+
+    const user = getUserFromRequest(request)
+    if (user) {
+      createAuditLog({
+        userId: user.userId,
+        username: user.username,
+        action: 'booking.created',
+        entity: 'booking',
+        entityId: booking.id,
+        details: { guest: createData.guest, room: createData.room },
+      })
+    }
+
     return NextResponse.json(deserializeBooking(booking as Record<string, unknown>), { status: 201 })
   } catch (error) {
     console.error('[Bookings] POST error:', error)

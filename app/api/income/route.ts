@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
+import { createAuditLog, getUserFromRequest } from '@/lib/audit'
 
 export async function GET() {
   if (!prisma) return NextResponse.json([])
@@ -18,6 +19,8 @@ export async function POST(request: Request) {
     const data = await request.json()
     const { id: _, ...createData } = data
     const income = await prisma.income.create({ data: createData })
+    const user = getUserFromRequest(request)
+    if (user) createAuditLog({ userId: user.userId, username: user.username, action: 'income.added', entity: 'income', entityId: income.id, details: { source: createData.source, amount: createData.amount } })
     return NextResponse.json(income, { status: 201 })
   } catch (error) {
     console.error('[Income] POST error:', error)

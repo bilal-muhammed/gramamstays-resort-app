@@ -77,7 +77,7 @@
   --chart-3: #c8956b;
   --chart-4: #6b8659;
   --chart-5: #8b7355;
-  --radius: 0.625rem;
+  --radius: 0.375rem;
   --sidebar: #f5f1ed;
   --sidebar-foreground: #2c3e2f;
   --sidebar-primary: #4a6741;
@@ -192,10 +192,10 @@
     border: 1px solid rgba(255, 255, 255, 0.3);
   }
   .premium-shadow {
-    box-shadow: 0 4px 6px -1px rgba(74, 103, 65, 0.08), 0 10px 30px -5px rgba(74, 103, 65, 0.12), 0 1px 2px rgba(0,0,0,0.04);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(74, 103, 65, 0.06);
   }
   .premium-shadow-lg {
-    box-shadow: 0 10px 15px -3px rgba(74, 103, 65, 0.1), 0 20px 50px -12px rgba(74, 103, 65, 0.18), 0 1px 3px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(74, 103, 65, 0.1);
   }
   .shimmer {
     background: linear-gradient(110deg, transparent 33%, rgba(212, 165, 116, 0.15) 50%, transparent 67%);

@@ -1,9 +1,10 @@
 'use client'
 
 import type { AdminSection } from '@/app/admin/page'
+import { useAuth } from '@/context/auth'
 import { LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog, Home } from 'lucide-react'
 
-const navItems: { id: AdminSection; label: string; icon: typeof LayoutDashboard }[] = [
+const allNavItems: { id: AdminSection; label: string; icon: typeof LayoutDashboard; minRole?: string }[] = [
   { id: 'dashboard', label: 'Home', icon: LayoutDashboard },
   { id: 'bookings', label: 'Bookings', icon: CalendarCheck },
   { id: 'properties', label: 'Properties', icon: Home },
@@ -18,6 +19,9 @@ interface Props {
 }
 
 export function AdminMobileNav({ activeSection, onNavigate }: Props) {
+  const { user, canAccess } = useAuth()
+  const navItems = allNavItems.filter(item => canAccess(item.id))
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white border-t border-gray-200 safe-area-bottom shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
       <nav className="flex items-center justify-around px-1 py-1.5">

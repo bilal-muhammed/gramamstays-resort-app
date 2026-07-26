@@ -35,69 +35,69 @@ export function Testimonials() {
   const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 })
 
   return (
-    <section id="testimonials" className="py-20 sm:py-28 px-5 sm:px-6 lg:px-10 relative overflow-hidden" ref={ref}>
+    <section id="testimonials" className="py-14 sm:py-20 px-5 sm:px-6 lg:px-10 relative overflow-hidden" ref={ref}>
       {/* Background Image */}
       <div className="absolute inset-0">
         <div className="absolute inset-0" style={{ backgroundImage: 'url(/luxury-room.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/92 to-background/95" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/93 to-background/95" />
       </div>
 
-      <div className="max-w-8xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-11">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className="flex items-center justify-center gap-3 mb-4 sm:mb-5"
+            transition={{ duration: 0.5 }}
+            className="flex items-center justify-center gap-3 mb-3 sm:mb-4"
           >
-            <div className="w-8 sm:w-10 h-px bg-secondary" />
-            <span className="text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase text-secondary font-medium">Guest Stories</span>
-            <div className="w-8 sm:w-10 h-px bg-secondary" />
+            <div className="w-8 h-px bg-secondary" />
+            <span className="text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-secondary font-medium">Guest Stories</span>
+            <div className="w-8 h-px bg-secondary" />
           </motion.div>
           <motion.h2
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4 sm:mb-5 leading-tight"
+            transition={{ duration: 0.6, delay: 0.08 }}
+            className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 sm:mb-4 leading-tight"
           >
             What Our Guests{' '}
-            <span className="italic font-light" style={{ WebkitTextFillColor: 'transparent', WebkitBackgroundClip: 'text', backgroundImage: 'linear-gradient(135deg, #d4a574, #c8956b)', backgroundClip: 'text' }}>Say</span>
+            <span className="italic font-light text-gradient-gold">Say</span>
           </motion.h2>
         </div>
 
         {/* Testimonial Cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {testimonials.map((testimonial, i) => (
             <motion.div
               key={testimonial.name}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.15 + i * 0.12 }}
-              whileHover={{ y: -4 }}
-              className="group relative p-6 sm:p-8 rounded-2xl bg-card/80 backdrop-blur-sm border border-border/60 hover:border-secondary/40 transition-all duration-500 premium-shadow hover:premium-shadow-lg"
+              transition={{ duration: 0.5, delay: 0.1 + i * 0.1 }}
+              whileHover={{ y: -3 }}
+              className="group relative p-5 sm:p-6 rounded-lg bg-card/80 backdrop-blur-sm border border-border/50 hover:border-secondary/35 transition-all duration-400 premium-shadow hover:premium-shadow-lg"
             >
-              <div className="absolute top-5 right-5 sm:top-6 sm:right-6 text-secondary/10 group-hover:text-secondary/20 transition-colors">
-                <Quote size={32} />
+              <div className="absolute top-4 right-4 text-secondary/10 group-hover:text-secondary/15 transition-colors">
+                <Quote size={26} />
               </div>
 
-              <div className="flex gap-0.5 sm:gap-1 mb-4 sm:mb-5">
+              <div className="flex gap-0.5 mb-3 sm:mb-4">
                 {Array.from({ length: testimonial.rating }).map((_, j) => (
-                  <Star key={j} size={13} className="fill-secondary text-secondary" />
+                  <Star key={j} size={12} className="fill-secondary text-secondary" />
                 ))}
               </div>
 
-              <p className="text-muted-foreground leading-relaxed mb-6 sm:mb-8 text-xs sm:text-sm italic">
+              <p className="text-muted-foreground leading-relaxed mb-5 text-xs sm:text-sm italic">
                 &ldquo;{testimonial.text}&rdquo;
               </p>
 
-              <div className="flex items-center gap-3 sm:gap-4 pt-5 sm:pt-6 border-t border-border/50">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-xs sm:text-sm shrink-0">
+              <div className="flex items-center gap-3 pt-4 border-t border-border/40">
+                <div className="w-9 h-9 rounded-md bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-[11px] shrink-0">
                   {testimonial.avatar}
                 </div>
                 <div className="min-w-0">
-                  <p className="font-bold text-foreground text-xs sm:text-sm">{testimonial.name}</p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{testimonial.role} &middot; {testimonial.location}</p>
+                  <p className="font-bold text-foreground text-xs">{testimonial.name}</p>
+                  <p className="text-[10px] text-muted-foreground truncate">{testimonial.role} &middot; {testimonial.location}</p>
                 </div>
               </div>
             </motion.div>
@@ -106,20 +106,20 @@ export function Testimonials() {
 
         {/* Trust Badges */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           animate={isVisible ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="mt-10 sm:mt-14 grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-14"
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="mt-8 sm:mt-11 grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-5 sm:gap-8 md:gap-12"
         >
           {[
             { name: 'TripAdvisor', badge: "Travelers' Choice 2024" },
             { name: 'Forbes', badge: '5-Star Rating' },
-            { name: 'Cond\u00E9 Nast', badge: 'Gold List' },
+            { name: 'Condé Nast', badge: 'Gold List' },
             { name: 'Luxury Travel', badge: 'Award Winner' },
           ].map((award) => (
             <div key={award.name} className="text-center">
-              <p className="text-sm sm:text-base md:text-lg font-bold text-foreground/80">{award.name}</p>
-              <p className="text-[9px] sm:text-[10px] text-secondary tracking-widest uppercase mt-0.5 sm:mt-1">{award.badge}</p>
+              <p className="text-xs sm:text-sm md:text-base font-bold text-foreground/80">{award.name}</p>
+              <p className="text-[9px] sm:text-[10px] text-secondary tracking-widest uppercase mt-0.5">{award.badge}</p>
             </div>
           ))}
         </motion.div>

@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
+import { createAuditLog, getUserFromRequest } from '@/lib/audit'
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!prisma) return NextResponse.json({ error: 'Database not connected' }, { status: 503 })
@@ -21,6 +22,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     const data = await request.json()
     const { id: _, ...updateData } = data
     const guest = await prisma.guest.update({ where: { id }, data: updateData })
+    const user = getUserFromRequest(request)
+    if (user) createAuditLog({ userId: user.userId, username: user.username, action: 'guest.updated', entity: 'guest', entityId: id })
     return NextResponse.json(guest)
   } catch (error) {
     console.error('[Guests] PATCH error:', error)

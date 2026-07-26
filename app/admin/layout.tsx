@@ -1,10 +1,7 @@
-import type { Metadata } from 'next'
-import { AdminPWA } from '@/components/admin/pwa'
+'use client'
 
-export const metadata: Metadata = {
-  title: 'Gramamstays Admin',
-  description: 'Resort management dashboard',
-}
+import { AuthProvider } from '@/context/auth'
+import { AdminPWA } from '@/components/admin/pwa'
 
 export default function AdminLayout({
   children,
@@ -12,9 +9,9 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <>
+    <AuthProvider>
       <AdminPWA />
       {children}
-    </>
+    </AuthProvider>
   )
 }
