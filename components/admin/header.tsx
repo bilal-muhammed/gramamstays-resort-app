@@ -25,7 +25,7 @@ export function AdminHeader({ onMenuToggle, activeSection }: Props) {
     <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
       <button
         onClick={onMenuToggle}
-        className="lg:hidden p-2.5 -ml-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+        className="lg:hidden p-2 rounded-lg -ml-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center"
       >
         <Menu size={22} />
       </button>
@@ -49,7 +49,7 @@ export function AdminHeader({ onMenuToggle, activeSection }: Props) {
         />
       </div>
 
-      <button className="relative p-2.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
+      <button className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center">
         <Bell size={18} />
         <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white" />
       </button>

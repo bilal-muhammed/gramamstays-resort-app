@@ -131,7 +131,7 @@ export function AdminFinancials() {
     <div className="space-y-5">
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="bg-white rounded-xl border border-gray-200 p-4 relative overflow-hidden">
+        <div className="bg-white rounded-lg border border-gray-200 p-3 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-50 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50" />
           <div className="relative">
             <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center mb-3">
@@ -141,7 +141,7 @@ export function AdminFinancials() {
             <p className="text-xs text-gray-500 mt-1">Total Income</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4 relative overflow-hidden">
+        <div className="bg-white rounded-lg border border-gray-200 p-3 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-red-50 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50" />
           <div className="relative">
             <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center mb-3">
@@ -151,7 +151,7 @@ export function AdminFinancials() {
             <p className="text-xs text-gray-500 mt-1">Total Expenses</p>
           </div>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4 relative overflow-hidden">
+        <div className="bg-white rounded-lg border border-gray-200 p-3 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-20 h-20 bg-blue-50 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50" />
           <div className="relative">
             <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center mb-3">
@@ -174,14 +174,14 @@ export function AdminFinancials() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl border border-gray-200 p-1.5 flex gap-1.5">
+      <div className="bg-white rounded-lg border border-gray-200 p-1 flex gap-1">
         {([
           { key: 'overview', label: 'Overview', icon: BarChart3 },
           { key: 'income', label: 'Income', icon: TrendingUp },
           { key: 'expenses', label: 'Expenses', icon: TrendingDown },
         ] as const).map(({ key, label, icon: Icon }) => (
           <button key={key} onClick={() => setActiveTab(key)}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 text-xs font-semibold rounded-lg transition-all min-h-[44px] ${
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold rounded-md transition-all min-h-[40px] ${
               activeTab === key 
                 ? 'bg-primary text-white shadow-sm' 
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
@@ -197,7 +197,7 @@ export function AdminFinancials() {
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Income Breakdown */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
                   <TrendingUp size={14} className="text-emerald-600" />
@@ -238,7 +238,7 @@ export function AdminFinancials() {
             </div>
 
             {/* Expense Breakdown */}
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
                   <TrendingDown size={14} className="text-red-600" />
@@ -285,10 +285,10 @@ export function AdminFinancials() {
       {activeTab === 'income' && (
         <div className="space-y-4">
           {/* Header & Filter */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="bg-white rounded-lg border border-gray-200 p-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <button onClick={() => { setIncomeForm(defaultIncome()); setShowIncomeForm(true) }}
-                className="flex items-center justify-center gap-2 px-5 py-3 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors min-h-[44px] shadow-sm">
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors min-h-[38px] shadow-sm">
                 <Plus size={16} /> Add Income
               </button>
               <div className="flex items-center gap-3">
@@ -297,11 +297,11 @@ export function AdminFinancials() {
                   <input ref={incomeFilterRef} type="date" value={incomeFilter} 
                     onFocus={() => openPicker(incomeFilterRef)} 
                     onChange={e => setIncomeFilter(e.target.value)}
-                    className="w-full sm:w-[160px] pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 cursor-pointer" />
+                    className="w-full sm:w-[160px] pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 cursor-pointer" />
                 </div>
                 {incomeFilter && (
                   <button onClick={() => setIncomeFilter('')} 
-                    className="px-3 py-2.5 rounded-xl bg-gray-100 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors">
+                    className="px-2.5 py-1.5 rounded-md bg-gray-100 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors">
                     Clear
                   </button>
                 )}
@@ -321,7 +321,7 @@ export function AdminFinancials() {
 
           {/* Income List */}
           {filteredIncome.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+            <div className="bg-white rounded-lg border border-gray-200 p-10 text-center">
               <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mx-auto mb-4">
                 <TrendingUp size={24} className="text-emerald-300" />
               </div>
@@ -333,7 +333,7 @@ export function AdminFinancials() {
               </p>
               {income.length === 0 && (
                 <button onClick={() => { setIncomeForm(defaultIncome()); setShowIncomeForm(true) }}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors">
+                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors">
                   <Plus size={14} /> Add First Income
                 </button>
               )}
@@ -341,7 +341,7 @@ export function AdminFinancials() {
           ) : (
             <div className="space-y-2">
               {filteredIncome.map(item => (
-                <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-4 hover:border-gray-300 transition-colors">
+                <div key={item.id} className="bg-white rounded-lg border border-gray-200 p-3 hover:border-gray-300 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-xl ${categoryBg[item.type] || 'bg-gray-100'} flex items-center justify-center shrink-0`}>
                       <TrendingUp size={16} />
@@ -359,7 +359,7 @@ export function AdminFinancials() {
                     <div className="flex items-center gap-3 shrink-0">
                       <span className="text-base font-bold text-emerald-600">+₹{item.amount.toLocaleString()}</span>
                       <button onClick={() => setDeleteConfirm({ type: 'income', id: item.id })}
-                        className="p-2.5 rounded-xl hover:bg-red-50 active:bg-red-100 text-gray-400 hover:text-red-500 transition-colors">
+                        className="p-2 rounded-lg hover:bg-red-50 active:bg-red-100 text-gray-400 hover:text-red-500 transition-colors">
                         <Trash2 size={15} />
                       </button>
                     </div>
@@ -375,10 +375,10 @@ export function AdminFinancials() {
       {activeTab === 'expenses' && (
         <div className="space-y-4">
           {/* Header & Filter */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="bg-white rounded-lg border border-gray-200 p-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <button onClick={openAddExpense}
-                className="flex items-center justify-center gap-2 px-5 py-3 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors min-h-[44px] shadow-sm">
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors min-h-[38px] shadow-sm">
                 <Plus size={16} /> Add Expense
               </button>
               <div className="flex items-center gap-3">
@@ -387,11 +387,11 @@ export function AdminFinancials() {
                   <input ref={expenseFilterRef} type="date" value={expenseFilter} 
                     onFocus={() => openPicker(expenseFilterRef)} 
                     onChange={e => setExpenseFilter(e.target.value)}
-                    className="w-full sm:w-[160px] pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 cursor-pointer" />
+                    className="w-full sm:w-[160px] pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 cursor-pointer" />
                 </div>
                 {expenseFilter && (
                   <button onClick={() => setExpenseFilter('')} 
-                    className="px-3 py-2.5 rounded-xl bg-gray-100 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors">
+                    className="px-2.5 py-1.5 rounded-md bg-gray-100 text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors">
                     Clear
                   </button>
                 )}
@@ -411,7 +411,7 @@ export function AdminFinancials() {
 
           {/* Expenses List */}
           {filteredExpenses.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+            <div className="bg-white rounded-lg border border-gray-200 p-10 text-center">
               <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
                 <TrendingDown size={24} className="text-red-300" />
               </div>
@@ -423,7 +423,7 @@ export function AdminFinancials() {
               </p>
               {expenses.length === 0 && (
                 <button onClick={openAddExpense}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors">
+                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors">
                   <Plus size={14} /> Add First Expense
                 </button>
               )}
@@ -431,7 +431,7 @@ export function AdminFinancials() {
           ) : (
             <div className="space-y-2">
               {filteredExpenses.map(item => (
-                <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-4 hover:border-gray-300 transition-colors">
+                <div key={item.id} className="bg-white rounded-lg border border-gray-200 p-3 hover:border-gray-300 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-xl ${categoryBg[item.category] || 'bg-gray-100'} flex items-center justify-center shrink-0`}>
                       <TrendingDown size={16} />
@@ -455,11 +455,11 @@ export function AdminFinancials() {
                     <div className="flex items-center gap-2 shrink-0">
                       <span className="text-base font-bold text-red-600">-₹{item.amount.toLocaleString()}</span>
                       <button onClick={() => openEditExpense(item)}
-                        className="p-2.5 rounded-xl hover:bg-gray-100 active:bg-gray-200 text-gray-400 hover:text-gray-600 transition-colors">
+                        className="p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 text-gray-400 hover:text-gray-600 transition-colors">
                         <Pencil size={15} />
                       </button>
                       <button onClick={() => setDeleteConfirm({ type: 'expense', id: item.id })}
-                        className="p-2.5 rounded-xl hover:bg-red-50 active:bg-red-100 text-gray-400 hover:text-red-500 transition-colors">
+                        className="p-2 rounded-lg hover:bg-red-50 active:bg-red-100 text-gray-400 hover:text-red-500 transition-colors">
                         <Trash2 size={15} />
                       </button>
                     </div>
@@ -474,13 +474,13 @@ export function AdminFinancials() {
       {/* Add/Edit Expense Modal */}
       {showExpenseForm && (
         <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowExpenseForm(false)}>
-          <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-2xl sm:rounded-xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-gray-900 text-lg">{editingExpenseId ? 'Edit Expense' : 'New Expense'}</h3>
                 <p className="text-xs text-gray-500 mt-0.5">{editingExpenseId ? 'Update expense details' : 'Track a new expense'}</p>
               </div>
-              <button onClick={() => setShowExpenseForm(false)} className="p-2.5 rounded-xl hover:bg-gray-100 transition-colors">
+              <button onClick={() => setShowExpenseForm(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
                 <X size={20} className="text-gray-500" />
               </button>
             </div>
@@ -488,42 +488,42 @@ export function AdminFinancials() {
               <div>
                 <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Label *</label>
                 <input type="text" required value={expenseForm.label} onChange={e => setExpenseForm({ ...expenseForm, label: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. Kitchen Supplies" />
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. Kitchen Supplies" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Description</label>
                 <textarea value={expenseForm.description} onChange={e => setExpenseForm({ ...expenseForm, description: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none h-24 transition-all" placeholder="What was this expense for?" />
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none h-24 transition-all" placeholder="What was this expense for?" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Amount (₹) *</label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
                   <input type="number" min="0" required value={expenseForm.amount || ''} onChange={e => setExpenseForm({ ...expenseForm, amount: Number(e.target.value) })}
-                    className="w-full pl-8 pr-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="0" />
+                    className="w-full pl-8 pr-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="0" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Category</label>
                   <select value={expenseForm.category} onChange={e => setExpenseForm({ ...expenseForm, category: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
                     {expenseCategories.map(c => <option key={c}>{c}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Date</label>
                   <input ref={expenseDateRef} type="date" value={expenseForm.date} onFocus={() => openPicker(expenseDateRef)} onChange={e => setExpenseForm({ ...expenseForm, date: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer transition-all" />
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer transition-all" />
                 </div>
               </div>
               <div className="flex gap-3 pt-3">
                 <button type="button" onClick={() => setShowExpenseForm(false)} 
-                  className="flex-1 py-3.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
+                  className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
                   Cancel
                 </button>
                 <button type="submit" 
-                  className="flex-1 py-3.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-all shadow-sm">
+                  className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-all shadow-sm">
                   {editingExpenseId ? 'Update' : 'Add'} Expense
                 </button>
               </div>
@@ -535,13 +535,13 @@ export function AdminFinancials() {
       {/* Add Income Modal */}
       {showIncomeForm && (
         <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowIncomeForm(false)}>
-          <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-2xl sm:rounded-xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-gray-900 text-lg">New Income</h3>
                 <p className="text-xs text-gray-500 mt-0.5">Record incoming revenue</p>
               </div>
-              <button onClick={() => setShowIncomeForm(false)} className="p-2.5 rounded-xl hover:bg-gray-100 transition-colors">
+              <button onClick={() => setShowIncomeForm(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
                 <X size={20} className="text-gray-500" />
               </button>
             </div>
@@ -549,37 +549,37 @@ export function AdminFinancials() {
               <div>
                 <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Source *</label>
                 <input type="text" required value={incomeForm.source} onChange={e => setIncomeForm({ ...incomeForm, source: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all" placeholder="e.g. Room - Presidential Suite #301" />
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all" placeholder="e.g. Room - Presidential Suite #301" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Amount (₹) *</label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
                   <input type="number" min="0" required value={incomeForm.amount || ''} onChange={e => setIncomeForm({ ...incomeForm, amount: Number(e.target.value) })}
-                    className="w-full pl-8 pr-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all" placeholder="0" />
+                    className="w-full pl-8 pr-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all" placeholder="0" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Type</label>
                   <select value={incomeForm.type} onChange={e => setIncomeForm({ ...incomeForm, type: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-white transition-all appearance-none">
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-white transition-all appearance-none">
                     {incomeTypes.map(t => <option key={t}>{t}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Date</label>
                   <input ref={incomeDateRef} type="date" value={incomeForm.date} onFocus={() => openPicker(incomeDateRef)} onChange={e => setIncomeForm({ ...incomeForm, date: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 cursor-pointer transition-all" />
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 cursor-pointer transition-all" />
                 </div>
               </div>
               <div className="flex gap-3 pt-3">
                 <button type="button" onClick={() => setShowIncomeForm(false)} 
-                  className="flex-1 py-3.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
+                  className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
                   Cancel
                 </button>
                 <button type="submit" 
-                  className="flex-1 py-3.5 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-all shadow-sm">
+                  className="flex-1 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-all shadow-sm">
                   Add Income
                 </button>
               </div>
@@ -591,7 +591,7 @@ export function AdminFinancials() {
       {/* Delete Confirmation */}
       {deleteConfirm && (
         <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setDeleteConfirm(null)}>
-          <div className="bg-white rounded-t-3xl sm:rounded-2xl p-6 w-full sm:max-w-sm sm:mx-4 safe-area-bottom" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-2xl sm:rounded-xl p-6 w-full sm:max-w-sm sm:mx-4 safe-area-bottom" onClick={e => e.stopPropagation()}>
             <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
               <Trash2 size={20} className="text-red-600" />
             </div>
@@ -599,11 +599,11 @@ export function AdminFinancials() {
             <p className="text-sm text-gray-500 mb-5 text-center">This action cannot be undone.</p>
             <div className="flex gap-3">
               <button onClick={() => setDeleteConfirm(null)} 
-                className="flex-1 py-3.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
+                className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
                 Cancel
               </button>
               <button onClick={handleDelete} 
-                className="flex-1 py-3.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-all shadow-sm">
+                className="flex-1 py-2.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-all shadow-sm">
                 Delete
               </button>
             </div>

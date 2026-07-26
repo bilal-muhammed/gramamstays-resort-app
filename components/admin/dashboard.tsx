@@ -110,7 +110,7 @@ export function AdminDashboard({ onNavigate }: Props) {
     <div className="space-y-5">
       {/* Today's Overview */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-gray-300 transition-all">
+        <div className="bg-white rounded-lg border border-gray-200 p-3 hover:border-gray-300 transition-all">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
               <LogIn size={16} className="text-blue-600" />
@@ -122,7 +122,7 @@ export function AdminDashboard({ onNavigate }: Props) {
             <p className="text-[11px] text-gray-400 mt-1 truncate">{todayCheckIns[0].guest}{todayCheckIns.length > 1 ? ` +${todayCheckIns.length - 1}` : ''}</p>
           )}
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4 hover:border-gray-300 transition-all">
+        <div className="bg-white rounded-lg border border-gray-200 p-3 hover:border-gray-300 transition-all">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
               <LogOut size={16} className="text-amber-600" />
@@ -134,7 +134,7 @@ export function AdminDashboard({ onNavigate }: Props) {
             <p className="text-[11px] text-gray-400 mt-1 truncate">{todayCheckOuts[0].guest}{todayCheckOuts.length > 1 ? ` +${todayCheckOuts.length - 1}` : ''}</p>
           )}
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4 col-span-2 sm:col-span-1 hover:border-gray-300 transition-all">
+        <div className="bg-white rounded-lg border border-gray-200 p-3 col-span-2 sm:col-span-1 hover:border-gray-300 transition-all">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
               <DollarSign size={16} className="text-emerald-600" />
@@ -150,7 +150,7 @@ export function AdminDashboard({ onNavigate }: Props) {
         {stats.map((stat) => {
           const Icon = stat.icon
           return (
-            <div key={stat.label} className="bg-white rounded-xl border border-gray-200 p-4 hover:border-gray-300 transition-all">
+            <div key={stat.label} className="bg-white rounded-lg border border-gray-200 p-3 hover:border-gray-300 transition-all">
               <div className="flex items-center gap-3 mb-3">
                 <div className={`w-10 h-10 ${stat.bgColor} rounded-xl flex items-center justify-center shrink-0`}>
                   <Icon size={16} className={stat.textColor} />
@@ -268,7 +268,7 @@ export function AdminDashboard({ onNavigate }: Props) {
       {/* Bottom Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Room Status */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <BedDouble size={14} className="text-primary" />
@@ -302,7 +302,7 @@ export function AdminDashboard({ onNavigate }: Props) {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <Activity size={14} className="text-primary" />
@@ -322,7 +322,7 @@ export function AdminDashboard({ onNavigate }: Props) {
                 <button
                   key={action.label}
                   onClick={() => onNavigate(action.section)}
-                  className="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 active:bg-gray-200 text-sm text-gray-700 font-medium transition-colors"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 active:bg-gray-200 text-sm text-gray-700 font-medium transition-colors"
                 >
                   <div className={`w-8 h-8 rounded-lg ${action.color} flex items-center justify-center`}>
                     <Icon size={14} />
@@ -336,7 +336,7 @@ export function AdminDashboard({ onNavigate }: Props) {
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5 sm:col-span-2 lg:col-span-1">
+        <div className="bg-white rounded-lg border border-gray-200 p-4 sm:col-span-2 lg:col-span-1">
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <Clock size={14} className="text-primary" />

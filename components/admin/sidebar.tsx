@@ -43,7 +43,7 @@ export function AdminSidebar({ activeSection, onNavigate, isOpen, onClose }: Pro
               <p className="text-[10px] text-white/40 uppercase tracking-wider">Admin Panel</p>
             </div>
           </div>
-          <button onClick={onClose} className="lg:hidden text-white/50 hover:text-white p-2.5 -mr-1 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-white/10 transition-colors">
+          <button onClick={onClose} className="lg:hidden text-white/50 hover:text-white p-1.5 -mr-1 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-md hover:bg-white/10 transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -57,7 +57,7 @@ export function AdminSidebar({ activeSection, onNavigate, isOpen, onClose }: Pro
               <button
                 key={item.id}
                 onClick={() => { onNavigate(item.id); onClose() }}
-                className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-lg text-sm font-medium transition-all min-h-[44px] ${
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all min-h-[40px] ${
                   isActive
                     ? 'bg-white/10 text-white'
                     : 'text-white/50 hover:text-white hover:bg-white/5 active:bg-white/10'

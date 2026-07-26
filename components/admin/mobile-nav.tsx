@@ -28,7 +28,7 @@ export function AdminMobileNav({ activeSection, onNavigate }: Props) {
             <button
               key={item.id}
               onClick={() => onNavigate(item.id)}
-              className={`flex flex-col items-center gap-1 px-2 py-2.5 rounded-xl transition-all min-w-0 min-h-[48px] justify-center ${
+              className={`flex flex-col items-center gap-1 px-2 py-2 rounded-md transition-all min-w-0 min-h-[44px] justify-center ${
                 isActive ? 'text-primary bg-primary/5' : 'text-gray-400 active:bg-gray-100'
               }`}
             >
