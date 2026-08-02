@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
+import { LoadingBar } from '@/components/loading-bar'
 import './globals.css'
 
 const inter = Inter({
@@ -40,6 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable} bg-background scroll-smooth`}>
       <body className="antialiased font-sans text-foreground">
+        <LoadingBar />
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

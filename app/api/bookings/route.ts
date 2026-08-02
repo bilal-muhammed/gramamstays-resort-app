@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
 import { createAuditLog, getUserFromRequest } from '@/lib/audit'
+import { sendBookingStatusEmail, sendBookingStatusWhatsAppNotification } from '@/lib/notifications'
 
 function toISODateTime(val: unknown): Date | undefined {
   if (val === undefined || val === null) return undefined
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
   if (!prisma) return NextResponse.json({ error: 'Database not connected' }, { status: 503 })
   try {
     const data = await request.json()
-    const { id: _, ...createData } = data
+    const { id: _, sendEmail: sendEmailFlag, sendWhatsApp: sendWhatsAppFlag, ...createData } = data
     if (createData.checkIn) createData.checkIn = toISODateTime(createData.checkIn)
     if (createData.checkOut) createData.checkOut = toISODateTime(createData.checkOut)
     serializeBooking(createData)
@@ -66,7 +67,53 @@ export async function POST(request: Request) {
       })
     }
 
-    return NextResponse.json(deserializeBooking(booking as Record<string, unknown>), { status: 201 })
+    let emailStatus: { sent: boolean; error?: string } = { sent: false }
+    let whatsappStatus: { sent: boolean; error?: string } = { sent: false }
+
+    const checkInDate = booking.checkIn instanceof Date
+      ? booking.checkIn.toISOString().split('T')[0]
+      : String(booking.checkIn)
+    const checkOutDate = booking.checkOut instanceof Date
+      ? booking.checkOut.toISOString().split('T')[0]
+      : String(booking.checkOut)
+
+    let addons: string[] = []
+    if (booking.addons) {
+      if (typeof booking.addons === 'string') {
+        try { addons = JSON.parse(booking.addons) } catch { addons = [] }
+      } else if (Array.isArray(booking.addons)) {
+        addons = booking.addons
+      }
+    }
+
+    const bookingData = {
+      guest: booking.guest,
+      email: booking.email,
+      phone: booking.phone,
+      room: booking.room,
+      roomNo: booking.roomNo,
+      checkIn: checkInDate,
+      checkOut: checkOutDate,
+      nights: booking.nights,
+      amount: booking.amount,
+      paidAmount: booking.paidAmount,
+      payment: booking.payment,
+      status: booking.status,
+      addons,
+      addonNote: booking.addonNote || undefined,
+    }
+
+    if (sendEmailFlag !== false && booking.email) {
+      const result = await sendBookingStatusEmail(bookingData, true)
+      emailStatus = { sent: result.success, error: result.error }
+    }
+
+    if (sendWhatsAppFlag !== false && booking.phone) {
+      const result = await sendBookingStatusWhatsAppNotification(bookingData, true)
+      whatsappStatus = { sent: result.success, error: result.error }
+    }
+
+    return NextResponse.json({ ...deserializeBooking(booking as Record<string, unknown>), emailStatus, whatsappStatus }, { status: 201 })
   } catch (error) {
     console.error('[Bookings] POST error:', error)
     return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 })

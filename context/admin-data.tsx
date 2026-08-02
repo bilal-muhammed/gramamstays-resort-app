@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, useEffect, useMemo, useRef, type ReactNode } from 'react'
 import type { Booking, Room, Guest, Income, Expense, Staff, Activity, Property } from '@/types/admin'
+import { startLoading, doneLoading } from '@/components/loading-bar'
 
 interface AdminDataContextType {
   bookings: Booking[]
@@ -13,8 +14,8 @@ interface AdminDataContextType {
   activities: Activity[]
   properties: Property[]
   loading: boolean
-  addBooking: (b: Omit<Booking, 'id'>) => Promise<void>
-  updateBooking: (id: string, b: Partial<Booking>) => Promise<void>
+  addBooking: (b: Omit<Booking, 'id'> & { sendEmail?: boolean; sendWhatsApp?: boolean }) => Promise<{ emailStatus?: { sent: boolean; error?: string }; whatsappStatus?: { sent: boolean; error?: string } } | null>
+  updateBooking: (id: string, b: Partial<Booking> & { sendEmail?: boolean; sendWhatsApp?: boolean }) => Promise<{ emailStatus?: { sent: boolean; error?: string }; whatsappStatus?: { sent: boolean; error?: string } } | null>
   deleteBooking: (id: string) => Promise<void>
   addRoom: (r: Omit<Room, 'id'>) => Promise<void>
   updateRoom: (id: string, r: Partial<Room>) => Promise<void>
@@ -40,11 +41,14 @@ const AdminDataContext = createContext<AdminDataContextType | null>(null)
 
 async function api<T>(url: string, options?: RequestInit): Promise<T | null> {
   try {
+    startLoading()
     const res = await fetch(url, { ...options, headers: { 'Content-Type': 'application/json', ...options?.headers } })
     if (!res.ok) return null
     return res.json()
   } catch {
     return null
+  } finally {
+    doneLoading()
   }
 }
 
@@ -93,8 +97,8 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     if (activity) setActivities(prev => [activity, ...prev].slice(0, 20))
   }, [])
 
-  const addBooking = useCallback(async (b: Omit<Booking, 'id'>) => {
-    const booking = await api<Booking>('/api/bookings', { method: 'POST', body: JSON.stringify(b) })
+  const addBooking = useCallback(async (b: Omit<Booking, 'id'> & { sendEmail?: boolean; sendWhatsApp?: boolean }) => {
+    const booking = await api<Booking & { emailStatus?: { sent: boolean; error?: string }; whatsappStatus?: { sent: boolean; error?: string } }>('/api/bookings', { method: 'POST', body: JSON.stringify(b) })
     if (booking) {
       setBookings(prev => [booking, ...prev])
       await api<Activity>('/api/activities', { method: 'POST', body: JSON.stringify({ time: 'Just now', text: `New booking from ${b.guest}` }) })
@@ -105,11 +109,13 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
           await api<Activity>('/api/activities', { method: 'POST', body: JSON.stringify({ time: 'Just now', text: `Income recorded: ₹${b.paidAmount.toLocaleString()} from ${b.guest}` }) })
         }
       }
+      return { emailStatus: booking.emailStatus, whatsappStatus: booking.whatsappStatus }
     }
+    return null
   }, [])
 
-  const updateBooking = useCallback(async (id: string, b: Partial<Booking>) => {
-    const updated = await api<Booking>(`/api/bookings/${id}`, { method: 'PATCH', body: JSON.stringify(b) })
+  const updateBooking = useCallback(async (id: string, b: Partial<Booking> & { sendEmail?: boolean; sendWhatsApp?: boolean }) => {
+    const updated = await api<Booking & { emailStatus?: { sent: boolean; error?: string }; whatsappStatus?: { sent: boolean; error?: string } }>(`/api/bookings/${id}`, { method: 'PATCH', body: JSON.stringify(b) })
     if (updated) {
       const original = bookingsRef.current.find(item => item.id === id)
       setBookings(prev => prev.map(item => item.id === id ? updated : item))
@@ -121,7 +127,9 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
           await api<Activity>('/api/activities', { method: 'POST', body: JSON.stringify({ time: 'Just now', text: `Payment of ₹${additional.toLocaleString()} from ${updated.guest}` }) })
         }
       }
+      return { emailStatus: updated.emailStatus, whatsappStatus: updated.whatsappStatus }
     }
+    return null
   }, [])
 
   const deleteBooking = useCallback(async (id: string) => {

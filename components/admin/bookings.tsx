@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback } from 'react'
 import { useAdminData } from '@/context/admin-data'
 import { useToast } from '@/context/toast'
+import { useLoading } from '@/components/loading-bar'
 import { Search, Plus, Pencil, Trash2, X, CalendarCheck, Filter, Users, Compass, Flame, UtensilsCrossed, BedDouble, Sparkles, TreePine } from 'lucide-react'
 import type { Booking } from '@/types/admin'
 
@@ -56,12 +57,13 @@ const paymentColor: Record<string, string> = {
 const emptyBooking = {
   guest: '', email: '', phone: '', room: '', roomNo: '',
   checkIn: '', checkOut: '', nights: 1, status: 'Pending' as const, amount: 0, paidAmount: 0, payment: 'Pending' as const,
-  addons: [] as string[], addonNote: '',
+  addons: [] as string[], addonNote: '', sendEmail: true, sendWhatsApp: true,
 }
 
 export function AdminBookings() {
   const { bookings, addBooking, updateBooking, deleteBooking, properties } = useAdminData()
   const { toast } = useToast()
+  const { isLoading } = useLoading()
   const [activeFilter, setActiveFilter] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
   const [showForm, setShowForm] = useState(false)
@@ -101,22 +103,42 @@ export function AdminBookings() {
 
   const openEdit = (b: Booking) => {
     setEditingId(b.id)
-    setForm({ guest: b.guest, email: b.email, phone: b.phone, room: b.room, roomNo: b.roomNo, checkIn: toDateInput(b.checkIn), checkOut: toDateInput(b.checkOut), nights: b.nights, status: b.status, amount: b.amount, paidAmount: b.paidAmount, payment: b.payment, addons: Array.isArray(b.addons) ? b.addons : [], addonNote: b.addonNote || '' })
+    setForm({ guest: b.guest, email: b.email, phone: b.phone, room: b.room, roomNo: b.roomNo, checkIn: toDateInput(b.checkIn), checkOut: toDateInput(b.checkOut), nights: b.nights, status: b.status, amount: b.amount, paidAmount: b.paidAmount, payment: b.payment, addons: Array.isArray(b.addons) ? b.addons : [], addonNote: b.addonNote || '', sendEmail: true, sendWhatsApp: true })
     setShowForm(true)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (form.status === 'Checked Out' && form.amount > 0 && form.paidAmount < form.amount) {
       toast('error', `Cannot check out — ₹${(form.amount - form.paidAmount).toLocaleString()} balance pending. Clear the balance first.`)
       return
     }
     if (editingId) {
-      updateBooking(editingId, form)
+      const result = await updateBooking(editingId, form)
       toast('success', 'Booking updated')
+      if (result) {
+        if (form.sendEmail) {
+          if (result.emailStatus?.sent) toast('success', 'Email sent to guest')
+          else if (result.emailStatus?.error) toast('error', `Email failed: ${result.emailStatus.error}`)
+        }
+        if (form.sendWhatsApp) {
+          if (result.whatsappStatus?.sent) toast('success', 'WhatsApp sent to guest')
+          else if (result.whatsappStatus?.error) toast('error', `WhatsApp failed: ${result.whatsappStatus.error}`)
+        }
+      }
     } else {
-      addBooking(form)
+      const result = await addBooking(form)
       toast('success', 'Booking created')
+      if (result) {
+        if (form.sendEmail) {
+          if (result.emailStatus?.sent) toast('success', 'Email sent to guest')
+          else if (result.emailStatus?.error) toast('error', `Email failed: ${result.emailStatus.error}`)
+        }
+        if (form.sendWhatsApp) {
+          if (result.whatsappStatus?.sent) toast('success', 'WhatsApp sent to guest')
+          else if (result.whatsappStatus?.error) toast('error', `WhatsApp failed: ${result.whatsappStatus.error}`)
+        }
+      }
     }
     setShowForm(false)
     setEditingId(null)
@@ -137,7 +159,7 @@ export function AdminBookings() {
           <h2 className="text-lg font-bold text-gray-900">Bookings</h2>
           <p className="text-xs text-gray-500 mt-0.5">{filtered.length} of {bookings.length} bookings</p>
         </div>
-        <button onClick={openAdd} className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all min-h-[38px] shadow-sm">
+        <button onClick={openAdd} disabled={isLoading} className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all min-h-[38px] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
           <Plus size={16} /> New Booking
         </button>
       </div>
@@ -181,7 +203,7 @@ export function AdminBookings() {
             <p className="text-sm font-medium text-gray-900 mb-1">No bookings found</p>
             <p className="text-xs text-gray-500 mb-4">{searchQuery ? 'Try a different search' : 'Create your first booking'}</p>
             {!searchQuery && (
-              <button onClick={openAdd} className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all">
+              <button onClick={openAdd} disabled={isLoading} className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                 <Plus size={14} /> New Booking
               </button>
             )}
@@ -259,10 +281,10 @@ export function AdminBookings() {
                     </td>
                     <td className="px-5 py-4 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <button onClick={() => openEdit(b)} className="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                        <button onClick={() => openEdit(b)} disabled={isLoading} className="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
                           <Pencil size={15} />
                         </button>
-                        <button onClick={() => setDeleteConfirm(b.id)} className="p-1.5 rounded-md hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors">
+                        <button onClick={() => setDeleteConfirm(b.id)} disabled={isLoading} className="p-1.5 rounded-md hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
                           <Trash2 size={15} />
                         </button>
                       </div>
@@ -285,7 +307,7 @@ export function AdminBookings() {
             <p className="text-sm font-medium text-gray-900 mb-1">No bookings found</p>
             <p className="text-xs text-gray-500 mb-4">{searchQuery ? 'Try a different search' : 'Create your first booking'}</p>
             {!searchQuery && (
-              <button onClick={openAdd} className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all">
+              <button onClick={openAdd} disabled={isLoading} className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                 <Plus size={14} /> New Booking
               </button>
             )}
@@ -350,10 +372,10 @@ export function AdminBookings() {
                 </div>
               )}
               <div className="flex gap-2">
-                <button onClick={() => openEdit(b)} className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
+                <button onClick={() => openEdit(b)} disabled={isLoading} className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
                   <Pencil size={15} />
                 </button>
-                <button onClick={() => setDeleteConfirm(b.id)} className="p-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-500 transition-colors">
+                <button onClick={() => setDeleteConfirm(b.id)} disabled={isLoading} className="p-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-500 transition-colors disabled:opacity-30 disabled:cursor-not-allowed">
                   <Trash2 size={15} />
                 </button>
               </div>
@@ -566,13 +588,56 @@ export function AdminBookings() {
                 )}
               </div>
 
+              {/* Notifications */}
+              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Notifications</h4>
+
+                {/* Email Toggle */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">Email</p>
+                    <p className="text-[11px] text-gray-500">{editingId ? 'Send status update' : 'Send booking confirmation'}</p>
+                  </div>
+                  <button type="button" onClick={() => setForm({ ...form, sendEmail: !form.sendEmail })}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.sendEmail ? 'bg-primary' : 'bg-gray-300'}`}>
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.sendEmail ? 'translate-x-6' : 'translate-x-1'}`} />
+                  </button>
+                </div>
+                {form.sendEmail && form.email && (
+                  <p className="text-[11px] text-primary font-medium">→ {form.email}</p>
+                )}
+                {form.sendEmail && !form.email && (
+                  <p className="text-[11px] text-amber-600 font-medium">⚠ No email address</p>
+                )}
+
+                <div className="border-t border-gray-200" />
+
+                {/* WhatsApp Toggle */}
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">WhatsApp</p>
+                    <p className="text-[11px] text-gray-500">{editingId ? 'Send status update' : 'Send booking confirmation'}</p>
+                  </div>
+                  <button type="button" onClick={() => setForm({ ...form, sendWhatsApp: !form.sendWhatsApp })}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.sendWhatsApp ? 'bg-green-500' : 'bg-gray-300'}`}>
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.sendWhatsApp ? 'translate-x-6' : 'translate-x-1'}`} />
+                  </button>
+                </div>
+                {form.sendWhatsApp && form.phone && (
+                  <p className="text-[11px] text-green-600 font-medium">→ +91 {form.phone}</p>
+                )}
+                {form.sendWhatsApp && !form.phone && (
+                  <p className="text-[11px] text-amber-600 font-medium">⚠ No phone number</p>
+                )}
+              </div>
+
               {/* Buttons */}
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
+                <button type="button" onClick={() => setShowForm(false)} disabled={isLoading} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                   Cancel
                 </button>
-                <button type="submit" className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-all shadow-sm">
-                  {editingId ? 'Update' : 'Create'} Booking
+                <button type="submit" disabled={isLoading} className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                  {isLoading ? 'Processing...' : editingId ? 'Update' : 'Create'} Booking
                 </button>
               </div>
             </form>
@@ -590,11 +655,11 @@ export function AdminBookings() {
             <h3 className="font-bold text-gray-900 mb-1 text-center">Delete Booking?</h3>
             <p className="text-sm text-gray-500 mb-5 text-center">This action cannot be undone.</p>
             <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
+              <button onClick={() => setDeleteConfirm(null)} disabled={isLoading} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                 Cancel
               </button>
-              <button onClick={() => handleDelete(deleteConfirm)} className="flex-1 py-2.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-all shadow-sm">
-                Delete
+              <button onClick={() => handleDelete(deleteConfirm)} disabled={isLoading} className="flex-1 py-2.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                {isLoading ? 'Deleting...' : 'Delete'}
               </button>
             </div>
           </div>

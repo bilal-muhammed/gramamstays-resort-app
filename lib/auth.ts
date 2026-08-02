@@ -1,7 +1,10 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'gramamstays-admin-secret-key-2024'
+const JWT_SECRET = process.env.JWT_SECRET
+if (!JWT_SECRET) {
+  console.error('[Auth] JWT_SECRET not set in environment variables!')
+}
 const TOKEN_EXPIRY = '7d'
 
 export type UserRole = 'super_admin' | 'admin' | 'staff'
