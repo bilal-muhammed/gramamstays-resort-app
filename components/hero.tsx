@@ -22,7 +22,7 @@ export function Hero() {
       {/* Background Image with Parallax */}
       <motion.div className="absolute inset-0" style={{ y: bgY, scale }}>
         <Image
-          src="/hero-resort.png"
+          src="/main_banner_.png"
           alt="Gramamstays Luxury Resort"
           fill
           className="object-cover"
@@ -61,7 +61,7 @@ export function Hero() {
           <span className="block">Where Nature</span>
           <span className="block mt-1.5 sm:mt-2">
             Meets{' '}
-            <span className="italic font-light text-gradient-gold">Luxury</span>
+            <span className="italic font-light text-gradient-gold">Elegance</span>
           </span>
         </motion.h2>
 
@@ -72,7 +72,7 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.6 }}
           className="text-sm sm:text-base md:text-lg text-white/65 max-w-lg sm:max-w-xl mx-auto mb-7 sm:mb-9 font-light leading-relaxed"
         >
-          An exclusive sanctuary nestled in the mountains, offering an unparalleled escape into elegance and world-class hospitality.
+        Experience the perfect harmony of nature, comfort, and warm hospitality just moments from Athirappilly Waterfalls.
         </motion.p>
 
         {/* CTAs */}
@@ -83,7 +83,7 @@ export function Hero() {
           className="flex flex-col sm:flex-row gap-3 justify-center items-center"
         >
           <motion.a
-            href="https://wa.me/919539222031?text=Hi%2C%20I%20would%20like%20to%20book%20a%20stay%20at%20Gramamstays%20Resort.%20Please%20share%20the%20availability%20and%20pricing."
+            href="https://wa.me/919526522031?text=Hi%2C%20I%20would%20like%20to%20book%20a%20stay%20at%20Gramamstays%20Resort.%20Please%20share%20the%20availability%20and%20pricing."
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.03 }}

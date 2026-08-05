@@ -50,7 +50,6 @@ export async function sendBookingStatusEmail(
       html,
     })
 
-    console.log(`[Notifications] Email sent to ${booking.email} for status: ${booking.status}`)
     return { success: true }
   } catch (error) {
     console.error('[Notifications] Failed to send email:', error)

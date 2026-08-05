@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, useEffect, useMemo, useRef, type ReactNode } from 'react'
-import type { Booking, Room, Guest, Income, Expense, Staff, Activity, Property } from '@/types/admin'
+import type { Booking, Room, Guest, Income, Expense, Staff, Activity, Property, Testimonial, Inquiry } from '@/types/admin'
 import { startLoading, doneLoading } from '@/components/loading-bar'
 
 interface AdminDataContextType {
@@ -13,6 +13,8 @@ interface AdminDataContextType {
   staff: Staff[]
   activities: Activity[]
   properties: Property[]
+  testimonials: Testimonial[]
+  inquiries: Inquiry[]
   loading: boolean
   addBooking: (b: Omit<Booking, 'id'> & { sendEmail?: boolean; sendWhatsApp?: boolean }) => Promise<{ emailStatus?: { sent: boolean; error?: string }; whatsappStatus?: { sent: boolean; error?: string } } | null>
   updateBooking: (id: string, b: Partial<Booking> & { sendEmail?: boolean; sendWhatsApp?: boolean }) => Promise<{ emailStatus?: { sent: boolean; error?: string }; whatsappStatus?: { sent: boolean; error?: string } } | null>
@@ -35,6 +37,11 @@ interface AdminDataContextType {
   addProperty: (p: Omit<Property, 'id'>) => Promise<void>
   updateProperty: (id: string, p: Partial<Property>) => Promise<void>
   deleteProperty: (id: string) => Promise<void>
+  addTestimonial: (t: Omit<Testimonial, 'id'>) => Promise<void>
+  updateTestimonial: (id: string, t: Partial<Testimonial>) => Promise<void>
+  deleteTestimonial: (id: string) => Promise<void>
+  updateInquiry: (id: string, i: Partial<Inquiry>) => Promise<void>
+  deleteInquiry: (id: string) => Promise<void>
 }
 
 const AdminDataContext = createContext<AdminDataContextType | null>(null)
@@ -65,6 +72,8 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
   const [staffList, setStaffList] = useState<Staff[]>([])
   const [activities, setActivities] = useState<Activity[]>([])
   const [properties, setProperties] = useState<Property[]>([])
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
+  const [inquiries, setInquiries] = useState<Inquiry[]>([])
   const [loading, setLoading] = useState(true)
 
   const bookingsRef = useRef(bookings)
@@ -80,7 +89,9 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       api<Staff[]>('/api/staff'),
       api<Activity[]>('/api/activities'),
       api<Property[]>('/api/properties'),
-    ]).then(([b, r, g, i, e, s, a, p]) => {
+      api<Testimonial[]>('/api/testimonials'),
+      api<Inquiry[]>('/api/inquiries'),
+    ]).then(([b, r, g, i, e, s, a, p, t, q]) => {
       if (b) setBookings(b)
       if (r) setRooms(r)
       if (g) setGuests(g)
@@ -89,6 +100,8 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       if (s) setStaffList(s)
       if (a) setActivities(a)
       if (p) setProperties(p)
+      if (t) setTestimonials(t)
+      if (q) setInquiries(q)
     }).finally(() => setLoading(false))
   }, [])
 
@@ -228,8 +241,33 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     if (result) setProperties(prev => prev.filter(item => item.id !== id))
   }, [])
 
+  const addTestimonial = useCallback(async (t: Omit<Testimonial, 'id'>) => {
+    const testimonial = await api<Testimonial>('/api/testimonials', { method: 'POST', body: JSON.stringify(t) })
+    if (testimonial) setTestimonials(prev => [testimonial, ...prev])
+  }, [])
+
+  const updateTestimonial = useCallback(async (id: string, t: Partial<Testimonial>) => {
+    const updated = await api<Testimonial>(`/api/testimonials/${id}`, { method: 'PATCH', body: JSON.stringify(t) })
+    if (updated) setTestimonials(prev => prev.map(item => item.id === id ? updated : item))
+  }, [])
+
+  const deleteTestimonial = useCallback(async (id: string) => {
+    const result = await api(`/api/testimonials/${id}`, { method: 'DELETE' })
+    if (result) setTestimonials(prev => prev.filter(item => item.id !== id))
+  }, [])
+
+  const updateInquiry = useCallback(async (id: string, i: Partial<Inquiry>) => {
+    const updated = await api<Inquiry>(`/api/inquiries/${id}`, { method: 'PATCH', body: JSON.stringify(i) })
+    if (updated) setInquiries(prev => prev.map(item => item.id === id ? updated : item))
+  }, [])
+
+  const deleteInquiry = useCallback(async (id: string) => {
+    const result = await api(`/api/inquiries/${id}`, { method: 'DELETE' })
+    if (result) setInquiries(prev => prev.filter(item => item.id !== id))
+  }, [])
+
   const value = useMemo(() => ({
-    bookings, rooms, guests, income, expenses, staff: staffList, activities, properties, loading,
+    bookings, rooms, guests, income, expenses, staff: staffList, activities, properties, testimonials, inquiries, loading,
     addBooking, updateBooking, deleteBooking,
     addRoom, updateRoom, deleteRoom,
     addGuest, updateGuest, deleteGuest,
@@ -238,7 +276,9 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
     addStaff, updateStaff, deleteStaff,
     addActivity,
     addProperty, updateProperty, deleteProperty,
-  }), [bookings, rooms, guests, income, expenses, staffList, activities, properties, loading, addBooking, updateBooking, deleteBooking, addRoom, updateRoom, deleteRoom, addGuest, updateGuest, deleteGuest, addIncome, deleteIncome, addExpense, updateExpense, deleteExpense, addStaff, updateStaff, deleteStaff, addActivity, addProperty, updateProperty, deleteProperty])
+    addTestimonial, updateTestimonial, deleteTestimonial,
+    updateInquiry, deleteInquiry,
+  }), [bookings, rooms, guests, income, expenses, staffList, activities, properties, testimonials, inquiries, loading, addBooking, updateBooking, deleteBooking, addRoom, updateRoom, deleteRoom, addGuest, updateGuest, deleteGuest, addIncome, deleteIncome, addExpense, updateExpense, deleteExpense, addStaff, updateStaff, deleteStaff, addActivity, addProperty, updateProperty, deleteProperty, addTestimonial, updateTestimonial, deleteTestimonial, updateInquiry, deleteInquiry])
 
   return (
     <AdminDataContext.Provider value={value}>

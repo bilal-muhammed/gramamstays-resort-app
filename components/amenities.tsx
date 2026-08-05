@@ -1,19 +1,14 @@
 'use client'
 
-import { Waves, Utensils, Dumbbell, Leaf, Wifi, Zap, Sparkles, Car, Baby, Wine } from 'lucide-react'
+import { Wifi, Dumbbell, Car, Baby, Wine } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 
 const amenities = [
-  { icon: Waves, name: 'Infinity Pool', description: 'Olympic-sized heated pool with panoramic mountain views.', accent: 'from-blue-500/10 to-cyan-500/10' },
-  { icon: Utensils, name: 'Gourmet Dining', description: 'Three restaurants with farm-to-table cuisine by Michelin chefs.', accent: 'from-orange-500/10 to-amber-500/10' },
-  { icon: Leaf, name: 'Spa & Wellness', description: 'Full-service sanctuary with Ayurvedic treatments and steam rooms.', accent: 'from-emerald-500/10 to-green-500/10' },
+  { icon: Wifi, name: 'High-Speed WiFi', description: 'Enterprise-grade fiber connectivity throughout the resort.', accent: 'from-sky-500/10 to-blue-500/10' },
   { icon: Dumbbell, name: 'Fitness Center', description: 'State-of-the-art equipment, personal trainers, and yoga classes.', accent: 'from-red-500/10 to-rose-500/10' },
-  { icon: Sparkles, name: 'Beauty Salon', description: 'Hair styling, facials, manicures, and holistic beauty rituals.', accent: 'from-purple-500/10 to-pink-500/10' },
   { icon: Wine, name: 'Wine Cellar', description: '500+ labels from premier vineyards with private tastings.', accent: 'from-rose-500/10 to-red-500/10' },
   { icon: Car, name: 'Valet & Transfer', description: 'Complimentary valet and luxury airport transfers.', accent: 'from-slate-500/10 to-gray-500/10' },
-  { icon: Wifi, name: 'High-Speed WiFi', description: 'Enterprise-grade fiber connectivity throughout the resort.', accent: 'from-sky-500/10 to-blue-500/10' },
-  { icon: Zap, name: 'Concierge', description: '24/7 team for helicopter tours and bespoke experiences.', accent: 'from-yellow-500/10 to-amber-500/10' },
   { icon: Baby, name: 'Kids Club', description: 'Supervised adventure zone with educational activities.', accent: 'from-teal-500/10 to-cyan-500/10' },
 ]
 
@@ -25,7 +20,7 @@ export function Amenities() {
       {/* Background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0" style={{ backgroundImage: 'url(/spa-wellness.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/96 via-background/94 to-background/96" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/88 to-background/90" />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -98,7 +93,7 @@ export function Amenities() {
               <h3 className="text-xl sm:text-2xl font-bold text-white mb-1">Premium Spa</h3>
               <p className="text-white/65 text-xs sm:text-sm mb-3 sm:mb-4 max-w-xs">Signature wellness treatments by expert therapists.</p>
               <motion.a
-                href="https://wa.me/919539222031?text=Hi%2C%20I%20would%20like%20to%20book%20a%20spa%20treatment%20at%20Gramamstays%20Resort.%20Please%20share%20the%20available%20slots."
+                href="https://wa.me/919526522031?text=Hi%2C%20I%20would%20like%20to%20book%20a%20spa%20treatment%20at%20Gramamstays%20Resort.%20Please%20share%20the%20available%20slots."
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.03 }}

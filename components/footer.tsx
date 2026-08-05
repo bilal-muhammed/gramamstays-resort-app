@@ -8,7 +8,7 @@ import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 import { useState, useEffect } from 'react'
 
 const quickLinks = [
-  { label: 'Rooms & Suites', href: '#rooms' },
+  { label: 'Properties', href: '#properties' },
   { label: 'Amenities', href: '#amenities' },
   { label: 'Dining', href: '#dining' },
   { label: 'Experiences', href: '#experience' },
@@ -165,7 +165,7 @@ export function Footer() {
                 <li>+91 97447 89195</li>
                 <li>hello@gramamstays.com</li>
                 <li className="pt-1">
-                  <a href="https://wa.me/919539222031?text=Hi%2C%20I%20would%20like%20to%20get%20in%20touch%20with%20Gramamstays%20Resort." target="_blank" rel="noopener noreferrer" className="text-secondary hover:text-accent transition-colors text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider">
+                  <a href="https://wa.me/919526522031?text=Hi%2C%20I%20would%20like%20to%20get%20in%20touch%20with%20Gramamstays%20Resort." target="_blank" rel="noopener noreferrer" className="text-secondary hover:text-accent transition-colors text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider">
                     Get in Touch &rarr;
                   </a>
                 </li>

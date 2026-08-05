@@ -19,7 +19,6 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: 'Gramamstays | Luxury Resort & Wellness Retreat',
   description: 'An exclusive sanctuary where luxury meets nature. Experience world-class dining, rejuvenating spa treatments, and breathtaking mountain views at Gramamstays.',
-  generator: 'v0.app',
   icons: {
     icon: '/logo.png',
     apple: '/logo.png',

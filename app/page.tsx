@@ -1,23 +1,27 @@
 import { Header } from '@/components/header'
 import { Hero } from '@/components/hero'
-import { Rooms } from '@/components/rooms'
+import { Properties } from '@/components/properties'
 import { Amenities } from '@/components/amenities'
-import { Dining } from '@/components/dining'
 import { Contact } from '@/components/contact'
 import { Footer } from '@/components/footer'
 import { Experience } from '@/components/experience'
 import { Testimonials } from '@/components/testimonials'
+import { SectionDivider } from '@/components/section-divider'
 
 export default function Page() {
   return (
     <main className="min-h-screen bg-background">
       <Header />
       <Hero />
+      <SectionDivider variant="ornament" />
       <Experience />
-      <Rooms />
+      <SectionDivider />
+      <Properties />
+      <SectionDivider variant="ornament" />
       <Amenities />
-      <Dining />
+      <SectionDivider />
       <Testimonials />
+      <SectionDivider variant="ornament" />
       <Contact />
       <Footer />
     </main>

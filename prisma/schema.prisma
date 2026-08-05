@@ -32,23 +32,23 @@ model Booking {
 }
 
 model Room {
-  id       String @id @default(cuid())
-  type     String
-  floor    String
-  status   String
-  guest    String
-  price    Float
+  id        String  @id @default(cuid())
+  type      String
+  floor     String
+  status    String
+  guest     String
+  price     Float
   amenities String
-  until    String?
-  from     String?
-  note     String?
+  until     String?
+  from      String?
+  note      String?
 
   @@index([status])
   @@index([type])
 }
 
 model Guest {
-  id         String @id @default(cuid())
+  id         String  @id @default(cuid())
   name       String
   email      String
   phone      String
@@ -117,14 +117,22 @@ model Activity {
 }
 
 model Property {
-  id          String   @id @default(cuid())
-  name        String
-  description String
-  price       Float
-  status      String
-  amenities   String
-  image       String?
-  createdAt   DateTime @default(now())
+  id            String   @id @default(cuid())
+  name          String
+  description   String
+  price         Float
+  status        String
+  amenities     String
+  image         String?
+  createdAt     DateTime @default(now())
+  gallery       String   @default("[]")
+  badge         String   @default("")
+  features      String   @default("")
+  originalPrice Float    @default(0)
+  rating        Float    @default(0)
+  reviews       Int      @default(0)
+  specs         String   @default("{}")
+  tagline       String   @default("")
 
   @@index([name])
   @@index([status])
@@ -158,4 +166,35 @@ model AuditLog {
   @@index([userId])
   @@index([action])
   @@index([entity])
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String   @default("")
+  location  String   @default("")
+  rating    Int      @default(5)
+  text      String
+  avatar    String   @default("")
+  status    String   @default("Active")
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([status])
+  @@index([order])
+}
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String   @default("")
+  message   String
+  type      String   @default("general")
+  status    String   @default("new")
+  notes     String   @default("")
+  createdAt DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
 }

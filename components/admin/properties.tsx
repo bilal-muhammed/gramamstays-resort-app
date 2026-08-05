@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useAdminData } from '@/context/admin-data'
 import { useToast } from '@/context/toast'
-import { Search, Plus, Pencil, Trash2, X, Home, MapPin, DollarSign, Star } from 'lucide-react'
+import { Search, Plus, Pencil, Trash2, X, Home, DollarSign, Star, Upload, Loader2, ImageIcon } from 'lucide-react'
 import type { Property } from '@/types/admin'
 
 const statusColor: Record<string, string> = {
@@ -18,7 +18,7 @@ const statusDot: Record<string, string> = {
   'Maintenance': 'bg-amber-500',
 }
 
-const emptyProperty = { name: '', description: '', price: 0, status: 'Active', amenities: '', image: '' }
+const emptyProperty = { name: '', tagline: '', description: '', price: 0, originalPrice: 0, status: 'Active', amenities: '', features: '', specs: '', badge: '', rating: 0, reviews: 0, image: '', gallery: '[]' }
 
 export function AdminProperties() {
   const { properties, addProperty, updateProperty, deleteProperty } = useAdminData()
@@ -28,6 +28,13 @@ export function AdminProperties() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState(emptyProperty)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [galleryPreviews, setGalleryPreviews] = useState<string[]>([])
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const getGallery = (): string[] => {
+    try { return JSON.parse(form.gallery) } catch { return [] }
+  }
 
   const filtered = properties.filter(p => {
     return p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -35,19 +42,95 @@ export function AdminProperties() {
       p.amenities.toLowerCase().includes(searchQuery.toLowerCase())
   })
 
-  const openAdd = () => { setEditingId(null); setForm(emptyProperty); setShowForm(true) }
-  const openEdit = (p: Property) => { setEditingId(p.id); setForm({ name: p.name, description: p.description, price: p.price, status: p.status, amenities: p.amenities, image: p.image || '' }); setShowForm(true) }
+  const openAdd = () => { setEditingId(null); setForm(emptyProperty); setGalleryPreviews([]); setShowForm(true) }
+  const openEdit = (p: Property) => {
+    setEditingId(p.id)
+    const gallery = (p as any).gallery || '[]'
+    setForm({
+      name: p.name,
+      tagline: (p as any).tagline || '',
+      description: p.description,
+      price: p.price,
+      originalPrice: (p as any).originalPrice || 0,
+      status: p.status,
+      amenities: p.amenities,
+      features: (p as any).features || '',
+      specs: (p as any).specs || '',
+      badge: (p as any).badge || '',
+      rating: (p as any).rating || 0,
+      reviews: (p as any).reviews || 0,
+      image: p.image || '',
+      gallery,
+    })
+    try { setGalleryPreviews(JSON.parse(gallery)) } catch { setGalleryPreviews([]) }
+    setShowForm(true)
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setUploading(true)
+    const currentGallery = getGallery()
+    const newPreviews = [...galleryPreviews]
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+      if (!file.type.startsWith('image/')) {
+        toast('error', `${file.name} is not an image`)
+        continue
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast('error', `${file.name} must be under 5MB`)
+        continue
+      }
+
+      const preview = URL.createObjectURL(file)
+      newPreviews.push(preview)
+      setGalleryPreviews([...newPreviews])
+
+      try {
+        const formData = new FormData()
+        formData.append('file', file)
+        const res = await fetch('/api/upload', { method: 'POST', body: formData })
+        const data = await res.json()
+        if (res.ok && data.url) {
+          currentGallery.push(data.url)
+          setForm(prev => ({ ...prev, gallery: JSON.stringify(currentGallery), image: currentGallery[0] || '' }))
+        } else {
+          toast('error', data.error || `Failed to upload ${file.name}`)
+        }
+      } catch {
+        toast('error', `Failed to upload ${file.name}`)
+      }
+    }
+
+    setUploading(false)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const removeGalleryImage = (index: number) => {
+    const currentGallery = getGallery()
+    currentGallery.splice(index, 1)
+    setGalleryPreviews(prev => prev.filter((_, i) => i !== index))
+    setForm(prev => ({
+      ...prev,
+      gallery: JSON.stringify(currentGallery),
+      image: currentGallery[0] || ''
+    }))
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    const data = { ...form, image: getGallery()[0] || form.image }
     if (editingId) {
-      updateProperty(editingId, form)
+      updateProperty(editingId, data)
       toast('success', 'Property updated')
     } else {
-      addProperty(form)
+      addProperty(data)
       toast('success', 'Property added')
     }
-    setShowForm(false); setEditingId(null); setForm(emptyProperty)
+    setShowForm(false); setEditingId(null); setForm(emptyProperty); setGalleryPreviews([])
   }
 
   return (
@@ -89,26 +172,51 @@ export function AdminProperties() {
           </div>
         ) : filtered.map(property => (
           <div key={property.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-gray-300 transition-all group">
-            {/* Property Header */}
-            <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-5">
-              <div className="flex items-start justify-between">
+            {/* Property Image */}
+            {property.image ? (
+              <div className="relative h-44 overflow-hidden">
+                <img src={property.image} alt={property.name} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                {(property as any).gallery && (() => {
+                  try { const g = JSON.parse((property as any).gallery); return g.length > 1 } catch { return false }
+                })() && (
+                  <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 bg-black/60 rounded-md text-[10px] text-white font-medium">
+                    <ImageIcon size={10} />
+                    {(() => { try { return JSON.parse((property as any).gallery).length } catch { return 0 } })()} photos
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-5">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center">
                     <Home size={20} className="text-primary" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-gray-900">{property.name}</p>
-                    <p className="text-[11px] text-gray-400">{property.id}</p>
                   </div>
                 </div>
-                <span className={`inline-flex items-center gap-1 px-2 py-1 text-[10px] font-semibold rounded-lg ${statusColor[property.status]}`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${statusDot[property.status]}`} />
-                  {property.status}
-                </span>
               </div>
-            </div>
+            )}
 
             <div className="p-5">
+              {/* Name + Status */}
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-gray-900">{property.name}</p>
+                  {(property as any).tagline && <p className="text-[11px] text-gray-400 italic">{(property as any).tagline}</p>}
+                </div>
+                <div className="flex flex-col items-end gap-1 shrink-0">
+                  <span className={`inline-flex items-center gap-1 px-2 py-1 text-[10px] font-semibold rounded-lg ${statusColor[property.status]}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${statusDot[property.status]}`} />
+                    {property.status}
+                  </span>
+                  {(property as any).badge && (
+                    <span className="px-2 py-0.5 text-[10px] font-semibold rounded-md bg-secondary/10 text-secondary">{(property as any).badge}</span>
+                  )}
+                </div>
+              </div>
+
               {/* Description */}
               <p className="text-xs text-gray-600 mb-3 line-clamp-2">{property.description}</p>
 
@@ -116,8 +224,17 @@ export function AdminProperties() {
               <div className="flex items-center gap-2 mb-3">
                 <DollarSign size={14} className="text-emerald-600" />
                 <span className="text-lg font-bold text-gray-900">₹{property.price.toLocaleString()}</span>
+                {(property as any).originalPrice ? <span className="text-xs text-gray-400 line-through">₹{(property as any).originalPrice.toLocaleString()}</span> : null}
                 <span className="text-xs text-gray-500">/night</span>
               </div>
+
+              {/* Rating & Reviews */}
+              {((property as any).rating || (property as any).reviews) && (
+                <div className="flex items-center gap-3 mb-3">
+                  {(property as any).rating ? <div className="flex items-center gap-1"><Star size={12} className="fill-amber-400 text-amber-400" /><span className="text-xs font-bold text-gray-900">{(property as any).rating}</span></div> : null}
+                  {(property as any).reviews ? <span className="text-[11px] text-gray-400">{(property as any).reviews} reviews</span> : null}
+                </div>
+              )}
 
               {/* Amenities */}
               {property.amenities && (
@@ -155,10 +272,79 @@ export function AdminProperties() {
               </button>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
+              {/* Gallery Upload */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Property Images</label>
+                {galleryPreviews.length > 0 ? (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-3 gap-2">
+                      {galleryPreviews.map((preview, i) => (
+                        <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 group">
+                          <img src={preview} alt={`Preview ${i + 1}`} className="w-full h-full object-cover" />
+                          <button type="button" onClick={() => removeGalleryImage(i)} className="absolute top-1 right-1 p-1 bg-black/60 rounded-full text-white hover:bg-black/80 transition-colors opacity-0 group-hover:opacity-100">
+                            <X size={10} />
+                          </button>
+                          {i === 0 && (
+                            <div className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-primary rounded text-[8px] text-white font-semibold">COVER</div>
+                          )}
+                        </div>
+                      ))}
+                      {uploading && (
+                        <div className="aspect-square rounded-lg border border-gray-200 flex items-center justify-center bg-gray-50">
+                          <Loader2 size={20} className="text-primary animate-spin" />
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="w-full py-2 border border-dashed border-gray-300 rounded-lg text-xs font-medium text-gray-600 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Upload size={12} /> Add more images
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="w-full h-40 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-2 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    {uploading ? (
+                      <Loader2 size={24} className="text-primary animate-spin" />
+                    ) : (
+                      <>
+                        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                          <Upload size={18} className="text-gray-400" />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-sm font-medium text-gray-700">Click to upload images</p>
+                          <p className="text-[11px] text-gray-400 mt-0.5">First image will be the cover — Max 5MB each</p>
+                        </div>
+                      </>
+                    )}
+                  </button>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  multiple
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+              </div>
+
               <div>
                 <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Property Name *</label>
                 <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. Chedi, British Bungalow" />
+                  className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="Property name" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Tagline</label>
+                <input type="text" value={form.tagline} onChange={e => setForm({ ...form, tagline: e.target.value })}
+                  className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. Nature's Embrace" />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Description</label>
@@ -175,22 +361,56 @@ export function AdminProperties() {
                   </div>
                 </div>
                 <div>
+                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Original Price (₹)</label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
+                    <input type="number" min="0" value={form.originalPrice} onChange={e => setForm({ ...form, originalPrice: Number(e.target.value) })}
+                      className="w-full pl-8 pr-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
                   <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Status</label>
                   <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}
                     className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
                     <option>Active</option><option>Inactive</option><option>Maintenance</option>
                   </select>
                 </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Badge</label>
+                  <select value={form.badge} onChange={e => setForm({ ...form, badge: e.target.value })}
+                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
+                    <option value="">None</option><option>Most Popular</option><option>Best Value</option><option>Exclusive</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Rating</label>
+                  <input type="number" min="0" max="5" step="0.1" value={form.rating} onChange={e => setForm({ ...form, rating: Number(e.target.value) })}
+                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. 4.9" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Reviews Count</label>
+                  <input type="number" min="0" value={form.reviews} onChange={e => setForm({ ...form, reviews: Number(e.target.value) })}
+                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. 128" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Features (comma-separated)</label>
+                <input type="text" value={form.features} onChange={e => setForm({ ...form, features: e.target.value })}
+                  className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. River View, Kayak Access, Private Deck" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Specs (JSON)</label>
+                <input type="text" value={form.specs} onChange={e => setForm({ ...form, specs: e.target.value })}
+                  className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder='e.g. {"size":"45 m²","guests":"2","beds":"1 King","bath":"1"}' />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Amenities</label>
                 <input type="text" value={form.amenities} onChange={e => setForm({ ...form, amenities: e.target.value })}
                   className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. Pool, Garden, River View" />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Image URL</label>
-                <input type="text" value={form.image} onChange={e => setForm({ ...form, image: e.target.value })}
-                  className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="https://..." />
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">

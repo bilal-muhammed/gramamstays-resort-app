@@ -85,4 +85,35 @@ export interface Property {
   status: string
   amenities: string
   image?: string
+  gallery?: string
+  tagline?: string
+  features?: string
+  specs?: string
+  badge?: string
+  rating?: number
+  reviews?: number
+  originalPrice?: number
+}
+
+export interface Testimonial {
+  id: string
+  name: string
+  role: string
+  location: string
+  rating: number
+  text: string
+  avatar: string
+  status: string
+  order: number
+}
+
+export interface Inquiry {
+  id: string
+  name: string
+  email: string
+  phone: string
+  message: string
+  type: string
+  status: string
+  notes: string
 }

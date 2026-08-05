@@ -3,12 +3,14 @@
 import type { AdminSection } from '@/app/admin/page'
 import { useAuth } from '@/context/auth'
 import Image from 'next/image'
-import { LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog, X, Home, UserPlus, ScrollText } from 'lucide-react'
+import { LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog, X, Home, UserPlus, ScrollText, MessageSquareQuote, Inbox } from 'lucide-react'
 
 const allNavItems: { id: AdminSection; label: string; icon: typeof LayoutDashboard; minRole?: string }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'bookings', label: 'Bookings', icon: CalendarCheck },
   { id: 'properties', label: 'Properties', icon: Home },
+  { id: 'testimonials', label: 'Testimonials', icon: MessageSquareQuote },
+  { id: 'inquiries', label: 'Inquiries', icon: Inbox },
   { id: 'financials', label: 'Financials', icon: DollarSign },
   { id: 'logs', label: 'Activity Logs', icon: ScrollText },
   { id: 'register', label: 'User Management', icon: UserPlus, minRole: 'super_admin' },

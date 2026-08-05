@@ -73,7 +73,6 @@ async function sendWhatsAppMessage(message: WhatsAppMessage): Promise<{ success:
       return { success: false, error: data.error?.message || 'Failed to send' }
     }
 
-    console.log('[WhatsApp] Message sent to', to, '— ID:', data.messages?.[0]?.id)
     return { success: true }
   } catch (error) {
     console.error('[WhatsApp] Send failed:', error)

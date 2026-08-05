@@ -6,13 +6,13 @@ import { useState, useEffect } from 'react'
 import { Menu, X, Phone } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-const WHATSAPP_NUMBER = '919539222031'
+const WHATSAPP_NUMBER = '919526522031'
 const WHATSAPP_BASE = `https://wa.me/${WHATSAPP_NUMBER}`
 const WHATSAPP_BOOKING = `${WHATSAPP_BASE}?text=${encodeURIComponent('Hi, I would like to book a stay at Gramamstays Resort. Please share the availability and pricing.')}`
 
 const navItems = [
   { label: 'Experience', href: '#experience' },
-  { label: 'Rooms', href: '#rooms' },
+  { label: 'Properties', href: '#properties' },
   { label: 'Amenities', href: '#amenities' },
   { label: 'Dining', href: '#dining' },
   { label: 'Stories', href: '#testimonials' },
@@ -129,7 +129,7 @@ export function Header() {
                 whileHover={{ scale: 1.02 }}
               >
                 <Phone size={12} />
-                <span className="hidden xl:inline">+91 95392 22031</span>
+                <span className="hidden xl:inline">+91 9526522031</span>
               </motion.a>
               <motion.a
                 href={WHATSAPP_BOOKING}
@@ -199,7 +199,7 @@ export function Header() {
               >
                 <div className="w-10 h-px bg-secondary" />
                 <p className="text-[10px] text-muted-foreground tracking-[0.25em] uppercase">Call us</p>
-                <a href={WHATSAPP_BOOKING} target="_blank" rel="noopener noreferrer" className="text-sm text-foreground font-medium">+91 95392 22031</a>
+                <a href={WHATSAPP_BOOKING} target="_blank" rel="noopener noreferrer" className="text-sm text-foreground font-medium">+91 9526522031</a>
                 <a
                   href={WHATSAPP_BOOKING}
                   target="_blank"

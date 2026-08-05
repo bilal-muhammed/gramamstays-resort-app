@@ -23,8 +23,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null)
 
 const ROLE_SECTIONS: Record<UserRole, string[]> = {
-  super_admin: ['dashboard', 'bookings', 'properties', 'financials', 'register', 'logs'],
-  admin: ['dashboard', 'bookings', 'properties', 'financials', 'logs'],
+  super_admin: ['dashboard', 'bookings', 'properties', 'testimonials', 'inquiries', 'financials', 'register', 'logs'],
+  admin: ['dashboard', 'bookings', 'properties', 'testimonials', 'inquiries', 'financials', 'logs'],
   staff: ['dashboard', 'bookings', 'logs'],
 }
 

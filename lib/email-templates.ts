@@ -90,16 +90,16 @@ function wrapHtml(title: string, headerSubtitle: string, bodyContent: string): s
 <body>
   <div class="container">
     <div class="header">
-      <h1>Gramamstays Resort</h1>
+      <h1>Gramamstays </h1>
       <p>${headerSubtitle}</p>
     </div>
     <div class="content">
       ${bodyContent}
     </div>
     <div class="footer">
-      <p class="brand">Gramamstays Resort</p>
+      <p class="brand">Gramamstays </p>
       <p>Your Nature Escape in Kerala</p>
-      <p>For inquiries: <a href="mailto:support@gramamstays.com">support@gramamstays.com</a></p>
+      <p>For inquiries: <a href="mailto:admin@gramamstays.com">admin@gramamstays.com</a></p>
     </div>
   </div>
   <style>${baseStyles}</style>
@@ -182,11 +182,11 @@ export function getBookingEmail(data: BookingEmailData): { subject: string; html
   switch (data.status) {
     case 'Pending':
       return {
-        subject: `Booking Request Received - Gramamstays Resort`,
+        subject: `Booking Request Received - Gramamstays `,
         html: wrapHtml('Booking Request Received', 'Booking Confirmation', `
           <p class="greeting">Dear ${data.guest},</p>
           <p class="body-text">
-            Thank you for choosing Gramamstays Resort! We have received your booking request and our team is reviewing it. You will receive a confirmation shortly.
+            Thank you for choosing Gramamstays ! We have received your booking request and our team is reviewing it. You will receive a confirmation shortly.
           </p>
           <div style="text-align:center;">
             <span class="status-badge" style="background:#fef3c7;color:#92400e;border:2px solid #f59e0b;">⏳ Pending Review</span>
@@ -201,11 +201,11 @@ export function getBookingEmail(data: BookingEmailData): { subject: string; html
 
     case 'Confirmed':
       return {
-        subject: `Booking Confirmed! - Gramamstays Resort`,
+        subject: `Booking Confirmed! - Gramamstays `,
         html: wrapHtml('Booking Confirmed', 'Reservation Confirmed', `
           <p class="greeting">Dear ${data.guest},</p>
           <p class="body-text">
-            Great news! Your booking has been confirmed. We look forward to welcoming you to Gramamstays Resort for a wonderful stay.
+            Great news! Your booking has been confirmed. We look forward to welcoming you to Gramamstays  for a wonderful stay.
           </p>
           <div style="text-align:center;">
             <span class="status-badge" style="background:#dcfce7;color:#166534;border:2px solid #22c55e;">✓ Confirmed</span>
@@ -222,11 +222,11 @@ export function getBookingEmail(data: BookingEmailData): { subject: string; html
 
     case 'Checked In':
       return {
-        subject: `Welcome to Gramamstays Resort!`,
+        subject: `Welcome to Gramamstays !`,
         html: wrapHtml('Welcome!', 'Check-in Complete', `
           <p class="greeting">Dear ${data.guest},</p>
           <p class="body-text">
-            Welcome to Gramamstays Resort! We are delighted to have you with us. We hope you have a comfortable and memorable stay.
+            Welcome to Gramamstays ! We are delighted to have you with us. We hope you have a comfortable and memorable stay.
           </p>
           <div style="text-align:center;">
             <span class="status-badge" style="background:#dcfce7;color:#166534;border:2px solid #22c55e;">✓ Checked In</span>
@@ -239,18 +239,18 @@ export function getBookingEmail(data: BookingEmailData): { subject: string; html
             • Breakfast is served from 7:30 AM to 10:00 AM<br>
             • Wi-Fi password available at the front desk<br>
             • Emergency contact: +91 XXXXX XXXXX<br><br>
-            Enjoy your stay and explore everything our resort has to offer!
+            Enjoy your stay and explore everything our  has to offer!
           </p>
         `)
       }
 
     case 'Checked Out':
       return {
-        subject: `Thank You for Staying with Us - Gramamstays Resort`,
+        subject: `Thank You for Staying with Us - Gramamstays `,
         html: wrapHtml('Thank You!', 'Check-out Complete', `
           <p class="greeting">Dear ${data.guest},</p>
           <p class="body-text">
-            Thank you for choosing Gramamstays Resort. It was a pleasure hosting you. We hope you had a wonderful experience and look forward to welcoming you again.
+            Thank you for choosing Gramamstays . It was a pleasure hosting you. We hope you had a wonderful experience and look forward to welcoming you again.
           </p>
           <div style="text-align:center;">
             <span class="status-badge" style="background:#f3f4f6;color:#374151;border:2px solid #9ca3af;">✓ Checked Out</span>
@@ -259,14 +259,14 @@ export function getBookingEmail(data: BookingEmailData): { subject: string; html
           <hr class="divider">
           <p class="body-text">
             We would love to hear about your experience! Your feedback helps us serve you and future guests better.<br><br>
-            Thank you for staying with us. We hope to see you again soon at Gramamstays Resort!
+            Thank you for staying with us. We hope to see you again soon at Gramamstays !
           </p>
         `)
       }
 
     default:
       return {
-        subject: `Booking Status Updated - Gramamstays Resort`,
+        subject: `Booking Status Updated - Gramamstays `,
         html: wrapHtml('Booking Update', 'Status Updated', `
           <p class="greeting">Dear ${data.guest},</p>
           <p class="body-text">

@@ -2,13 +2,17 @@
 
 import type { AdminSection } from '@/app/admin/page'
 import { useAuth } from '@/context/auth'
-import { Menu, Bell, LogOut, LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog, Home, UserPlus, ScrollText } from 'lucide-react'
+import { Menu, Bell, LogOut, LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog, Home, UserPlus, ScrollText, MessageSquareQuote, Inbox } from 'lucide-react'
 
 const sectionConfig: Record<AdminSection, { title: string; subtitle: string; icon: typeof LayoutDashboard }> = {
   dashboard: { title: 'Dashboard', subtitle: 'Overview & insights', icon: LayoutDashboard },
   bookings: { title: 'Bookings', subtitle: 'Manage reservations', icon: CalendarCheck },
   properties: { title: 'Properties', subtitle: 'Manage properties', icon: Home },
+  testimonials: { title: 'Testimonials', subtitle: 'Guest reviews', icon: MessageSquareQuote },
+  inquiries: { title: 'Inquiries', subtitle: 'Website inquiries', icon: Inbox },
+  guests: { title: 'Guests', subtitle: 'Guest directory', icon: Users },
   financials: { title: 'Financials', subtitle: 'Income & expenses', icon: DollarSign },
+  staff: { title: 'Staff', subtitle: 'Team management', icon: UserCog },
   register: { title: 'User Management', subtitle: 'Manage admin users', icon: UserPlus },
   logs: { title: 'Activity Logs', subtitle: 'Track all actions', icon: ScrollText },
 }

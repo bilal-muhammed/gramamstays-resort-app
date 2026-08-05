@@ -18,8 +18,10 @@ const AdminStaff = dynamic(() => import('@/components/admin/staff').then(m => ({
 const AdminProperties = dynamic(() => import('@/components/admin/properties').then(m => ({ default: m.AdminProperties })), { loading: () => <div className="bg-white rounded-lg border border-gray-200 p-6 h-64 animate-pulse" /> })
 const RegisterPage = dynamic(() => import('@/app/admin/register/page'), { loading: () => <div className="bg-white rounded-lg border border-gray-200 p-6 h-64 animate-pulse" /> })
 const AdminActivityLogs = dynamic(() => import('@/components/admin/activity-logs').then(m => ({ default: m.AdminActivityLogs })), { loading: () => <div className="bg-white rounded-lg border border-gray-200 p-6 h-64 animate-pulse" /> })
+const AdminTestimonials = dynamic(() => import('@/components/admin/testimonials').then(m => ({ default: m.AdminTestimonials })), { loading: () => <div className="bg-white rounded-lg border border-gray-200 p-6 h-64 animate-pulse" /> })
+const AdminInquiries = dynamic(() => import('@/components/admin/inquiries').then(m => ({ default: m.AdminInquiries })), { loading: () => <div className="bg-white rounded-lg border border-gray-200 p-6 h-64 animate-pulse" /> })
 
-export type AdminSection = 'dashboard' | 'bookings' | 'properties' | 'guests' | 'financials' | 'staff' | 'register' | 'logs'
+export type AdminSection = 'dashboard' | 'bookings' | 'properties' | 'guests' | 'financials' | 'staff' | 'register' | 'logs' | 'testimonials' | 'inquiries'
 
 function AdminContent() {
   const { user, loading, canAccess } = useAuth()
@@ -51,6 +53,8 @@ function AdminContent() {
       case 'staff': return <AdminStaff />
       case 'register': return <RegisterPage />
       case 'logs': return <AdminActivityLogs />
+      case 'testimonials': return <AdminTestimonials />
+      case 'inquiries': return <AdminInquiries />
       default: return <AdminDashboard onNavigate={setActiveSection} />
     }
   }, [activeSection, canAccess])

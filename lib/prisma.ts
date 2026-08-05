@@ -29,7 +29,3 @@ function createClient() {
 export const prisma = globalForPrisma.prisma || createClient()
 
 if (prisma) globalForPrisma.prisma = prisma
-
-export function isDbConnected(): boolean {
-  return prisma !== null
-}

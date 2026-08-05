@@ -35,7 +35,7 @@ export function Experience() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <div className="absolute inset-0" style={{ backgroundImage: 'url(/spa-wellness.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/92 to-background/95" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/87 to-background/90" />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -100,7 +100,7 @@ export function Experience() {
           transition={{ duration: 0.7, delay: 0.4 }}
           className="mt-12 sm:mt-16 relative rounded-lg overflow-hidden h-[250px] sm:h-[300px] md:h-[360px]"
         >
-          <div className="absolute inset-0" style={{ backgroundImage: 'url(/hero-resort.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          <div className="absolute inset-0" style={{ backgroundImage: 'url(/hero-resort_1.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
           <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-primary/40" />
           <div className="absolute inset-0 z-10 flex items-center">
             <div className="px-6 sm:px-10 md:px-16 max-w-3xl">
