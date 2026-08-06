@@ -35,7 +35,7 @@ export function Experience() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <div className="absolute inset-0" style={{ backgroundImage: 'url(/spa-wellness.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/87 to-background/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/93 via-background/90 to-background/93" />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -48,13 +48,13 @@ export function Experience() {
             className="flex items-center gap-3 mb-3 sm:mb-4"
           >
             <div className="w-8 h-px bg-secondary" />
-            <span className="text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-secondary font-medium">The Gramamstays Difference</span>
+            <span className="text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-secondary font-medium font-hand">The Gramamstays Difference</span>
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.08 }}
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 sm:mb-4 leading-tight"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-display text-foreground mb-3 sm:mb-4 leading-tight"
           >
             An Experience{' '}
             <span className="italic font-light text-gradient-gold">Beyond</span>{' '}
@@ -86,7 +86,7 @@ export function Experience() {
                 <div className="w-10 h-10 rounded-md bg-secondary/10 flex items-center justify-center mb-3 group-hover:bg-secondary/15 transition-colors duration-400">
                   <Icon size={18} className="text-secondary" strokeWidth={1.5} />
                 </div>
-                <h3 className="text-base sm:text-lg font-bold text-foreground mb-1.5">{feature.title}</h3>
+                <h3 className="text-base sm:text-lg font-bold font-display text-foreground mb-1.5">{feature.title}</h3>
                 <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
               </motion.div>
             )
@@ -101,10 +101,10 @@ export function Experience() {
           className="mt-12 sm:mt-16 relative rounded-lg overflow-hidden h-[250px] sm:h-[300px] md:h-[360px]"
         >
           <div className="absolute inset-0" style={{ backgroundImage: 'url(/hero-resort_1.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-primary/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/93 via-primary/73 to-primary/43" />
           <div className="absolute inset-0 z-10 flex items-center">
             <div className="px-6 sm:px-10 md:px-16 max-w-3xl">
-              <h3 className="text-xl sm:text-2xl md:text-4xl font-bold text-white mb-3 sm:mb-4 leading-tight">
+              <h3 className="text-xl sm:text-2xl md:text-4xl font-bold font-display text-white mb-3 sm:mb-4 leading-tight">
                 Your Journey to{' '}
                 <span className="italic font-light">Inner Peace</span>{' '}
                 Begins Here

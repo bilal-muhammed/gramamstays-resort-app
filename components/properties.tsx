@@ -94,9 +94,9 @@ export function Properties() {
           <div className="max-w-2xl">
             <div className="flex items-center gap-3 mb-3 sm:mb-4">
               <div className="w-8 h-px bg-secondary" />
-              <span className="text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-secondary font-medium">Properties</span>
+              <span className="text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-secondary font-medium font-hand">Properties</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-2 sm:mb-3 leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-display text-foreground mb-2 sm:mb-3 leading-tight">
               Our{' '}
               <span className="italic font-light text-gradient-gold">Properties</span>
             </h2>
@@ -181,7 +181,7 @@ export function Properties() {
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div className="min-w-0">
                   <Link href={`/properties/${property.id}`}>
-                    <h3 className="text-lg font-bold text-foreground hover:text-primary transition-colors">{property.name}</h3>
+                    <h3 className="text-lg font-bold font-display text-foreground hover:text-primary transition-colors">{property.name}</h3>
                   </Link>
                   {property.tagline && <p className="text-[11px] text-secondary font-medium italic mt-0.5">{property.tagline}</p>}
                 </div>

@@ -1,11 +1,13 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useAdminData } from '@/context/admin-data'
 import { useToast } from '@/context/toast'
 import { useLoading } from '@/components/loading-bar'
 import { Search, Plus, Pencil, Trash2, X, CalendarCheck, Filter, Users, Compass, Flame, UtensilsCrossed, BedDouble, Sparkles, TreePine } from 'lucide-react'
 import type { Booking } from '@/types/admin'
+import { AppSheet } from './app-sheet'
+import { FormSection, FormField, FormRow, FormInput, FormSelect, FormTextarea, FormSubmit } from './form-parts'
 
 const addonOptions = [
   { id: 'trekking', label: 'Trekking', icon: Compass },
@@ -60,7 +62,7 @@ const emptyBooking = {
   addons: [] as string[], addonNote: '', sendEmail: true, sendWhatsApp: true,
 }
 
-export function AdminBookings() {
+export function AdminBookings({ openForm, onFormOpened }: { openForm?: 'booking' | 'income' | 'expense' | null; onFormOpened?: () => void }) {
   const { bookings, addBooking, updateBooking, deleteBooking, properties } = useAdminData()
   const { toast } = useToast()
   const { isLoading } = useLoading()
@@ -70,12 +72,16 @@ export function AdminBookings() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState(emptyBooking)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
   const checkInRef = useRef<HTMLInputElement>(null)
   const checkOutRef = useRef<HTMLInputElement>(null)
 
-  const openPicker = useCallback((ref: React.RefObject<HTMLInputElement | null>) => {
-    ref.current?.showPicker?.()
-  }, [])
+  useEffect(() => {
+    if (openForm === 'booking') {
+      openAdd()
+      onFormOpened?.()
+    }
+  }, [openForm])
 
   const filters = ['All', 'Checked In', 'Confirmed', 'Pending', 'Checked Out']
 
@@ -109,10 +115,12 @@ export function AdminBookings() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
     if (form.status === 'Checked Out' && form.amount > 0 && form.paidAmount < form.amount) {
       toast('error', `Cannot check out — ₹${(form.amount - form.paidAmount).toLocaleString()} balance pending. Clear the balance first.`)
       return
     }
+    setSubmitting(true)
     if (editingId) {
       const result = await updateBooking(editingId, form)
       toast('success', 'Booking updated')
@@ -143,6 +151,7 @@ export function AdminBookings() {
     setShowForm(false)
     setEditingId(null)
     setForm(emptyBooking)
+    setSubmitting(false)
   }
 
   const handleDelete = (id: string) => {
@@ -385,286 +394,202 @@ export function AdminBookings() {
       </div>
 
       {/* Add/Edit Form Modal */}
-      {showForm && (
-        <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowForm(false)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-gray-900 text-lg">{editingId ? 'Edit Booking' : 'New Booking'}</h3>
-                <p className="text-xs text-gray-500 mt-0.5">{editingId ? 'Update booking details' : 'Create a new reservation'}</p>
-              </div>
-              <button onClick={() => setShowForm(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-                <X size={20} className="text-gray-500" />
-              </button>
-            </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-5">
-              {/* Guest Info */}
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Guest Name *</label>
-                <input type="text" required value={form.guest} onChange={e => setForm({ ...form, guest: e.target.value })}
-                  className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="Full name" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Phone *</label>
-                  <input type="tel" required value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="Phone" />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Email</label>
-                  <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="Email" />
-                </div>
-              </div>
+      <AppSheet open={showForm} onClose={() => setShowForm(false)} title={editingId ? 'Edit Booking' : 'New Booking'} subtitle={editingId ? 'Update booking details' : 'Create a new reservation'}>
+            <form onSubmit={handleSubmit} className="p-4 pb-6 space-y-3 safe-area-bottom">
+              <FormSection title="Guest">
+                <FormField label="Guest Name *">
+                  <FormInput type="text" required value={form.guest} onChange={e => setForm({ ...form, guest: e.target.value })} placeholder="Full name" />
+                </FormField>
+                <FormRow>
+                  <FormField label="Phone *">
+                    <FormInput type="tel" required value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="Phone" />
+                  </FormField>
+                  <FormField label="Email">
+                    <FormInput type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="Email" />
+                  </FormField>
+                </FormRow>
+              </FormSection>
 
-              {/* Room & Dates */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Room *</label>
-                  <select value={form.room} onChange={e => setForm({ ...form, room: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
-                    <option value="">Select property</option>
-                    {properties.filter(p => p.status === 'Active').map(p => (
-                      <option key={p.id} value={p.name}>{p.name} — ₹{p.price.toLocaleString()}/night</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Room No.</label>
-                  <input type="text" value={form.roomNo} onChange={e => setForm({ ...form, roomNo: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. 101" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Check-in *</label>
-                  <input ref={checkInRef} type="date" required value={form.checkIn} onFocus={() => openPicker(checkInRef)} onChange={e => {
-                    const checkIn = e.target.value
-                    setForm(prev => {
-                      const nights = checkIn && prev.checkOut ? Math.max(1, Math.ceil((new Date(prev.checkOut).getTime() - new Date(checkIn).getTime()) / 86400000)) : prev.nights
-                      return { ...prev, checkIn, nights }
-                    })
-                  }} className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Check-out *</label>
-                  <input ref={checkOutRef} type="date" required value={form.checkOut} onFocus={() => openPicker(checkOutRef)} onChange={e => {
-                    const checkOut = e.target.value
-                    setForm(prev => {
-                      const nights = prev.checkIn && checkOut ? Math.max(1, Math.ceil((new Date(checkOut).getTime() - new Date(prev.checkIn).getTime()) / 86400000)) : prev.nights
-                      return { ...prev, checkOut, nights }
-                    })
-                  }} className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Nights</label>
-                  <input type="number" min="1" readOnly value={form.nights}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 bg-gray-50 focus:outline-none" />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Status</label>
-                  <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as Booking['status'] })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
-                    <option>Pending</option>
-                    <option>Confirmed</option>
-                    <option>Checked In</option>
-                    <option>Checked Out</option>
-                  </select>
-                  {form.status === 'Checked Out' && form.amount > 0 && form.paidAmount < form.amount && (
-                    <p className="text-[11px] text-red-600 font-medium mt-1.5">Cannot check out with ₹{(form.amount - form.paidAmount).toLocaleString()} balance pending</p>
-                  )}
-                </div>
-              </div>
+              <FormSection title="Room & Dates">
+                <FormRow>
+                  <FormField label="Room *">
+                    <FormSelect value={form.room} onChange={e => setForm({ ...form, room: e.target.value })}>
+                      <option value="">Select property</option>
+                      {properties.filter(p => p.status === 'Active').map(p => (
+                        <option key={p.id} value={p.name}>{p.name} — ₹{p.price.toLocaleString()}/night</option>
+                      ))}
+                    </FormSelect>
+                  </FormField>
+                  <FormField label="Room No.">
+                    <FormInput type="text" value={form.roomNo} onChange={e => setForm({ ...form, roomNo: e.target.value })} placeholder="e.g. 101" />
+                  </FormField>
+                </FormRow>
+                <FormRow>
+                  <FormField label="Check-in *">
+                    <FormInput ref={checkInRef} type="date" required value={form.checkIn} onChange={e => {
+                      const checkIn = e.target.value
+                      setForm(prev => {
+                        const nights = checkIn && prev.checkOut ? Math.max(1, Math.ceil((new Date(prev.checkOut).getTime() - new Date(checkIn).getTime()) / 86400000)) : prev.nights
+                        return { ...prev, checkIn, nights }
+                      })
+                    }} />
+                  </FormField>
+                  <FormField label="Check-out *">
+                    <FormInput ref={checkOutRef} type="date" required value={form.checkOut} onChange={e => {
+                      const checkOut = e.target.value
+                      setForm(prev => {
+                        const nights = prev.checkIn && checkOut ? Math.max(1, Math.ceil((new Date(checkOut).getTime() - new Date(prev.checkIn).getTime()) / 86400000)) : prev.nights
+                        return { ...prev, checkOut, nights }
+                      })
+                    }} />
+                  </FormField>
+                </FormRow>
+                <FormRow>
+                  <FormField label="Nights">
+                    <FormInput type="number" min={1} readOnly value={form.nights} />
+                  </FormField>
+                  <FormField label="Status">
+                    <FormSelect value={form.status} onChange={e => setForm({ ...form, status: e.target.value as Booking['status'] })}>
+                      <option>Pending</option><option>Confirmed</option><option>Checked In</option><option>Checked Out</option>
+                    </FormSelect>
+                  </FormField>
+                </FormRow>
+                {form.status === 'Checked Out' && form.amount > 0 && form.paidAmount < form.amount && (
+                  <p className="text-[11px] text-red-600 font-medium">Cannot check out with ₹{(form.amount - form.paidAmount).toLocaleString()} balance pending</p>
+                )}
+              </FormSection>
 
-              {/* Payment */}
-              <div className="bg-gray-50 rounded-xl p-4 space-y-4">
-                <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Payment Details</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Total Amount (₹) *</label>
+              <FormSection title="Payment">
+                <FormRow>
+                  <FormField label="Total Amount (₹) *">
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
-                      <input type="number" min="0" required value={form.amount} onChange={e => {
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium text-sm">₹</span>
+                      <FormInput type="number" min={0} required value={form.amount} onChange={e => {
                         const amount = Number(e.target.value)
                         setForm(prev => {
                           const payment = amount > 0 && prev.paidAmount >= amount ? 'Fully Paid' : prev.paidAmount > 0 ? 'Partial' : 'Pending'
                           return { ...prev, amount, payment }
                         })
-                      }}
-                        className="w-full pl-8 pr-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                      }} className="pl-7" />
                     </div>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Paid (₹)</label>
+                  </FormField>
+                  <FormField label="Paid (₹)">
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
-                      <input type="number" min="0" value={form.paidAmount} onChange={e => {
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium text-sm">₹</span>
+                      <FormInput type="number" min={0} value={form.paidAmount} onChange={e => {
                         const paidAmount = Number(e.target.value)
                         setForm(prev => {
                           const payment = prev.amount > 0 && paidAmount >= prev.amount ? 'Fully Paid' : paidAmount > 0 ? 'Partial' : 'Pending'
                           return { ...prev, paidAmount, payment }
                         })
-                      }}
-                        className="w-full pl-8 pr-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                      }} className="pl-7" />
                     </div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Payment Status</label>
-                    <select value={form.payment} onChange={e => setForm({ ...form, payment: e.target.value as Booking['payment'] })}
-                      className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
-                      <option>Pending</option>
-                      <option>Partial</option>
-                      <option>Fully Paid</option>
-                    </select>
-                  </div>
+                  </FormField>
+                </FormRow>
+                <FormRow>
+                  <FormField label="Payment Status">
+                    <FormSelect value={form.payment} onChange={e => setForm({ ...form, payment: e.target.value as Booking['payment'] })}>
+                      <option>Pending</option><option>Partial</option><option>Fully Paid</option>
+                    </FormSelect>
+                  </FormField>
                   <div className="flex items-end">
                     {form.amount > 0 && form.paidAmount < form.amount && (
-                      <div className="w-full px-4 py-3 rounded-xl bg-amber-50 border border-amber-200">
+                      <div className="w-full px-3 py-2 rounded-lg bg-amber-50 border border-amber-200">
                         <p className="text-xs text-amber-600 font-medium">Balance: ₹{(form.amount - form.paidAmount).toLocaleString()}</p>
                       </div>
                     )}
                   </div>
-                </div>
-              </div>
+                </FormRow>
+              </FormSection>
 
-              {/* Add-ons */}
-              <div className="bg-gray-50 rounded-xl p-4 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Add-ons & Extras</h4>
-                  {form.addons.length > 0 && (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary">{form.addons.length} selected</span>
-                  )}
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {addonOptions.map(opt => {
-                    const Icon = opt.icon
-                    const isSelected = form.addons.includes(opt.id)
-                    return (
-                      <button key={opt.id} type="button" onClick={() => {
-                        setForm(prev => ({
-                          ...prev,
-                          addons: isSelected
-                            ? prev.addons.filter(a => a !== opt.id)
-                            : [...prev.addons, opt.id],
-                        }))
-                      }}
-                        className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-medium transition-all ${
-                          isSelected
-                            ? 'bg-primary/10 border-primary/30 text-primary'
-                            : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
-                        }`}>
-                        <Icon size={14} className={isSelected ? 'text-primary' : 'text-gray-400'} />
-                        <span className="flex-1 text-left">{opt.label}</span>
-                      </button>
-                    )
-                  })}
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Custom Add-on / Notes</label>
-                  <textarea value={form.addonNote} onChange={e => setForm({ ...form, addonNote: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none h-20 transition-all" placeholder="e.g. Birthday cake decoration, airport transfer..." />
-                </div>
+              <FormSection title="Add-ons">
+                <FormField label="">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {addonOptions.map(opt => {
+                      const Icon = opt.icon
+                      const isSelected = form.addons.includes(opt.id)
+                      return (
+                        <button key={opt.id} type="button" onClick={() => {
+                          setForm(prev => ({
+                            ...prev,
+                            addons: isSelected ? prev.addons.filter(a => a !== opt.id) : [...prev.addons, opt.id],
+                          }))
+                        }}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium transition-all ${
+                            isSelected ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                          }`}>
+                          <Icon size={14} className={isSelected ? 'text-primary' : 'text-gray-400'} />
+                          <span className="flex-1 text-left">{opt.label}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </FormField>
+                <FormField label="Custom Add-on / Notes">
+                  <FormTextarea value={form.addonNote} onChange={e => setForm({ ...form, addonNote: e.target.value })} placeholder="e.g. Birthday cake, airport transfer..." rows={3} className="h-16" />
+                </FormField>
                 {(form.addons.length > 0 || form.addonNote) && (
                   <div className="flex flex-wrap gap-1.5">
                     {form.addons.map(id => {
                       const opt = addonOptions.find(o => o.id === id)
                       return opt ? (
-                        <span key={id} className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold rounded-lg bg-primary/10 text-primary">
+                        <span key={id} className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded bg-primary/10 text-primary">
                           {opt.label}
                           <button type="button" onClick={() => setForm(prev => ({ ...prev, addons: prev.addons.filter(a => a !== id) }))} className="ml-0.5 hover:text-primary/70">×</button>
                         </span>
                       ) : null
                     })}
-                    {form.addonNote && (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold rounded-lg bg-amber-50 text-amber-700">
-                        Note: {form.addonNote.length > 30 ? form.addonNote.slice(0, 30) + '...' : form.addonNote}
-                      </span>
-                    )}
                   </div>
                 )}
-              </div>
+              </FormSection>
 
-              {/* Notifications */}
-              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Notifications</h4>
-
-                {/* Email Toggle */}
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Email</p>
-                    <p className="text-[11px] text-gray-500">{editingId ? 'Send status update' : 'Send booking confirmation'}</p>
+              <FormSection title="Notifications">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">Email</p>
+                      <p className="text-[11px] text-gray-500">{editingId ? 'Send status update' : 'Send confirmation'}</p>
+                    </div>
+                    <button type="button" onClick={() => setForm({ ...form, sendEmail: !form.sendEmail })}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.sendEmail ? 'bg-primary' : 'bg-gray-300'}`}>
+                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.sendEmail ? 'translate-x-6' : 'translate-x-1'}`} />
+                    </button>
                   </div>
-                  <button type="button" onClick={() => setForm({ ...form, sendEmail: !form.sendEmail })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.sendEmail ? 'bg-primary' : 'bg-gray-300'}`}>
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.sendEmail ? 'translate-x-6' : 'translate-x-1'}`} />
-                  </button>
+                  {form.sendEmail && !form.email && <p className="text-[11px] text-amber-600 font-medium">No email address</p>}
+                  <div className="border-t border-gray-100" />
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">WhatsApp</p>
+                      <p className="text-[11px] text-gray-500">{editingId ? 'Send status update' : 'Send confirmation'}</p>
+                    </div>
+                    <button type="button" onClick={() => setForm({ ...form, sendWhatsApp: !form.sendWhatsApp })}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.sendWhatsApp ? 'bg-green-500' : 'bg-gray-300'}`}>
+                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.sendWhatsApp ? 'translate-x-6' : 'translate-x-1'}`} />
+                    </button>
+                  </div>
+                  {form.sendWhatsApp && !form.phone && <p className="text-[11px] text-amber-600 font-medium">No phone number</p>}
                 </div>
-                {form.sendEmail && form.email && (
-                  <p className="text-[11px] text-primary font-medium">→ {form.email}</p>
-                )}
-                {form.sendEmail && !form.email && (
-                  <p className="text-[11px] text-amber-600 font-medium">⚠ No email address</p>
-                )}
+              </FormSection>
 
-                <div className="border-t border-gray-200" />
-
-                {/* WhatsApp Toggle */}
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">WhatsApp</p>
-                    <p className="text-[11px] text-gray-500">{editingId ? 'Send status update' : 'Send booking confirmation'}</p>
-                  </div>
-                  <button type="button" onClick={() => setForm({ ...form, sendWhatsApp: !form.sendWhatsApp })}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${form.sendWhatsApp ? 'bg-green-500' : 'bg-gray-300'}`}>
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.sendWhatsApp ? 'translate-x-6' : 'translate-x-1'}`} />
-                  </button>
-                </div>
-                {form.sendWhatsApp && form.phone && (
-                  <p className="text-[11px] text-green-600 font-medium">→ +91 {form.phone}</p>
-                )}
-                {form.sendWhatsApp && !form.phone && (
-                  <p className="text-[11px] text-amber-600 font-medium">⚠ No phone number</p>
-                )}
-              </div>
-
-              {/* Buttons */}
-              <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowForm(false)} disabled={isLoading} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                  Cancel
-                </button>
-                <button type="submit" disabled={isLoading} className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                  {isLoading ? 'Processing...' : editingId ? 'Update' : 'Create'} Booking
-                </button>
+              <div className="flex gap-2 pt-2">
+                <FormSubmit type="button" onClick={() => setShowForm(false)} disabled={submitting} color="primary">Cancel</FormSubmit>
+                <FormSubmit loading={submitting} disabled={submitting}>{submitting ? (editingId ? 'Updating...' : 'Creating...') : editingId ? 'Update' : 'Create'} Booking</FormSubmit>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </AppSheet>
 
       {/* Delete Confirmation */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setDeleteConfirm(null)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-xl p-6 w-full sm:max-w-sm sm:mx-4 safe-area-bottom" onClick={e => e.stopPropagation()}>
-            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-              <Trash2 size={20} className="text-red-600" />
-            </div>
-            <h3 className="font-bold text-gray-900 mb-1 text-center">Delete Booking?</h3>
-            <p className="text-sm text-gray-500 mb-5 text-center">This action cannot be undone.</p>
-            <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm(null)} disabled={isLoading} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                Cancel
-              </button>
-              <button onClick={() => handleDelete(deleteConfirm)} disabled={isLoading} className="flex-1 py-2.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                {isLoading ? 'Deleting...' : 'Delete'}
-              </button>
-            </div>
+      <AppSheet open={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} title="Delete Booking?" subtitle="This action cannot be undone.">
+        <div className="p-4 pb-6 safe-area-bottom">
+          <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+            <Trash2 size={20} className="text-red-600" />
+          </div>
+          <div className="flex gap-2">
+            <FormSubmit type="button" onClick={() => setDeleteConfirm(null)} disabled={isLoading} color="primary">Cancel</FormSubmit>
+            <FormSubmit type="button" onClick={() => handleDelete(deleteConfirm!)} disabled={isLoading} color="red">{isLoading ? 'Deleting...' : 'Delete'}</FormSubmit>
           </div>
         </div>
-      )}
+      </AppSheet>
     </div>
   )
 }

@@ -4,6 +4,8 @@ import { useState, useRef } from 'react'
 import { useAdminData } from '@/context/admin-data'
 import { useToast } from '@/context/toast'
 import { Search, Plus, Pencil, Trash2, X, Home, DollarSign, Star, Upload, Loader2, ImageIcon } from 'lucide-react'
+import { AppSheet } from './app-sheet'
+import { FormSection, FormField, FormRow, FormInput, FormSelect, FormTextarea, FormSubmit } from './form-parts'
 import type { Property } from '@/types/admin'
 
 const statusColor: Record<string, string> = {
@@ -29,6 +31,7 @@ export function AdminProperties() {
   const [form, setForm] = useState(emptyProperty)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -120,17 +123,20 @@ export function AdminProperties() {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     const data = { ...form, image: getGallery()[0] || form.image }
     if (editingId) {
-      updateProperty(editingId, data)
+      await updateProperty(editingId, data)
       toast('success', 'Property updated')
     } else {
-      addProperty(data)
+      await addProperty(data)
       toast('success', 'Property added')
     }
     setShowForm(false); setEditingId(null); setForm(emptyProperty); setGalleryPreviews([])
+    setSubmitting(false)
   }
 
   return (
@@ -259,192 +265,127 @@ export function AdminProperties() {
       </div>
 
       {/* Add/Edit Modal */}
-      {showForm && (
-        <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowForm(false)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-gray-900 text-lg">{editingId ? 'Edit Property' : 'New Property'}</h3>
-                <p className="text-xs text-gray-500 mt-0.5">{editingId ? 'Update property details' : 'Add a new property'}</p>
-              </div>
-              <button onClick={() => setShowForm(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-                <X size={20} className="text-gray-500" />
-              </button>
-            </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-5">
-              {/* Gallery Upload */}
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Property Images</label>
+      <AppSheet open={showForm} onClose={() => setShowForm(false)} title={editingId ? 'Edit Property' : 'New Property'} subtitle={editingId ? 'Update property details' : 'Add a new property'}>
+            <form onSubmit={handleSubmit} className="p-4 pb-6 space-y-3 safe-area-bottom">
+              {/* Images */}
+              <FormSection title="Images">
                 {galleryPreviews.length > 0 ? (
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-3 gap-2">
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-4 gap-1.5">
                       {galleryPreviews.map((preview, i) => (
-                        <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-gray-200 group">
+                        <div key={i} className="relative aspect-square rounded-md overflow-hidden border border-gray-200 group">
                           <img src={preview} alt={`Preview ${i + 1}`} className="w-full h-full object-cover" />
-                          <button type="button" onClick={() => removeGalleryImage(i)} className="absolute top-1 right-1 p-1 bg-black/60 rounded-full text-white hover:bg-black/80 transition-colors opacity-0 group-hover:opacity-100">
-                            <X size={10} />
+                          <button type="button" onClick={() => removeGalleryImage(i)} className="absolute top-0.5 right-0.5 p-0.5 bg-black/60 rounded-full text-white hover:bg-black/80 transition-colors opacity-0 group-hover:opacity-100">
+                            <X size={8} />
                           </button>
-                          {i === 0 && (
-                            <div className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-primary rounded text-[8px] text-white font-semibold">COVER</div>
-                          )}
+                          {i === 0 && <div className="absolute bottom-0.5 left-0.5 px-1 py-0.5 bg-primary rounded text-[7px] text-white font-semibold">COVER</div>}
                         </div>
                       ))}
-                      {uploading && (
-                        <div className="aspect-square rounded-lg border border-gray-200 flex items-center justify-center bg-gray-50">
-                          <Loader2 size={20} className="text-primary animate-spin" />
-                        </div>
-                      )}
+                      {uploading && <div className="aspect-square rounded-md border border-gray-200 flex items-center justify-center bg-gray-50"><Loader2 size={16} className="text-primary animate-spin" /></div>}
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={uploading}
-                      className="w-full py-2 border border-dashed border-gray-300 rounded-lg text-xs font-medium text-gray-600 hover:border-primary hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
-                    >
-                      <Upload size={12} /> Add more images
+                    <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}
+                      className="w-full py-1.5 border border-dashed border-gray-300 rounded-md text-[10px] font-medium text-gray-600 hover:border-primary hover:text-primary transition-all flex items-center justify-center gap-1">
+                      <Upload size={10} /> Add more
                     </button>
                   </div>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={uploading}
-                    className="w-full h-40 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-2 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer disabled:opacity-50"
-                  >
-                    {uploading ? (
-                      <Loader2 size={24} className="text-primary animate-spin" />
-                    ) : (
+                  <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}
+                    className="w-full h-24 border border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-1 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer disabled:opacity-50">
+                    {uploading ? <Loader2 size={18} className="text-primary animate-spin" /> : (
                       <>
-                        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                          <Upload size={18} className="text-gray-400" />
-                        </div>
-                        <div className="text-center">
-                          <p className="text-sm font-medium text-gray-700">Click to upload images</p>
-                          <p className="text-[11px] text-gray-400 mt-0.5">First image will be the cover — Max 5MB each</p>
-                        </div>
+                        <Upload size={16} className="text-gray-400" />
+                        <span className="text-[10px] font-medium text-gray-500">Click to upload — Max 5MB each</span>
                       </>
                     )}
                   </button>
                 )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                  multiple
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-              </div>
+                <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple onChange={handleImageUpload} className="hidden" />
+              </FormSection>
 
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Property Name *</label>
-                <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="Property name" />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Tagline</label>
-                <input type="text" value={form.tagline} onChange={e => setForm({ ...form, tagline: e.target.value })}
-                  className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. Nature's Embrace" />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Description</label>
-                <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })}
-                  className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none h-24 transition-all" placeholder="Describe the property..." />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Price (₹/night) *</label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
-                    <input type="number" min="0" required value={form.price} onChange={e => setForm({ ...form, price: Number(e.target.value) })}
-                      className="w-full pl-8 pr-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Original Price (₹)</label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
-                    <input type="number" min="0" value={form.originalPrice} onChange={e => setForm({ ...form, originalPrice: Number(e.target.value) })}
-                      className="w-full pl-8 pr-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
-                  </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Status</label>
-                  <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
-                    <option>Active</option><option>Inactive</option><option>Maintenance</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Badge</label>
-                  <select value={form.badge} onChange={e => setForm({ ...form, badge: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
-                    <option value="">None</option><option>Most Popular</option><option>Best Value</option><option>Exclusive</option>
-                  </select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Rating</label>
-                  <input type="number" min="0" max="5" step="0.1" value={form.rating} onChange={e => setForm({ ...form, rating: Number(e.target.value) })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. 4.9" />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Reviews Count</label>
-                  <input type="number" min="0" value={form.reviews} onChange={e => setForm({ ...form, reviews: Number(e.target.value) })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. 128" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Features (comma-separated)</label>
-                <input type="text" value={form.features} onChange={e => setForm({ ...form, features: e.target.value })}
-                  className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. River View, Kayak Access, Private Deck" />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Specs (JSON)</label>
-                <input type="text" value={form.specs} onChange={e => setForm({ ...form, specs: e.target.value })}
-                  className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder='e.g. {"size":"45 m²","guests":"2","beds":"1 King","bath":"1"}' />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Amenities</label>
-                <input type="text" value={form.amenities} onChange={e => setForm({ ...form, amenities: e.target.value })}
-                  className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. Pool, Garden, River View" />
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
-                  Cancel
-                </button>
-                <button type="submit" className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-all shadow-sm">
-                  {editingId ? 'Update' : 'Add'} Property
-                </button>
+              {/* Basic Info */}
+              <FormSection title="Basic Info">
+                <FormField label="Name *">
+                  <FormInput type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Property name" />
+                </FormField>
+                <FormField label="Tagline">
+                  <FormInput type="text" value={form.tagline} onChange={e => setForm({ ...form, tagline: e.target.value })} placeholder="e.g. Nature's Embrace" />
+                </FormField>
+                <FormField label="Description">
+                  <FormTextarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Describe the property..." rows={3} className="h-16" />
+                </FormField>
+              </FormSection>
+
+              {/* Pricing & Status */}
+              <FormSection title="Pricing & Status">
+                <FormRow>
+                  <FormField label="Price (₹/night) *">
+                    <div className="relative">
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs">₹</span>
+                      <FormInput type="number" min={0} required value={form.price} onChange={e => setForm({ ...form, price: Number(e.target.value) })} className="pl-6" />
+                    </div>
+                  </FormField>
+                  <FormField label="Original Price (₹)">
+                    <div className="relative">
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs">₹</span>
+                      <FormInput type="number" min={0} value={form.originalPrice} onChange={e => setForm({ ...form, originalPrice: Number(e.target.value) })} className="pl-6" />
+                    </div>
+                  </FormField>
+                </FormRow>
+                <FormRow>
+                  <FormField label="Status">
+                    <FormSelect value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+                      <option>Active</option><option>Inactive</option><option>Maintenance</option>
+                    </FormSelect>
+                  </FormField>
+                  <FormField label="Badge">
+                    <FormSelect value={form.badge} onChange={e => setForm({ ...form, badge: e.target.value })}>
+                      <option value="">None</option><option>Most Popular</option><option>Best Value</option><option>Exclusive</option>
+                    </FormSelect>
+                  </FormField>
+                </FormRow>
+                <FormRow>
+                  <FormField label="Rating">
+                    <FormInput type="number" min={0} max={5} step={0.1} value={form.rating} onChange={e => setForm({ ...form, rating: Number(e.target.value) })} placeholder="e.g. 4.9" />
+                  </FormField>
+                  <FormField label="Reviews Count">
+                    <FormInput type="number" min={0} value={form.reviews} onChange={e => setForm({ ...form, reviews: Number(e.target.value) })} placeholder="e.g. 128" />
+                  </FormField>
+                </FormRow>
+              </FormSection>
+
+              {/* Details */}
+              <FormSection title="Details" defaultOpen={false}>
+                <FormField label="Features (comma-separated)">
+                  <FormInput type="text" value={form.features} onChange={e => setForm({ ...form, features: e.target.value })} placeholder="River View, Kayak Access, Private Deck" />
+                </FormField>
+                <FormField label="Specs (JSON)">
+                  <FormInput type="text" value={form.specs} onChange={e => setForm({ ...form, specs: e.target.value })} placeholder='{"size":"45 m²","guests":"2"}' />
+                </FormField>
+                <FormField label="Amenities">
+                  <FormInput type="text" value={form.amenities} onChange={e => setForm({ ...form, amenities: e.target.value })} placeholder="Pool, Garden, River View" />
+                </FormField>
+              </FormSection>
+
+              {/* Actions */}
+              <div className="flex gap-2 pt-2">
+                <FormSubmit type="button" onClick={() => setShowForm(false)} disabled={submitting} color="primary">Cancel</FormSubmit>
+                <FormSubmit loading={submitting} disabled={submitting}>{editingId ? 'Update' : 'Add'} Property</FormSubmit>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </AppSheet>
 
       {/* Delete Confirmation */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setDeleteConfirm(null)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-xl p-6 w-full sm:max-w-sm sm:mx-4 safe-area-bottom" onClick={e => e.stopPropagation()}>
-            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-              <Trash2 size={20} className="text-red-600" />
-            </div>
-            <h3 className="font-bold text-gray-900 mb-1 text-center">Delete Property?</h3>
-            <p className="text-sm text-gray-500 mb-5 text-center">This action cannot be undone.</p>
-            <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
-                Cancel
-              </button>
-              <button onClick={() => { deleteProperty(deleteConfirm); setDeleteConfirm(null) }} className="flex-1 py-2.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-all shadow-sm">
-                Delete
-              </button>
-            </div>
+      <AppSheet open={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} title="Delete Property?" subtitle="This action cannot be undone.">
+        <div className="p-4 pb-6 safe-area-bottom">
+          <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+            <Trash2 size={20} className="text-red-600" />
+          </div>
+          <div className="flex gap-2">
+            <FormSubmit type="button" onClick={() => setDeleteConfirm(null)} color="primary">Cancel</FormSubmit>
+            <FormSubmit type="button" onClick={() => { deleteProperty(deleteConfirm!); setDeleteConfirm(null) }} color="red">Delete</FormSubmit>
           </div>
         </div>
-      )}
+      </AppSheet>
     </div>
   )
 }

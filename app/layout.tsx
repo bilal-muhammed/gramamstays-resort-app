@@ -1,6 +1,6 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Inter, Zilla_Slab, Caveat } from 'next/font/google'
 import { LoadingBar } from '@/components/loading-bar'
 import './globals.css'
 
@@ -10,9 +10,17 @@ const inter = Inter({
   display: 'swap',
 })
 
-const playfair = Playfair_Display({
+const zillaSlab = Zilla_Slab({
   subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-serif',
+  display: 'swap',
+})
+
+const caveat = Caveat({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-handwritten',
   display: 'swap',
 })
 
@@ -38,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable} bg-background scroll-smooth`}>
+    <html lang="en" className={`${inter.variable} ${zillaSlab.variable} ${caveat.variable} bg-background scroll-smooth`}>
       <body className="antialiased font-sans text-foreground">
         <LoadingBar />
         {children}

@@ -41,7 +41,7 @@ export function Footer() {
         {/* Background Image */}
         <div className="absolute inset-0">
           <div className="absolute inset-0" style={{ backgroundImage: 'url(/hero-resort.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/95 via-primary/92 to-forest/98" />
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/97 via-primary/94 to-forest/99" />
         </div>
 
         <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 relative z-10">
@@ -53,7 +53,7 @@ export function Footer() {
                 animate={isVisible ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5 }}
               >
-                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-1.5 sm:mb-2">Stay Inspired</h3>
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold font-display text-white mb-1.5 sm:mb-2">Stay Inspired</h3>
                 <p className="text-white/55 text-xs sm:text-sm max-w-md">Join our circle for exclusive offers, seasonal events, and luxury travel inspiration.</p>
               </motion.div>
               <motion.form

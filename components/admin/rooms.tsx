@@ -5,6 +5,8 @@ import { useAdminData } from '@/context/admin-data'
 import { useToast } from '@/context/toast'
 import { Search, Plus, Pencil, Trash2, X, Wrench, CheckCircle, Eye, Lock, BedDouble, MapPin, Users } from 'lucide-react'
 import type { Room } from '@/types/admin'
+import { AppSheet } from './app-sheet'
+import { FormSection, FormField, FormRow, FormInput, FormSelect, FormTextarea, FormSubmit } from './form-parts'
 
 const statusIcon: Record<string, typeof CheckCircle> = {
   'Occupied': Eye, 'Available': CheckCircle, 'Maintenance': Wrench, 'Reserved': Lock,
@@ -32,6 +34,7 @@ export function AdminRooms() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState(emptyRoom)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
 
   const types = ['All', ...properties.map(p => p.name)]
 
@@ -51,16 +54,19 @@ export function AdminRooms() {
   const openAdd = () => { setEditingId(null); setForm(emptyRoom); setShowForm(true) }
   const openEdit = (r: Room) => { setEditingId(r.id); setForm({ type: r.type, floor: r.floor, status: r.status, guest: r.guest, price: r.price, amenities: r.amenities, until: r.until || '', from: r.from || '', note: r.note || '' }); setShowForm(true) }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     if (editingId) {
-      updateRoom(editingId, form)
+      await updateRoom(editingId, form)
       toast('success', 'Room updated')
     } else {
-      addRoom(form)
+      await addRoom(form)
       toast('success', 'Room added')
     }
     setShowForm(false); setEditingId(null); setForm(emptyRoom)
+    setSubmitting(false)
   }
 
   return (
@@ -196,111 +202,76 @@ export function AdminRooms() {
       </div>
 
       {/* Add/Edit Modal */}
-      {showForm && (
-        <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowForm(false)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-gray-900 text-lg">{editingId ? 'Edit Room' : 'New Room'}</h3>
-                <p className="text-xs text-gray-500 mt-0.5">{editingId ? 'Update room details' : 'Add a new room to inventory'}</p>
-              </div>
-              <button onClick={() => setShowForm(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-                <X size={20} className="text-gray-500" />
-              </button>
-            </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-5">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Room Number *</label>
-                  <input type="text" required value={form.id} onChange={e => setForm({ ...form, id: e.target.value } as any)}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. 301" />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Type *</label>
-                  <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
-                    {properties.map(p => (
-                      <option key={p.id} value={p.name}>{p.name}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Floor</label>
-                  <select value={form.floor} onChange={e => setForm({ ...form, floor: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
-                    <option>1st</option><option>2nd</option><option>3rd</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Status</label>
-                  <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as Room['status'] })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
-                    <option>Available</option><option>Occupied</option><option>Maintenance</option><option>Reserved</option>
-                  </select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Price (₹/night) *</label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
-                    <input type="number" min="0" required value={form.price} onChange={e => setForm({ ...form, price: Number(e.target.value) })}
-                      className="w-full pl-8 pr-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Guest</label>
-                  <input type="text" value={form.guest} onChange={e => setForm({ ...form, guest: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="-" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Amenities</label>
-                <input type="text" value={form.amenities} onChange={e => setForm({ ...form, amenities: e.target.value })}
-                  className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="King Bed, Ocean View, etc." />
-              </div>
-              {form.status === 'Maintenance' && (
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Maintenance Note</label>
-                  <input type="text" value={form.note} onChange={e => setForm({ ...form, note: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
-                </div>
-              )}
-              <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
-                  Cancel
-                </button>
-                <button type="submit" className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-all shadow-sm">
-                  {editingId ? 'Update' : 'Add'} Room
-                </button>
+      <AppSheet open={showForm} onClose={() => setShowForm(false)} title={editingId ? 'Edit Room' : 'New Room'} subtitle={editingId ? 'Update room details' : 'Add a new room to inventory'}>
+            <form onSubmit={handleSubmit} className="p-4 pb-6 space-y-3 safe-area-bottom">
+              <FormSection title="Room Info">
+                <FormRow>
+                  <FormField label="Room Number *">
+                    <FormInput type="text" required value={form.id} onChange={e => setForm({ ...form, id: e.target.value } as any)} placeholder="e.g. 301" />
+                  </FormField>
+                  <FormField label="Type *">
+                    <FormSelect value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}>
+                      {properties.map(p => (
+                        <option key={p.id} value={p.name}>{p.name}</option>
+                      ))}
+                    </FormSelect>
+                  </FormField>
+                </FormRow>
+                <FormRow>
+                  <FormField label="Floor">
+                    <FormSelect value={form.floor} onChange={e => setForm({ ...form, floor: e.target.value })}>
+                      <option>1st</option><option>2nd</option><option>3rd</option>
+                    </FormSelect>
+                  </FormField>
+                  <FormField label="Status">
+                    <FormSelect value={form.status} onChange={e => setForm({ ...form, status: e.target.value as Room['status'] })}>
+                      <option>Available</option><option>Occupied</option><option>Maintenance</option><option>Reserved</option>
+                    </FormSelect>
+                  </FormField>
+                </FormRow>
+              </FormSection>
+
+              <FormSection title="Pricing & Guest">
+                <FormRow>
+                  <FormField label="Price (₹/night) *">
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium text-sm">₹</span>
+                      <FormInput type="number" min={0} required value={form.price} onChange={e => setForm({ ...form, price: Number(e.target.value) })} className="pl-7" />
+                    </div>
+                  </FormField>
+                  <FormField label="Guest">
+                    <FormInput type="text" value={form.guest} onChange={e => setForm({ ...form, guest: e.target.value })} placeholder="-" />
+                  </FormField>
+                </FormRow>
+                <FormField label="Amenities">
+                  <FormInput type="text" value={form.amenities} onChange={e => setForm({ ...form, amenities: e.target.value })} placeholder="King Bed, Ocean View, etc." />
+                </FormField>
+                {form.status === 'Maintenance' && (
+                  <FormField label="Maintenance Note">
+                    <FormInput type="text" value={form.note} onChange={e => setForm({ ...form, note: e.target.value })} />
+                  </FormField>
+                )}
+              </FormSection>
+
+              <div className="flex gap-2 pt-2">
+                <FormSubmit type="button" onClick={() => setShowForm(false)} disabled={submitting} color="primary">Cancel</FormSubmit>
+                <FormSubmit loading={submitting} disabled={submitting}>{editingId ? 'Update' : 'Add'} Room</FormSubmit>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </AppSheet>
 
       {/* Delete Confirmation */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setDeleteConfirm(null)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-xl p-6 w-full sm:max-w-sm sm:mx-4 safe-area-bottom" onClick={e => e.stopPropagation()}>
-            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-              <Trash2 size={20} className="text-red-600" />
-            </div>
-            <h3 className="font-bold text-gray-900 mb-1 text-center">Delete Room?</h3>
-            <p className="text-sm text-gray-500 mb-5 text-center">This action cannot be undone.</p>
-            <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
-                Cancel
-              </button>
-              <button onClick={() => { deleteRoom(deleteConfirm); setDeleteConfirm(null) }} className="flex-1 py-2.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-all shadow-sm">
-                Delete
-              </button>
-            </div>
+      <AppSheet open={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} title="Delete Room?" subtitle="This action cannot be undone.">
+        <div className="p-4 pb-6 safe-area-bottom">
+          <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+            <Trash2 size={20} className="text-red-600" />
+          </div>
+          <div className="flex gap-2">
+            <FormSubmit type="button" onClick={() => setDeleteConfirm(null)} color="primary">Cancel</FormSubmit>
+            <FormSubmit type="button" onClick={() => { deleteRoom(deleteConfirm!); setDeleteConfirm(null) }} color="red">Delete</FormSubmit>
           </div>
         </div>
-      )}
+      </AppSheet>
     </div>
   )
 }

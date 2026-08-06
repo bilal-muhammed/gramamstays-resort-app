@@ -20,20 +20,65 @@ function isAuthenticated(request: NextRequest): boolean {
   return true
 }
 
+function getSecretPath(): string {
+  return process.env.ADMIN_SECRET_PATH || 'admin'
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const method = request.method
+  const secretPath = getSecretPath()
 
-  if (pathname.startsWith('/admin/login') || pathname.startsWith('/api/auth/')) {
+  // Block direct /admin access — return 404
+  if (pathname.startsWith('/admin')) {
+    return new NextResponse('Not Found', { status: 404 })
+  }
+
+  // API auth routes — always allow
+  if (pathname.startsWith('/api/auth/')) {
     return NextResponse.next()
   }
 
-  if (pathname.startsWith('/admin')) {
-    if (!isAuthenticated(request)) {
-      return NextResponse.redirect(new URL('/admin/login', request.url))
+  // Secret admin path — rewrite to /admin internally
+  if (pathname.startsWith(`/${secretPath}`)) {
+    const isAdminRoot = pathname === `/${secretPath}` || pathname === `/${secretPath}/`
+    const isLogin = pathname === `/${secretPath}/login`
+
+    if (isAdminRoot && !isAuthenticated(request)) {
+      // Not logged in → rewrite directly to /admin/login
+      const rewriteUrl = request.nextUrl.clone()
+      rewriteUrl.pathname = '/admin/login'
+      return NextResponse.rewrite(rewriteUrl)
     }
+
+    if (isAdminRoot && isAuthenticated(request)) {
+      // Logged in at root → rewrite to /admin
+      const rewriteUrl = request.nextUrl.clone()
+      rewriteUrl.pathname = '/admin'
+      return NextResponse.rewrite(rewriteUrl)
+    }
+
+    if (isLogin) {
+      // Login page → rewrite to /admin/login
+      const rewriteUrl = request.nextUrl.clone()
+      rewriteUrl.pathname = '/admin/login'
+      return NextResponse.rewrite(rewriteUrl)
+    }
+
+    // All other admin routes — require auth
+    if (!isAuthenticated(request)) {
+      const loginUrl = request.nextUrl.clone()
+      loginUrl.pathname = `/${secretPath}/login`
+      return NextResponse.redirect(loginUrl)
+    }
+
+    // Rewrite authenticated admin routes to /admin/*
+    const rewriteUrl = request.nextUrl.clone()
+    rewriteUrl.pathname = pathname.replace(`/${secretPath}`, '/admin')
+    return NextResponse.rewrite(rewriteUrl)
   }
 
+  // API routes — apply auth rules
   if (pathname.startsWith('/api/')) {
     if (pathname === '/api/bookings' && method === 'POST') {
       return NextResponse.next()
@@ -64,5 +109,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/:path*'],
+  matcher: ['/admin/:path*', '/api/:path*', '/:path*'],
 }

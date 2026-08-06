@@ -20,7 +20,7 @@ export function Amenities() {
       {/* Background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0" style={{ backgroundImage: 'url(/spa-wellness.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/88 to-background/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/93 via-background/91 to-background/93" />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -33,14 +33,14 @@ export function Amenities() {
             className="flex items-center justify-center gap-3 mb-3 sm:mb-4"
           >
             <div className="w-8 h-px bg-secondary" />
-            <span className="text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-secondary font-medium">Facilities & Services</span>
+            <span className="text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-secondary font-medium font-hand">Facilities & Services</span>
             <div className="w-8 h-px bg-secondary" />
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.08 }}
-            className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 sm:mb-4 leading-tight"
+            className="text-2xl sm:text-3xl md:text-4xl font-bold font-display text-foreground mb-3 sm:mb-4 leading-tight"
           >
             World-Class{' '}
             <span className="italic font-light text-gradient-gold">Amenities</span>
@@ -85,36 +85,36 @@ export function Amenities() {
           transition={{ duration: 0.7, delay: 0.5 }}
           className="mt-8 sm:mt-11 grid sm:grid-cols-2 gap-3 sm:gap-5"
         >
-          {/* Spa Banner */}
+          {/* Athirapilly Waterfall Banner */}
           <div className="relative rounded-lg overflow-hidden h-52 sm:h-64 group">
-            <div className="absolute inset-0 transition-transform duration-600 group-hover:scale-105" style={{ backgroundImage: 'url(/spa-wellness.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+            <div className="absolute inset-0 transition-transform duration-600 group-hover:scale-105" style={{ backgroundImage: 'url(/athirapilly_falls.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
             <div className="relative z-10 h-full flex flex-col justify-end p-5 sm:p-6">
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-1">Premium Spa</h3>
-              <p className="text-white/65 text-xs sm:text-sm mb-3 sm:mb-4 max-w-xs">Signature wellness treatments by expert therapists.</p>
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-1">Athirapilly Waterfall</h3>
+              <p className="text-white/65 text-xs sm:text-sm mb-3 sm:mb-4 max-w-xs">The Niagara of India — just 10 minutes from the resort. A majestic 80ft cascade through lush Shola forests.</p>
               <motion.a
-                href="https://wa.me/919526522031?text=Hi%2C%20I%20would%20like%20to%20book%20a%20spa%20treatment%20at%20Gramamstays%20Resort.%20Please%20share%20the%20available%20slots."
+                href="https://wa.me/919526522031?text=Hi%2C%20I%20would%20like%20to%20know%20more%20about%20the%20Athirapilly%20Waterfall%20trip%20from%20Gramamstays%20Resort."
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 className="self-start px-5 py-2 bg-white text-primary rounded-md font-medium text-xs sm:text-sm text-center"
               >
-                Book a Treatment
+                Plan a Visit
               </motion.a>
             </div>
           </div>
 
-          {/* Pool Banner */}
+          {/* Lakeside Escapes Banner */}
           <div className="relative rounded-lg overflow-hidden h-52 sm:h-64 group">
-            <div className="absolute inset-0 transition-transform duration-600 group-hover:scale-105" style={{ backgroundImage: 'url(/hero-resort.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+            <div className="absolute inset-0 transition-transform duration-600 group-hover:scale-105" style={{ backgroundImage: 'url(/lakeview_1.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
             <div className="relative z-10 h-full flex flex-col justify-end p-5 sm:p-6">
               <div className="flex gap-3 sm:gap-4 mb-2.5 sm:mb-3">
                 {[
-                  { value: '50m', label: 'Length' },
-                  { value: '28°C', label: 'Heated' },
-                  { value: '24/7', label: 'Access' },
+                  { value: '3+', label: 'Lakes Nearby' },
+                  { value: '10 min', label: 'Drive' },
+                  { value: 'Year', label: 'Round' },
                 ].map((stat) => (
                   <div key={stat.label} className="text-center">
                     <p className="text-base sm:text-lg font-bold text-white">{stat.value}</p>
@@ -122,15 +122,18 @@ export function Amenities() {
                   </div>
                 ))}
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-1">Infinity Pool</h3>
-              <p className="text-white/65 text-xs sm:text-sm mb-3 sm:mb-4 max-w-xs">Heated pool that seamlessly blends with the horizon.</p>
-              <motion.button
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-1">Lakeside Escapes</h3>
+              <p className="text-white/65 text-xs sm:text-sm mb-3 sm:mb-4 max-w-xs">Charakara & Viyyur lakes — serene spots for fishing, kayaking, and sunset views near the resort.</p>
+              <motion.a
+                href="https://wa.me/919526522031?text=Hi%2C%20I%20would%20like%20to%20know%20more%20about%20the%20lakeside%20experiences%20near%20Gramamstays%20Resort."
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
-                className="self-start px-5 py-2 bg-white text-secondary rounded-md font-medium text-xs sm:text-sm"
+                className="self-start px-5 py-2 bg-white text-secondary rounded-md font-medium text-xs sm:text-sm text-center"
               >
-                Learn More
-              </motion.button>
+                Explore Stays
+              </motion.a>
             </div>
           </div>
         </motion.div>

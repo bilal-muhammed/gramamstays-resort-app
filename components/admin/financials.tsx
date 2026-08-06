@@ -1,10 +1,12 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { useAdminData } from '@/context/admin-data'
 import { useToast } from '@/context/toast'
 import { TrendingUp, TrendingDown, DollarSign, Plus, Pencil, Trash2, X, Calendar, BarChart3, Wallet, PiggyBank, Search, Filter } from 'lucide-react'
 import type { Expense, Income } from '@/types/admin'
+import { AppSheet } from './app-sheet'
+import { FormSection, FormField, FormRow, FormInput, FormSelect, FormTextarea, FormSubmit } from './form-parts'
 
 const categoryColors: Record<string, string> = {
   'Room Revenue': 'bg-blue-500', 'Spa': 'bg-purple-500', 'Spa & Wellness': 'bg-purple-500',
@@ -60,7 +62,7 @@ function fmtDate(d: string) {
 const defaultExpense = () => ({ date: getTodayISO(), label: '', description: '', amount: 0, category: 'Supplies' })
 const defaultIncome = () => ({ date: getTodayISO(), source: '', amount: 0, type: 'Room Revenue' })
 
-export function AdminFinancials() {
+export function AdminFinancials({ openForm, onFormOpened }: { openForm?: 'booking' | 'income' | 'expense' | null; onFormOpened?: () => void }) {
   const { income, expenses, addIncome, deleteIncome, addExpense, updateExpense, deleteExpense } = useAdminData()
   const { toast } = useToast()
   const [activeTab, setActiveTab] = useState<'overview' | 'income' | 'expenses'>('overview')
@@ -72,14 +74,24 @@ export function AdminFinancials() {
   const [deleteConfirm, setDeleteConfirm] = useState<{ type: 'income' | 'expense'; id: string } | null>(null)
   const [incomeFilter, setIncomeFilter] = useState('')
   const [expenseFilter, setExpenseFilter] = useState('')
-  const expenseDateRef = useRef<HTMLInputElement>(null)
-  const incomeDateRef = useRef<HTMLInputElement>(null)
+  const [submitting, setSubmitting] = useState(false)
   const incomeFilterRef = useRef<HTMLInputElement>(null)
   const expenseFilterRef = useRef<HTMLInputElement>(null)
 
   const openPicker = useCallback((ref: React.RefObject<HTMLInputElement | null>) => {
     ref.current?.showPicker?.()
   }, [])
+
+  useEffect(() => {
+    if (openForm === 'income') {
+      setIncomeForm(defaultIncome())
+      setShowIncomeForm(true)
+      onFormOpened?.()
+    } else if (openForm === 'expense') {
+      openAddExpense()
+      onFormOpened?.()
+    }
+  }, [openForm])
 
   const totalIncome = income.reduce((s, i) => s + i.amount, 0)
   const totalExpenses = expenses.reduce((s, e) => s + e.amount, 0)
@@ -104,19 +116,25 @@ export function AdminFinancials() {
   const openAddExpense = () => { setEditingExpenseId(null); setExpenseForm(defaultExpense()); setShowExpenseForm(true) }
   const openEditExpense = (e: Expense) => { setEditingExpenseId(e.id); setExpenseForm({ date: e.date, label: e.label, description: e.description, amount: e.amount, category: e.category }); setShowExpenseForm(true) }
 
-  const handleExpenseSubmit = (e: React.FormEvent) => {
+  const handleExpenseSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     const data = { ...expenseForm, date: expenseForm.date || getTodayISO() }
-    if (editingExpenseId) { updateExpense(editingExpenseId, data); toast('success', 'Expense updated') }
-    else { addExpense(data); toast('success', 'Expense added') }
+    if (editingExpenseId) { await updateExpense(editingExpenseId, data); toast('success', 'Expense updated') }
+    else { await addExpense(data); toast('success', 'Expense added') }
     setShowExpenseForm(false); setEditingExpenseId(null); setExpenseForm(defaultExpense())
+    setSubmitting(false)
   }
 
-  const handleIncomeSubmit = (e: React.FormEvent) => {
+  const handleIncomeSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    addIncome({ ...incomeForm, date: incomeForm.date || getTodayISO() })
+    if (submitting) return
+    setSubmitting(true)
+    await addIncome({ ...incomeForm, date: incomeForm.date || getTodayISO() })
     toast('success', 'Income recorded')
     setShowIncomeForm(false); setIncomeForm(defaultIncome())
+    setSubmitting(false)
   }
 
   const handleDelete = () => {
@@ -472,144 +490,82 @@ export function AdminFinancials() {
       )}
 
       {/* Add/Edit Expense Modal */}
-      {showExpenseForm && (
-        <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowExpenseForm(false)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-gray-900 text-lg">{editingExpenseId ? 'Edit Expense' : 'New Expense'}</h3>
-                <p className="text-xs text-gray-500 mt-0.5">{editingExpenseId ? 'Update expense details' : 'Track a new expense'}</p>
-              </div>
-              <button onClick={() => setShowExpenseForm(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-                <X size={20} className="text-gray-500" />
-              </button>
-            </div>
-            <form onSubmit={handleExpenseSubmit} className="p-6 space-y-5">
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Label *</label>
-                <input type="text" required value={expenseForm.label} onChange={e => setExpenseForm({ ...expenseForm, label: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="e.g. Kitchen Supplies" />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Description</label>
-                <textarea value={expenseForm.description} onChange={e => setExpenseForm({ ...expenseForm, description: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none h-24 transition-all" placeholder="What was this expense for?" />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Amount (₹) *</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
-                  <input type="number" min="0" required value={expenseForm.amount || ''} onChange={e => setExpenseForm({ ...expenseForm, amount: Number(e.target.value) })}
-                    className="w-full pl-8 pr-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="0" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Category</label>
-                  <select value={expenseForm.category} onChange={e => setExpenseForm({ ...expenseForm, category: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
-                    {expenseCategories.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Date</label>
-                  <input ref={expenseDateRef} type="date" value={expenseForm.date} onFocus={() => openPicker(expenseDateRef)} onChange={e => setExpenseForm({ ...expenseForm, date: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer transition-all" />
-                </div>
-              </div>
-              <div className="flex gap-3 pt-3">
-                <button type="button" onClick={() => setShowExpenseForm(false)} 
-                  className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
-                  Cancel
-                </button>
-                <button type="submit" 
-                  className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-all shadow-sm">
-                  {editingExpenseId ? 'Update' : 'Add'} Expense
-                </button>
+      <AppSheet open={showExpenseForm} onClose={() => setShowExpenseForm(false)} title={editingExpenseId ? 'Edit Expense' : 'New Expense'} subtitle={editingExpenseId ? 'Update expense details' : 'Track a new expense'}>
+            <form onSubmit={handleExpenseSubmit} className="p-4 pb-6 space-y-3 safe-area-bottom">
+              <FormSection title="Expense Details">
+                <FormField label="Label *">
+                  <FormInput type="text" required value={expenseForm.label} onChange={e => setExpenseForm({ ...expenseForm, label: e.target.value })} placeholder="e.g. Kitchen Supplies" />
+                </FormField>
+                <FormField label="Description">
+                  <FormTextarea value={expenseForm.description} onChange={e => setExpenseForm({ ...expenseForm, description: e.target.value })} placeholder="What was this expense for?" rows={3} className="h-16" />
+                </FormField>
+                <FormField label="Amount (₹) *">
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium text-sm">₹</span>
+                    <FormInput type="number" min={0} required value={expenseForm.amount || ''} onChange={e => setExpenseForm({ ...expenseForm, amount: Number(e.target.value) })} placeholder="0" className="pl-7" />
+                  </div>
+                </FormField>
+                <FormRow>
+                  <FormField label="Category">
+                    <FormSelect value={expenseForm.category} onChange={e => setExpenseForm({ ...expenseForm, category: e.target.value })}>
+                      {expenseCategories.map(c => <option key={c}>{c}</option>)}
+                    </FormSelect>
+                  </FormField>
+                  <FormField label="Date">
+                    <FormInput type="date" value={expenseForm.date} onChange={e => setExpenseForm({ ...expenseForm, date: e.target.value })} />
+                  </FormField>
+                </FormRow>
+              </FormSection>
+              <div className="flex gap-2 pt-2">
+                <FormSubmit type="button" onClick={() => setShowExpenseForm(false)} disabled={submitting} color="primary">Cancel</FormSubmit>
+                <FormSubmit loading={submitting} disabled={submitting}>{editingExpenseId ? 'Update' : 'Add'} Expense</FormSubmit>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </AppSheet>
 
       {/* Add Income Modal */}
-      {showIncomeForm && (
-        <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowIncomeForm(false)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-gray-900 text-lg">New Income</h3>
-                <p className="text-xs text-gray-500 mt-0.5">Record incoming revenue</p>
-              </div>
-              <button onClick={() => setShowIncomeForm(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-                <X size={20} className="text-gray-500" />
-              </button>
-            </div>
-            <form onSubmit={handleIncomeSubmit} className="p-6 space-y-5">
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Source *</label>
-                <input type="text" required value={incomeForm.source} onChange={e => setIncomeForm({ ...incomeForm, source: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all" placeholder="e.g. Room - Presidential Suite #301" />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Amount (₹) *</label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
-                  <input type="number" min="0" required value={incomeForm.amount || ''} onChange={e => setIncomeForm({ ...incomeForm, amount: Number(e.target.value) })}
-                    className="w-full pl-8 pr-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all" placeholder="0" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Type</label>
-                  <select value={incomeForm.type} onChange={e => setIncomeForm({ ...incomeForm, type: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-white transition-all appearance-none">
-                    {incomeTypes.map(t => <option key={t}>{t}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Date</label>
-                  <input ref={incomeDateRef} type="date" value={incomeForm.date} onFocus={() => openPicker(incomeDateRef)} onChange={e => setIncomeForm({ ...incomeForm, date: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 cursor-pointer transition-all" />
-                </div>
-              </div>
-              <div className="flex gap-3 pt-3">
-                <button type="button" onClick={() => setShowIncomeForm(false)} 
-                  className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
-                  Cancel
-                </button>
-                <button type="submit" 
-                  className="flex-1 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-all shadow-sm">
-                  Add Income
-                </button>
+      <AppSheet open={showIncomeForm} onClose={() => setShowIncomeForm(false)} title="New Income" subtitle="Record incoming revenue">
+            <form onSubmit={handleIncomeSubmit} className="p-4 pb-6 space-y-3 safe-area-bottom">
+              <FormSection title="Income Details">
+                <FormField label="Source *">
+                  <FormInput type="text" required value={incomeForm.source} onChange={e => setIncomeForm({ ...incomeForm, source: e.target.value })} placeholder="e.g. Room - Presidential Suite #301" />
+                </FormField>
+                <FormField label="Amount (₹) *">
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium text-sm">₹</span>
+                    <FormInput type="number" min={0} required value={incomeForm.amount || ''} onChange={e => setIncomeForm({ ...incomeForm, amount: Number(e.target.value) })} placeholder="0" className="pl-7" />
+                  </div>
+                </FormField>
+                <FormRow>
+                  <FormField label="Type">
+                    <FormSelect value={incomeForm.type} onChange={e => setIncomeForm({ ...incomeForm, type: e.target.value })}>
+                      {incomeTypes.map(t => <option key={t}>{t}</option>)}
+                    </FormSelect>
+                  </FormField>
+                  <FormField label="Date">
+                    <FormInput type="date" value={incomeForm.date} onChange={e => setIncomeForm({ ...incomeForm, date: e.target.value })} />
+                  </FormField>
+                </FormRow>
+              </FormSection>
+              <div className="flex gap-2 pt-2">
+                <FormSubmit type="button" onClick={() => setShowIncomeForm(false)} disabled={submitting} color="primary">Cancel</FormSubmit>
+                <FormSubmit loading={submitting} disabled={submitting} color="emerald">Add Income</FormSubmit>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </AppSheet>
 
       {/* Delete Confirmation */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setDeleteConfirm(null)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-xl p-6 w-full sm:max-w-sm sm:mx-4 safe-area-bottom" onClick={e => e.stopPropagation()}>
-            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-              <Trash2 size={20} className="text-red-600" />
-            </div>
-            <h3 className="font-bold text-gray-900 mb-1 text-center">Delete Entry?</h3>
-            <p className="text-sm text-gray-500 mb-5 text-center">This action cannot be undone.</p>
-            <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm(null)} 
-                className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
-                Cancel
-              </button>
-              <button onClick={handleDelete} 
-                className="flex-1 py-2.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-all shadow-sm">
-                Delete
-              </button>
-            </div>
+      <AppSheet open={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} title="Delete Entry?" subtitle="This action cannot be undone.">
+        <div className="p-4 pb-6 safe-area-bottom">
+          <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+            <Trash2 size={20} className="text-red-600" />
+          </div>
+          <div className="flex gap-2">
+            <FormSubmit type="button" onClick={() => setDeleteConfirm(null)} color="primary">Cancel</FormSubmit>
+            <FormSubmit type="button" onClick={handleDelete} color="red">Delete</FormSubmit>
           </div>
         </div>
-      )}
+      </AppSheet>
     </div>
   )
 }

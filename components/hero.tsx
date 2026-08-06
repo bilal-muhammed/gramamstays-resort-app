@@ -25,7 +25,7 @@ export function Hero() {
           src="/main_banner_.png"
           alt="Gramamstays Luxury Resort"
           fill
-          className="object-cover"
+          className="object-cover object-[70%_40%] sm:object-center"
           priority
         />
       </motion.div>
@@ -47,7 +47,7 @@ export function Hero() {
           className="flex items-center justify-center gap-3 mb-4 sm:mb-5"
         >
           <div className="w-8 h-px bg-secondary" />
-          <span className="text-secondary text-[10px] sm:text-[11px] tracking-[0.3em] uppercase font-medium">Est. 2024</span>
+          <span className="text-secondary text-[10px] sm:text-[11px] tracking-[0.3em] uppercase font-medium font-hand">Est. 2024</span>
           <div className="w-8 h-px bg-secondary" />
         </motion.div>
 
@@ -56,7 +56,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-5 leading-[0.95] tracking-tight"
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-display mb-4 sm:mb-5 leading-[0.95] tracking-tight"
         >
           <span className="block">Where Nature</span>
           <span className="block mt-1.5 sm:mt-2">

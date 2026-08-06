@@ -7,10 +7,12 @@ import { Footer } from '@/components/footer'
 import { Experience } from '@/components/experience'
 import { Testimonials } from '@/components/testimonials'
 import { SectionDivider } from '@/components/section-divider'
+import { ForestOverlay } from '@/components/forest-overlay'
 
 export default function Page() {
   return (
     <main className="min-h-screen bg-background">
+      <ForestOverlay />
       <Header />
       <Hero />
       <SectionDivider variant="ornament" />

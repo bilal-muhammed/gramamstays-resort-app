@@ -2,7 +2,7 @@
 
 import type { AdminSection } from '@/app/admin/page'
 import { useAdminData } from '@/context/admin-data'
-import { TrendingUp, TrendingDown, CalendarCheck, BedDouble, DollarSign, ArrowUpRight, Clock, CalendarClock, LogIn, LogOut, Users, Activity } from 'lucide-react'
+import { TrendingUp, TrendingDown, CalendarCheck, BedDouble, DollarSign, ArrowUpRight, Clock, CalendarClock, LogIn, LogOut, Users, Activity, ArrowDownToLine, ArrowUpFromLine } from 'lucide-react'
 
 function fmtDate(d: string) {
   if (!d) return ''
@@ -51,11 +51,11 @@ const roomStatusConfig = [
 
 interface Props {
   onNavigate: (section: AdminSection) => void
+  onOpenForm?: (form: 'booking' | 'income' | 'expense') => void
 }
 
-export function AdminDashboard({ onNavigate }: Props) {
+export function AdminDashboard({ onNavigate, onOpenForm }: Props) {
   const { bookings, rooms, expenses, income, activities } = useAdminData()
-
   const now = new Date()
   const todayStr = now.toISOString().split('T')[0]
   const thisMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
@@ -102,68 +102,93 @@ export function AdminDashboard({ onNavigate }: Props) {
   const stats = [
     { label: 'Revenue', value: `₹${totalRevenue.toLocaleString()}`, change: revenueChange !== 0 ? `${revenueChange > 0 ? '+' : ''}${revenueChange}%` : '', up: revenueChange >= 0, icon: DollarSign, bgColor: 'bg-emerald-100', textColor: 'text-emerald-600' },
     { label: 'Occupancy', value: `${occupancyRate}%`, change: '', up: true, icon: BedDouble, bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
-    { label: 'Active Bookings', value: String(activeBookings), change: '', up: true, icon: CalendarCheck, bgColor: 'bg-amber-100', textColor: 'text-amber-600' },
+    { label: 'Active', value: String(activeBookings), change: '', up: true, icon: CalendarCheck, bgColor: 'bg-amber-100', textColor: 'text-amber-600' },
     { label: 'Pending', value: `₹${pendingAmount.toLocaleString()}`, change: '', up: false, icon: Clock, bgColor: 'bg-red-100', textColor: 'text-red-600' },
   ]
 
+  const quickActions = [
+    { label: 'New Booking', form: 'booking' as const, icon: CalendarCheck, color: 'bg-blue-500', textColor: 'text-white' },
+    { label: 'Add Income', form: 'income' as const, icon: ArrowDownToLine, color: 'bg-emerald-500', textColor: 'text-white' },
+    { label: 'Add Expense', form: 'expense' as const, icon: ArrowUpFromLine, color: 'bg-red-500', textColor: 'text-white' },
+  ]
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-4 sm:space-y-5 pb-20 lg:pb-5">
+      {/* Quick Actions Toolbar - Mobile Only */}
+      <div className="lg:hidden bg-white rounded-xl border border-gray-200 p-2.5">
+        <div className="flex gap-2">
+          {quickActions.map((action) => {
+            const Icon = action.icon
+            return (
+              <button
+                key={action.label}
+                onClick={() => onOpenForm?.(action.form)}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg ${action.color} ${action.textColor} text-[11px] font-semibold active:scale-95 transition-all`}
+              >
+                <Icon size={13} />
+                {action.label}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
       {/* Today's Overview */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <div className="bg-white rounded-lg border border-gray-200 p-3 hover:border-gray-300 transition-all">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-              <LogIn size={16} className="text-blue-600" />
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
+        <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-4 hover:border-gray-300 transition-all active:scale-[0.98]">
+          <div className="flex items-center gap-2.5 mb-2.5">
+            <div className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center">
+              <LogIn size={15} className="text-blue-600" />
             </div>
-            <span className="text-xs text-gray-500 font-medium">Check-ins</span>
+            <span className="text-[11px] text-gray-500 font-medium">Check-ins</span>
           </div>
           <p className="text-2xl sm:text-3xl font-bold text-gray-900">{todayCheckIns.length}</p>
           {todayCheckIns.length > 0 && (
-            <p className="text-[11px] text-gray-400 mt-1 truncate">{todayCheckIns[0].guest}{todayCheckIns.length > 1 ? ` +${todayCheckIns.length - 1}` : ''}</p>
+            <p className="text-[10px] text-gray-400 mt-1 truncate">{todayCheckIns[0].guest}{todayCheckIns.length > 1 ? ` +${todayCheckIns.length - 1}` : ''}</p>
           )}
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-3 hover:border-gray-300 transition-all">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-              <LogOut size={16} className="text-amber-600" />
+        <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-4 hover:border-gray-300 transition-all active:scale-[0.98]">
+          <div className="flex items-center gap-2.5 mb-2.5">
+            <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center">
+              <LogOut size={15} className="text-amber-600" />
             </div>
-            <span className="text-xs text-gray-500 font-medium">Check-outs</span>
+            <span className="text-[11px] text-gray-500 font-medium">Check-outs</span>
           </div>
           <p className="text-2xl sm:text-3xl font-bold text-gray-900">{todayCheckOuts.length}</p>
           {todayCheckOuts.length > 0 && (
-            <p className="text-[11px] text-gray-400 mt-1 truncate">{todayCheckOuts[0].guest}{todayCheckOuts.length > 1 ? ` +${todayCheckOuts.length - 1}` : ''}</p>
+            <p className="text-[10px] text-gray-400 mt-1 truncate">{todayCheckOuts[0].guest}{todayCheckOuts.length > 1 ? ` +${todayCheckOuts.length - 1}` : ''}</p>
           )}
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-3 col-span-2 sm:col-span-1 hover:border-gray-300 transition-all">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-              <DollarSign size={16} className="text-emerald-600" />
+        <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-4 col-span-2 sm:col-span-1 hover:border-gray-300 transition-all active:scale-[0.98]">
+          <div className="flex items-center gap-2.5 mb-2.5">
+            <div className="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
+              <DollarSign size={15} className="text-emerald-600" />
             </div>
-            <span className="text-xs text-gray-500 font-medium">Today&apos;s Revenue</span>
+            <span className="text-[11px] text-gray-500 font-medium">Today&apos;s Revenue</span>
           </div>
           <p className="text-2xl sm:text-3xl font-bold text-emerald-600">₹{todayRevenue.toLocaleString()}</p>
         </div>
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
         {stats.map((stat) => {
           const Icon = stat.icon
           return (
-            <div key={stat.label} className="bg-white rounded-lg border border-gray-200 p-3 hover:border-gray-300 transition-all">
-              <div className="flex items-center gap-3 mb-3">
-                <div className={`w-10 h-10 ${stat.bgColor} rounded-xl flex items-center justify-center shrink-0`}>
-                  <Icon size={16} className={stat.textColor} />
+            <div key={stat.label} className="bg-white rounded-xl border border-gray-200 p-3 sm:p-4 hover:border-gray-300 transition-all active:scale-[0.98]">
+              <div className="flex items-center gap-2.5 mb-2.5">
+                <div className={`w-9 h-9 ${stat.bgColor} rounded-xl flex items-center justify-center shrink-0`}>
+                  <Icon size={15} className={stat.textColor} />
                 </div>
                 {stat.change && (
-                  <div className={`flex items-center gap-0.5 text-[11px] font-semibold ${stat.up ? 'text-emerald-600' : 'text-red-500'}`}>
-                    {stat.up ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                  <div className={`flex items-center gap-0.5 text-[10px] font-semibold ${stat.up ? 'text-emerald-600' : 'text-red-500'}`}>
+                    {stat.up ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
                     <span>{stat.change}</span>
                   </div>
                 )}
               </div>
-              <p className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{stat.value}</p>
-              <p className="text-[11px] text-gray-500 mt-1">{stat.label}</p>
+              <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">{stat.value}</p>
+              <p className="text-[10px] sm:text-[11px] text-gray-500 mt-0.5">{stat.label}</p>
             </div>
           )
         })}
@@ -171,7 +196,7 @@ export function AdminDashboard({ onNavigate }: Props) {
 
       {/* Upcoming Bookings */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-gray-100 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <CalendarClock size={14} className="text-primary" />
@@ -184,9 +209,9 @@ export function AdminDashboard({ onNavigate }: Props) {
         </div>
 
         {upcomingBookings.length === 0 ? (
-          <div className="p-12 text-center">
-            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-              <CalendarClock size={24} className="text-gray-300" />
+          <div className="p-10 sm:p-12 text-center">
+            <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+              <CalendarClock size={22} className="text-gray-300" />
             </div>
             <p className="text-sm font-medium text-gray-900 mb-1">No upcoming bookings</p>
             <p className="text-xs text-gray-500">All caught up!</p>
@@ -196,7 +221,7 @@ export function AdminDashboard({ onNavigate }: Props) {
             {/* Mobile Cards */}
             <div className="lg:hidden divide-y divide-gray-50">
               {upcomingBookings.map((b) => (
-                <div key={b.id} className="px-4 py-3.5 hover:bg-gray-50/50 transition-colors">
+                <div key={b.id} className="px-4 py-3.5 hover:bg-gray-50/50 transition-colors active:bg-gray-100/50">
                   <div className="flex items-start justify-between mb-2">
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-gray-900">{b.guest}</p>
@@ -266,9 +291,9 @@ export function AdminDashboard({ onNavigate }: Props) {
       </div>
 
       {/* Bottom Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {/* Room Status */}
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <BedDouble size={14} className="text-primary" />
@@ -301,8 +326,8 @@ export function AdminDashboard({ onNavigate }: Props) {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
+        {/* Quick Actions - Desktop Only */}
+        <div className="hidden lg:block bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <Activity size={14} className="text-primary" />
@@ -311,9 +336,9 @@ export function AdminDashboard({ onNavigate }: Props) {
           </div>
           <div className="space-y-2">
             {[
-              { label: 'New Booking', section: 'bookings' as AdminSection, icon: CalendarCheck, color: 'bg-blue-100 text-blue-600' },
-              { label: 'Add Income', section: 'financials' as AdminSection, icon: TrendingUp, color: 'bg-emerald-100 text-emerald-600' },
-              { label: 'Add Expense', section: 'financials' as AdminSection, icon: TrendingDown, color: 'bg-red-100 text-red-600' },
+              { label: 'New Booking', form: 'booking' as const, icon: CalendarCheck, color: 'bg-blue-100 text-blue-600' },
+              { label: 'Add Income', form: 'income' as const, icon: TrendingUp, color: 'bg-emerald-100 text-emerald-600' },
+              { label: 'Add Expense', form: 'expense' as const, icon: TrendingDown, color: 'bg-red-100 text-red-600' },
               { label: 'View Guests', section: 'guests' as AdminSection, icon: Users, color: 'bg-purple-100 text-purple-600' },
               { label: 'Staff Directory', section: 'staff' as AdminSection, icon: Users, color: 'bg-amber-100 text-amber-600' },
             ].map((action) => {
@@ -321,7 +346,7 @@ export function AdminDashboard({ onNavigate }: Props) {
               return (
                 <button
                   key={action.label}
-                  onClick={() => onNavigate(action.section)}
+                  onClick={() => 'form' in action ? onOpenForm?.(action.form) : onNavigate(action.section)}
                   className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 active:bg-gray-200 text-sm text-gray-700 font-medium transition-colors"
                 >
                   <div className={`w-8 h-8 rounded-lg ${action.color} flex items-center justify-center`}>
@@ -336,7 +361,7 @@ export function AdminDashboard({ onNavigate }: Props) {
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-lg border border-gray-200 p-4 sm:col-span-2 lg:col-span-1">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:col-span-2 lg:col-span-1">
           <div className="flex items-center gap-2.5 mb-4">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <Clock size={14} className="text-primary" />
@@ -365,6 +390,7 @@ export function AdminDashboard({ onNavigate }: Props) {
           </div>
         </div>
       </div>
+
     </div>
   )
 }

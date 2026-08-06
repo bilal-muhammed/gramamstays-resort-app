@@ -104,7 +104,7 @@ export function Testimonials() {
       {/* Background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0" style={{ backgroundImage: 'url(/room_1.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/88 to-background/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/93 via-background/91 to-background/93" />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -117,14 +117,14 @@ export function Testimonials() {
             className="flex items-center justify-center gap-3 mb-3 sm:mb-4"
           >
             <div className="w-8 h-px bg-secondary" />
-            <span className="text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-secondary font-medium">Guest Stories</span>
+            <span className="text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-secondary font-medium font-hand">Guest Stories</span>
             <div className="w-8 h-px bg-secondary" />
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.08 }}
-            className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-3 sm:mb-4 leading-tight"
+            className="text-2xl sm:text-3xl md:text-4xl font-bold font-display text-foreground mb-3 sm:mb-4 leading-tight"
           >
             What Our Guests{' '}
             <span className="italic font-light text-gradient-gold">Say</span>

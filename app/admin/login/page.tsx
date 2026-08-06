@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/auth'
 import { Eye, EyeOff, Lock, User } from 'lucide-react'
+import { getAdminPath } from '@/lib/admin-path'
 
 export default function LoginPage() {
   const { login } = useAuth()
@@ -23,7 +24,7 @@ export default function LoginPage() {
     if (result.error) {
       setError(result.error)
     } else {
-      router.push('/admin')
+      router.push(getAdminPath())
     }
   }
 

@@ -5,6 +5,8 @@ import { useAdminData } from '@/context/admin-data'
 import { useToast } from '@/context/toast'
 import { Search, Plus, Pencil, Trash2, X, Shield, UserCog, Mail, Phone, Clock, Users } from 'lucide-react'
 import type { Staff } from '@/types/admin'
+import { AppSheet } from './app-sheet'
+import { FormSection, FormField, FormRow, FormInput, FormSelect, FormTextarea, FormSubmit } from './form-parts'
 
 const statusColor: Record<string, string> = {
   'Active': 'bg-emerald-50 text-emerald-700 border border-emerald-200',
@@ -40,6 +42,7 @@ export function AdminStaff() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState(emptyStaff)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
 
   const filtered = staff.filter(s => {
     return s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.role.toLowerCase().includes(searchQuery.toLowerCase()) || s.department.toLowerCase().includes(searchQuery.toLowerCase())
@@ -53,16 +56,19 @@ export function AdminStaff() {
   const openAdd = () => { setEditingId(null); setForm(emptyStaff); setShowForm(true) }
   const openEdit = (s: Staff) => { setEditingId(s.id); setForm({ name: s.name, email: s.email, phone: s.phone, role: s.role, department: s.department, status: s.status, lastActive: s.lastActive, permissions: [...s.permissions] }); setShowForm(true) }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     if (editingId) {
-      updateStaff(editingId, form)
+      await updateStaff(editingId, form)
       toast('success', 'Staff updated')
     } else {
-      addStaff(form)
+      await addStaff(form)
       toast('success', 'Staff added')
     }
     setShowForm(false); setEditingId(null); setForm(emptyStaff)
+    setSubmitting(false)
   }
 
   const togglePermission = (perm: string) => {
@@ -230,109 +236,77 @@ export function AdminStaff() {
       )}
 
       {/* Add/Edit Modal */}
-      {showForm && (
-        <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowForm(false)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-xl w-full sm:max-w-lg sm:mx-4 max-h-[92vh] overflow-y-auto safe-area-bottom" onClick={e => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-gray-900 text-lg">{editingId ? 'Edit Staff' : 'New Staff Member'}</h3>
-                <p className="text-xs text-gray-500 mt-0.5">{editingId ? 'Update staff details' : 'Add a new team member'}</p>
-              </div>
-              <button onClick={() => setShowForm(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-                <X size={20} className="text-gray-500" />
-              </button>
-            </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-5">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Name *</label>
-                  <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Email *</label>
-                  <input type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Phone</label>
-                  <input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Status</label>
-                  <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value as Staff['status'] })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
-                    <option>Active</option><option>Off Duty</option>
-                  </select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Role</label>
-                  <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
-                    {roles.map(r => <option key={r}>{r}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Department</label>
-                  <select value={form.department} onChange={e => setForm({ ...form, department: e.target.value })}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white transition-all appearance-none">
-                    {departments.map(d => <option key={d}>{d}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Permissions</label>
-                <div className="flex flex-wrap gap-2">
-                  {allPermissions.map(p => (
-                    <button key={p} type="button" onClick={() => togglePermission(p)}
-                      className={`px-3 py-2 rounded-md text-xs font-semibold border transition-all ${
-                        form.permissions.includes(p) 
-                          ? 'bg-primary/10 border-primary/30 text-primary' 
-                          : 'bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100'
-                      }`}>
-                      {p}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
-                  Cancel
-                </button>
-                <button type="submit" className="flex-1 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-all shadow-sm">
-                  {editingId ? 'Update' : 'Add'} Staff
-                </button>
+      <AppSheet open={showForm} onClose={() => setShowForm(false)} title={editingId ? 'Edit Staff' : 'New Staff Member'} subtitle={editingId ? 'Update staff details' : 'Add a new team member'}>
+            <form onSubmit={handleSubmit} className="p-4 pb-6 space-y-3 safe-area-bottom">
+              <FormSection title="Personal">
+                <FormRow>
+                  <FormField label="Name *">
+                    <FormInput type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+                  </FormField>
+                  <FormField label="Email *">
+                    <FormInput type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+                  </FormField>
+                </FormRow>
+                <FormRow>
+                  <FormField label="Phone">
+                    <FormInput type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+                  </FormField>
+                  <FormField label="Status">
+                    <FormSelect value={form.status} onChange={e => setForm({ ...form, status: e.target.value as Staff['status'] })}>
+                      <option>Active</option><option>Off Duty</option>
+                    </FormSelect>
+                  </FormField>
+                </FormRow>
+              </FormSection>
+
+              <FormSection title="Role & Department">
+                <FormRow>
+                  <FormField label="Role">
+                    <FormSelect value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}>
+                      {roles.map(r => <option key={r}>{r}</option>)}
+                    </FormSelect>
+                  </FormField>
+                  <FormField label="Department">
+                    <FormSelect value={form.department} onChange={e => setForm({ ...form, department: e.target.value })}>
+                      {departments.map(d => <option key={d}>{d}</option>)}
+                    </FormSelect>
+                  </FormField>
+                </FormRow>
+                <FormField label="Permissions">
+                  <div className="flex flex-wrap gap-2">
+                    {allPermissions.map(p => (
+                      <button key={p} type="button" onClick={() => togglePermission(p)}
+                        className={`px-3 py-1.5 rounded-md text-xs font-semibold border transition-all ${
+                          form.permissions.includes(p)
+                            ? 'bg-primary/10 border-primary/30 text-primary'
+                            : 'bg-gray-50 border-gray-200 text-gray-500 hover:bg-gray-100'
+                        }`}>
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                </FormField>
+              </FormSection>
+
+              <div className="flex gap-2 pt-2">
+                <FormSubmit type="button" onClick={() => setShowForm(false)} disabled={submitting} color="primary">Cancel</FormSubmit>
+                <FormSubmit loading={submitting} disabled={submitting}>{editingId ? 'Update' : 'Add'} Staff</FormSubmit>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </AppSheet>
 
       {/* Delete Confirmation */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setDeleteConfirm(null)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-xl p-6 w-full sm:max-w-sm sm:mx-4 safe-area-bottom" onClick={e => e.stopPropagation()}>
-            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-              <Trash2 size={20} className="text-red-600" />
-            </div>
-            <h3 className="font-bold text-gray-900 mb-1 text-center">Delete Staff Member?</h3>
-            <p className="text-sm text-gray-500 mb-5 text-center">This action cannot be undone.</p>
-            <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all">
-                Cancel
-              </button>
-              <button onClick={() => { deleteStaff(deleteConfirm); setDeleteConfirm(null) }} className="flex-1 py-2.5 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-all shadow-sm">
-                Delete
-              </button>
-            </div>
+      <AppSheet open={!!deleteConfirm} onClose={() => setDeleteConfirm(null)} title="Delete Staff Member?" subtitle="This action cannot be undone.">
+        <div className="p-4 pb-6 safe-area-bottom">
+          <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+            <Trash2 size={20} className="text-red-600" />
+          </div>
+          <div className="flex gap-2">
+            <FormSubmit type="button" onClick={() => setDeleteConfirm(null)} color="primary">Cancel</FormSubmit>
+            <FormSubmit type="button" onClick={() => { deleteStaff(deleteConfirm!); setDeleteConfirm(null) }} color="red">Delete</FormSubmit>
           </div>
         </div>
-      )}
+      </AppSheet>
     </div>
   )
 }

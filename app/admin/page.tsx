@@ -9,6 +9,7 @@ import { ToastProvider } from '@/context/toast'
 import { AdminSidebar } from '@/components/admin/sidebar'
 import { AdminMobileNav } from '@/components/admin/mobile-nav'
 import { AdminHeader } from '@/components/admin/header'
+import { getAdminPath } from '@/lib/admin-path'
 
 const AdminDashboard = dynamic(() => import('@/components/admin/dashboard').then(m => ({ default: m.AdminDashboard })), { loading: () => <div className="space-y-5"><div className="grid grid-cols-2 lg:grid-cols-4 gap-3">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="bg-white rounded-lg border border-gray-200 p-3 h-24 animate-pulse" />)}</div></div> })
 const AdminBookings = dynamic(() => import('@/components/admin/bookings').then(m => ({ default: m.AdminBookings })), { loading: () => <div className="bg-white rounded-lg border border-gray-200 p-6 h-64 animate-pulse" /> })
@@ -28,9 +29,10 @@ function AdminContent() {
   const router = useRouter()
   const [activeSection, setActiveSection] = useState<AdminSection>('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [openForm, setOpenForm] = useState<'booking' | 'income' | 'expense' | null>(null)
 
   useEffect(() => {
-    if (!loading && !user) router.push('/admin/login')
+    if (!loading && !user) router.push(getAdminPath('/login'))
   }, [loading, user, router])
 
   useEffect(() => {
@@ -45,17 +47,17 @@ function AdminContent() {
   const section = useMemo(() => {
     if (!canAccess(activeSection)) return <AdminDashboard onNavigate={setActiveSection} />
     switch (activeSection) {
-      case 'dashboard': return <AdminDashboard onNavigate={setActiveSection} />
-      case 'bookings': return <AdminBookings />
+      case 'dashboard': return <AdminDashboard onNavigate={setActiveSection} onOpenForm={(form) => { setActiveSection(form === 'booking' ? 'bookings' : 'financials'); setOpenForm(form) }} />
+      case 'bookings': return <AdminBookings openForm={openForm} onFormOpened={() => setOpenForm(null)} />
       case 'properties': return <AdminProperties />
       case 'guests': return <AdminGuests />
-      case 'financials': return <AdminFinancials />
+      case 'financials': return <AdminFinancials openForm={openForm} onFormOpened={() => setOpenForm(null)} />
       case 'staff': return <AdminStaff />
       case 'register': return <RegisterPage />
       case 'logs': return <AdminActivityLogs />
       case 'testimonials': return <AdminTestimonials />
       case 'inquiries': return <AdminInquiries />
-      default: return <AdminDashboard onNavigate={setActiveSection} />
+      default: return <AdminDashboard onNavigate={setActiveSection} onOpenForm={(form) => { setActiveSection(form === 'booking' ? 'bookings' : 'financials'); setOpenForm(form) }} />
     }
   }, [activeSection, canAccess])
 

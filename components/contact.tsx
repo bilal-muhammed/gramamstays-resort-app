@@ -43,8 +43,8 @@ export function Contact() {
   return (
     <section id="contact" className="py-14 sm:py-20 px-5 sm:px-6 lg:px-10 relative" ref={ref}>
       <div className="absolute inset-0">
-        <div className="absolute inset-0" style={{ backgroundImage: 'url(/luxury-room.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/88 to-background/90" />
+        <div className="absolute inset-0" style={{ backgroundImage: 'url(/athirapilly_falls.png)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/55 to-background/60" />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -53,11 +53,11 @@ export function Contact() {
           <motion.div initial={{ opacity: 0, y: 15 }} animate={isVisible ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}
             className="flex items-center justify-center gap-3 mb-3">
             <div className="w-8 h-px bg-secondary" />
-            <span className="text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-secondary font-medium">Reach Out</span>
+            <span className="text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-secondary font-medium font-hand">Reach Out</span>
             <div className="w-8 h-px bg-secondary" />
           </motion.div>
           <motion.h2 initial={{ opacity: 0, y: 20 }} animate={isVisible ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.08 }}
-            className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground leading-tight">
+            className="text-2xl sm:text-3xl md:text-4xl font-bold font-display text-foreground leading-tight">
             Begin Your <span className="italic font-light text-gradient-gold">Journey</span>
           </motion.h2>
         </div>

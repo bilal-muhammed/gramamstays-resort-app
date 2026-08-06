@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/auth'
 import { UserPlus, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { getAdminPath } from '@/lib/admin-path'
 
 export default function RegisterPage() {
   const { user, isSuperAdmin, loading: authLoading } = useAuth()
@@ -17,7 +18,7 @@ export default function RegisterPage() {
   const [users, setUsers] = useState<Array<{ id: string; username: string; email: string; phone: string; role: string; createdAt: string }>>([])
 
   useEffect(() => {
-    if (!authLoading && !isSuperAdmin) router.push('/admin')
+    if (!authLoading && !isSuperAdmin) router.push(getAdminPath())
   }, [authLoading, isSuperAdmin, router])
 
   useEffect(() => {
@@ -70,7 +71,7 @@ export default function RegisterPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Link href="/admin" className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors">
+        <Link href={getAdminPath()} className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors">
           <ArrowLeft size={18} />
         </Link>
         <div>
