@@ -1,5 +1,5 @@
 const CACHE_NAME = 'gramamstays-admin-v1'
-const PRECACHE_URLS = ['/admin', '/manifest.json', '/icon-192.png', '/icon-512.png']
+const PRECACHE_URLS = ['/5AUUVwJHVzM', '/manifest.json', '/icon-192.png', '/icon-512.png']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
