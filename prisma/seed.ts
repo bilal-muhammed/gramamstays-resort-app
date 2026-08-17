@@ -6,7 +6,7 @@ import pg from 'pg'
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_URL!,
   ssl: { rejectUnauthorized: false },
-  max: 1,
+  max: 5,
 })
 const adapter = new PrismaPg(pool)
 const prisma = new PrismaClient({ adapter })
@@ -19,7 +19,7 @@ async function main() {
     return
   }
 
-  await prisma.booking.createMany({
+  await prisma.property.createMany({
     data: [
       { id: 'prop-001', name: 'The Chedi', description: 'A luxurious retreat blending traditional elegance with modern comfort. Features panoramic views, private gardens, and world-class amenities.', price: 850, status: 'Active', amenities: 'King Bed, River View, Private Pool, Butler Service, Outdoor Shower' },
       { id: 'prop-002', name: 'British Bungalow', description: 'Heritage bungalow with colonial architecture, wrap-around verandah, and lush manicured lawns. Perfect for a serene escape.', price: 650, status: 'Active', amenities: 'Queen Bed, Garden View, Fireplace, Antique Furnishings, Tea Lounge' },

@@ -1,21 +1,22 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { jwtVerify } from 'jose'
 
-function decodeToken(token: string): { exp?: number } | null {
+async function verifyToken(token: string): Promise<{ exp?: number } | null> {
   try {
-    const parts = token.split('.')
-    if (parts.length !== 3) return null
-    const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')))
-    return payload
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET || '')
+    if (!secret.length) return null
+    const { payload } = await jwtVerify(token, secret)
+    return payload as { exp?: number }
   } catch {
     return null
   }
 }
 
-function isAuthenticated(request: NextRequest): boolean {
+async function isAuthenticated(request: NextRequest): Promise<boolean> {
   const token = request.cookies.get('ga_token')?.value
   if (!token) return false
-  const payload = decodeToken(token)
+  const payload = await verifyToken(token)
   if (!payload || (payload.exp && payload.exp * 1000 < Date.now())) return false
   return true
 }
@@ -24,7 +25,7 @@ function getSecretPath(): string {
   return process.env.ADMIN_SECRET_PATH || 'admin'
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const method = request.method
   const secretPath = getSecretPath()
@@ -44,14 +45,14 @@ export function middleware(request: NextRequest) {
     const isAdminRoot = pathname === `/${secretPath}` || pathname === `/${secretPath}/`
     const isLogin = pathname === `/${secretPath}/login`
 
-    if (isAdminRoot && !isAuthenticated(request)) {
+    if (isAdminRoot && !(await isAuthenticated(request))) {
       // Not logged in → rewrite directly to /admin/login
       const rewriteUrl = request.nextUrl.clone()
       rewriteUrl.pathname = '/admin/login'
       return NextResponse.rewrite(rewriteUrl)
     }
 
-    if (isAdminRoot && isAuthenticated(request)) {
+    if (isAdminRoot && (await isAuthenticated(request))) {
       // Logged in at root → rewrite to /admin
       const rewriteUrl = request.nextUrl.clone()
       rewriteUrl.pathname = '/admin'
@@ -66,7 +67,7 @@ export function middleware(request: NextRequest) {
     }
 
     // All other admin routes — require auth
-    if (!isAuthenticated(request)) {
+    if (!(await isAuthenticated(request))) {
       const loginUrl = request.nextUrl.clone()
       loginUrl.pathname = `/${secretPath}/login`
       return NextResponse.redirect(loginUrl)
@@ -100,7 +101,7 @@ export function middleware(request: NextRequest) {
       return NextResponse.next()
     }
 
-    if (!isAuthenticated(request)) {
+    if (!(await isAuthenticated(request))) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
   }

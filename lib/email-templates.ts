@@ -238,7 +238,7 @@ export function getBookingEmail(data: BookingEmailData): { subject: string; html
             • Reception is available 24/7 for any assistance<br>
             • Breakfast is served from 7:30 AM to 10:00 AM<br>
             • Wi-Fi password available at the front desk<br>
-            • Emergency contact: +91 XXXXX XXXXX<br><br>
+            • Emergency contact: +91 95392 22031<br><br>
             Enjoy your stay and explore everything our  has to offer!
           </p>
         `)

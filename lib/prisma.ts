@@ -14,7 +14,7 @@ function createClient() {
     const pool = new pg.Pool({
       connectionString: url,
       ssl: url.includes('localhost') ? false : { rejectUnauthorized: false },
-      max: 1,
+      max: 5,
       idleTimeoutMillis: 10000,
       connectionTimeoutMillis: 15000,
     })
