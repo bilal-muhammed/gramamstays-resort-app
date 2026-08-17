@@ -20,7 +20,7 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url)
 
-  if (url.pathname.startsWith('/admin')) {
+  if (url.pathname.startsWith('/5AUUVwJHVzM')) {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
