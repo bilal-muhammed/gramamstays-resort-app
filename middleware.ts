@@ -48,7 +48,7 @@ export async function middleware(request: NextRequest) {
     if (isAdminRoot && !(await isAuthenticated(request))) {
       // Not logged in → rewrite directly to /admin/login
       const rewriteUrl = request.nextUrl.clone()
-      rewriteUrl.pathname = '/admin/login'
+      rewriteUrl.pathname = '/5AUUVwJHVzM/login'
       return NextResponse.rewrite(rewriteUrl)
     }
 
@@ -62,7 +62,7 @@ export async function middleware(request: NextRequest) {
     if (isLogin) {
       // Login page → rewrite to /admin/login
       const rewriteUrl = request.nextUrl.clone()
-      rewriteUrl.pathname = '/admin/login'
+      rewriteUrl.pathname = '/5AUUVwJHVzM/login'
       return NextResponse.rewrite(rewriteUrl)
     }
 
