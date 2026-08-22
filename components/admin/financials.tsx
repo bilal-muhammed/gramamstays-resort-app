@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { useAdminData } from '@/context/admin-data'
 import { useToast } from '@/context/toast'
-import { TrendingUp, TrendingDown, DollarSign, Plus, Pencil, Trash2, X, Calendar, BarChart3, Wallet, PiggyBank, Search, Filter } from 'lucide-react'
+import { TrendingUp, TrendingDown, DollarSign, Plus, Pencil, Trash2, X, Calendar, BarChart3, Wallet, PiggyBank, Search, Filter, Clock, CreditCard, MessageSquare } from 'lucide-react'
 import type { Expense, Income } from '@/types/admin'
 import { AppSheet } from './app-sheet'
 import { FormSection, FormField, FormRow, FormInput, FormSelect, FormTextarea, FormSubmit } from './form-parts'
@@ -60,12 +60,12 @@ function fmtDate(d: string) {
 }
 
 const defaultExpense = () => ({ date: getTodayISO(), label: '', description: '', amount: 0, category: 'Supplies' })
-const defaultIncome = () => ({ date: getTodayISO(), source: '', amount: 0, type: 'Room Revenue' })
+const defaultIncome = () => ({ date: getTodayISO(), source: '', amount: 0, type: 'Room Revenue', description: '' })
 
 export function AdminFinancials({ openForm, onFormOpened }: { openForm?: 'booking' | 'income' | 'expense' | null; onFormOpened?: () => void }) {
-  const { income, expenses, addIncome, deleteIncome, addExpense, updateExpense, deleteExpense } = useAdminData()
+  const { income, expenses, bookings, addIncome, deleteIncome, addExpense, updateExpense, deleteExpense, updateBooking } = useAdminData()
   const { toast } = useToast()
-  const [activeTab, setActiveTab] = useState<'overview' | 'income' | 'expenses'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'income' | 'expenses' | 'pending'>('overview')
   const [showExpenseForm, setShowExpenseForm] = useState(false)
   const [showIncomeForm, setShowIncomeForm] = useState(false)
   const [editingExpenseId, setEditingExpenseId] = useState<string | null>(null)
@@ -113,6 +113,12 @@ export function AdminFinancials({ openForm, onFormOpened }: { openForm?: 'bookin
   const incomeByType = income.reduce((acc, i) => { acc[i.type] = (acc[i.type] || 0) + i.amount; return acc }, {} as Record<string, number>)
   const expenseByCategory = expenses.reduce((acc, e) => { acc[e.category] = (acc[e.category] || 0) + e.amount; return acc }, {} as Record<string, number>)
 
+  const pendingPayments = bookings
+    .filter(b => b.payment !== 'Fully Paid' && b.status !== 'Checked Out')
+    .map(b => ({ ...b, outstanding: b.amount - b.paidAmount }))
+    .sort((a, b) => b.outstanding - a.outstanding)
+  const totalPending = pendingPayments.reduce((s, b) => s + b.outstanding, 0)
+
   const openAddExpense = () => { setEditingExpenseId(null); setExpenseForm(defaultExpense()); setShowExpenseForm(true) }
   const openEditExpense = (e: Expense) => { setEditingExpenseId(e.id); setExpenseForm({ date: e.date, label: e.label, description: e.description, amount: e.amount, category: e.category }); setShowExpenseForm(true) }
 
@@ -147,56 +153,45 @@ export function AdminFinancials({ openForm, onFormOpened }: { openForm?: 'bookin
 
   return (
     <div className="space-y-5">
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="bg-white rounded-lg border border-gray-200 p-3 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-50 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50" />
-          <div className="relative">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center mb-3">
-              <TrendingUp size={18} className="text-emerald-600" />
+      {/* Stats Cards */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+              <TrendingUp size={15} className="text-emerald-600" />
             </div>
-            <p className="text-2xl font-bold text-emerald-600">₹{totalIncome.toLocaleString()}</p>
-            <p className="text-xs text-gray-500 mt-1">Total Income</p>
+            <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wide">Income</p>
           </div>
+          <p className="text-xl font-bold text-emerald-600">₹{totalIncome.toLocaleString()}</p>
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-3 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-red-50 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50" />
-          <div className="relative">
-            <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center mb-3">
-              <TrendingDown size={18} className="text-red-600" />
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+              <TrendingDown size={15} className="text-red-600" />
             </div>
-            <p className="text-2xl font-bold text-red-600">₹{totalExpenses.toLocaleString()}</p>
-            <p className="text-xs text-gray-500 mt-1">Total Expenses</p>
+            <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wide">Expenses</p>
           </div>
+          <p className="text-xl font-bold text-red-600">₹{totalExpenses.toLocaleString()}</p>
         </div>
-        <div className="bg-white rounded-lg border border-gray-200 p-3 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-blue-50 rounded-full -translate-y-1/2 translate-x-1/2 opacity-50" />
-          <div className="relative">
-            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center mb-3">
-              <PiggyBank size={18} className="text-blue-600" />
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+              <PiggyBank size={15} className="text-blue-600" />
             </div>
-            <p className={`text-2xl font-bold ${netProfit >= 0 ? 'text-blue-600' : 'text-red-600'}`}>₹{netProfit.toLocaleString()}</p>
-            <p className="text-xs text-gray-500 mt-1">Net Profit</p>
+            <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wide">Net Profit</p>
           </div>
-        </div>
-        <div className="bg-gradient-to-br from-primary to-primary/80 rounded-xl p-4 text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-20 h-20 bg-white rounded-full -translate-y-1/2 translate-x-1/2 opacity-10" />
-          <div className="relative">
-            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mb-3">
-              <Wallet size={18} />
-            </div>
-            <p className="text-2xl font-bold">{income.length + expenses.length}</p>
-            <p className="text-xs text-white/80 mt-1">Total Transactions</p>
-          </div>
+          <p className={`text-xl font-bold ${netProfit >= 0 ? 'text-blue-600' : 'text-red-600'}`}>₹{netProfit.toLocaleString()}</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-lg border border-gray-200 p-1 flex gap-1">
+      <div className="sticky top-[var(--header-h)] z-20 bg-[#f0f2f5] pb-3">
+        <div className="bg-white rounded-lg border border-gray-200 p-1 flex gap-1">
         {([
           { key: 'overview', label: 'Overview', icon: BarChart3 },
           { key: 'income', label: 'Income', icon: TrendingUp },
           { key: 'expenses', label: 'Expenses', icon: TrendingDown },
+          { key: 'pending', label: 'Pending', icon: Clock },
         ] as const).map(({ key, label, icon: Icon }) => (
           <button key={key} onClick={() => setActiveTab(key)}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold rounded-md transition-all min-h-[40px] ${
@@ -208,14 +203,15 @@ export function AdminFinancials({ openForm, onFormOpened }: { openForm?: 'bookin
             {label}
           </button>
         ))}
+        </div>
       </div>
 
       {/* Overview */}
       {activeTab === 'overview' && (
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Income Breakdown */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            {/* Income by Type */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
                   <TrendingUp size={14} className="text-emerald-600" />
@@ -255,8 +251,8 @@ export function AdminFinancials({ openForm, onFormOpened }: { openForm?: 'bookin
               )}
             </div>
 
-            {/* Expense Breakdown */}
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            {/* Expenses by Category */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
                   <TrendingDown size={14} className="text-red-600" />
@@ -302,20 +298,20 @@ export function AdminFinancials({ openForm, onFormOpened }: { openForm?: 'bookin
       {/* Income Tab */}
       {activeTab === 'income' && (
         <div className="space-y-4">
-          {/* Header & Filter */}
-          <div className="bg-white rounded-lg border border-gray-200 p-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          {/* Filter Bar */}
+          <div className="bg-white rounded-xl border border-gray-200 p-3">
+            <div className="flex items-center justify-between gap-3">
               <button onClick={() => { setIncomeForm(defaultIncome()); setShowIncomeForm(true) }}
                 className="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors min-h-[38px] shadow-sm">
                 <Plus size={16} /> Add Income
               </button>
-              <div className="flex items-center gap-3">
-                <div className="relative flex-1 sm:flex-none">
+              <div className="flex items-center gap-2">
+                <div className="relative">
                   <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                   <input ref={incomeFilterRef} type="date" value={incomeFilter} 
                     onFocus={() => openPicker(incomeFilterRef)} 
                     onChange={e => setIncomeFilter(e.target.value)}
-                    className="w-full sm:w-[160px] pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 cursor-pointer" />
+                    className="w-[160px] pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 cursor-pointer" />
                 </div>
                 {incomeFilter && (
                   <button onClick={() => setIncomeFilter('')} 
@@ -339,7 +335,7 @@ export function AdminFinancials({ openForm, onFormOpened }: { openForm?: 'bookin
 
           {/* Income List */}
           {filteredIncome.length === 0 ? (
-            <div className="bg-white rounded-lg border border-gray-200 p-10 text-center">
+            <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
               <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mx-auto mb-4">
                 <TrendingUp size={24} className="text-emerald-300" />
               </div>
@@ -359,20 +355,21 @@ export function AdminFinancials({ openForm, onFormOpened }: { openForm?: 'bookin
           ) : (
             <div className="space-y-2">
               {filteredIncome.map(item => (
-                <div key={item.id} className="bg-white rounded-lg border border-gray-200 p-3 hover:border-gray-300 transition-colors">
+                <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-3 hover:border-gray-300 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-xl ${categoryBg[item.type] || 'bg-gray-100'} flex items-center justify-center shrink-0`}>
                       <TrendingUp size={16} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <p className="text-sm font-semibold text-gray-900 truncate">{item.source}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold text-gray-900 truncate">{item.source}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
                         <span className="text-xs text-gray-500">{fmtDate(item.date)}</span>
                         <span className="text-gray-300">·</span>
                         <span className="text-[10px] font-medium text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">{item.type}</span>
                       </div>
+                      {item.description && (
+                        <p className="text-[11px] text-gray-400 mt-1 truncate">{item.description}</p>
+                      )}
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
                       <span className="text-base font-bold text-emerald-600">+₹{item.amount.toLocaleString()}</span>
@@ -392,20 +389,20 @@ export function AdminFinancials({ openForm, onFormOpened }: { openForm?: 'bookin
       {/* Expenses Tab */}
       {activeTab === 'expenses' && (
         <div className="space-y-4">
-          {/* Header & Filter */}
-          <div className="bg-white rounded-lg border border-gray-200 p-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          {/* Filter Bar */}
+          <div className="bg-white rounded-xl border border-gray-200 p-3">
+            <div className="flex items-center justify-between gap-3">
               <button onClick={openAddExpense}
                 className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 transition-colors min-h-[38px] shadow-sm">
                 <Plus size={16} /> Add Expense
               </button>
-              <div className="flex items-center gap-3">
-                <div className="relative flex-1 sm:flex-none">
+              <div className="flex items-center gap-2">
+                <div className="relative">
                   <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                   <input ref={expenseFilterRef} type="date" value={expenseFilter} 
                     onFocus={() => openPicker(expenseFilterRef)} 
                     onChange={e => setExpenseFilter(e.target.value)}
-                    className="w-full sm:w-[160px] pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 cursor-pointer" />
+                    className="w-[160px] pl-9 pr-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 cursor-pointer" />
                 </div>
                 {expenseFilter && (
                   <button onClick={() => setExpenseFilter('')} 
@@ -429,7 +426,7 @@ export function AdminFinancials({ openForm, onFormOpened }: { openForm?: 'bookin
 
           {/* Expenses List */}
           {filteredExpenses.length === 0 ? (
-            <div className="bg-white rounded-lg border border-gray-200 p-10 text-center">
+            <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
               <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
                 <TrendingDown size={24} className="text-red-300" />
               </div>
@@ -449,16 +446,14 @@ export function AdminFinancials({ openForm, onFormOpened }: { openForm?: 'bookin
           ) : (
             <div className="space-y-2">
               {filteredExpenses.map(item => (
-                <div key={item.id} className="bg-white rounded-lg border border-gray-200 p-3 hover:border-gray-300 transition-colors">
+                <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-3 hover:border-gray-300 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-xl ${categoryBg[item.category] || 'bg-gray-100'} flex items-center justify-center shrink-0`}>
                       <TrendingDown size={16} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <p className="text-sm font-semibold text-gray-900 truncate">{item.label}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold text-gray-900 truncate">{item.label}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
                         <span className="text-xs text-gray-500">{fmtDate(item.date)}</span>
                         <span className="text-gray-300">·</span>
                         <span className="text-[10px] font-medium text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">{item.category}</span>
@@ -481,6 +476,92 @@ export function AdminFinancials({ openForm, onFormOpened }: { openForm?: 'bookin
                         <Trash2 size={15} />
                       </button>
                     </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Pending Payments Tab */}
+      {activeTab === 'pending' && (
+        <div className="space-y-4">
+          {/* Summary Card */}
+          {pendingPayments.length > 0 && (
+            <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-4 text-white">
+              <div className="flex items-center gap-2 mb-1">
+                <CreditCard size={16} />
+                <p className="text-xs font-medium text-white/80">Total Outstanding</p>
+              </div>
+              <p className="text-2xl font-bold">₹{totalPending.toLocaleString()}</p>
+              <p className="text-xs text-white/70 mt-1">{pendingPayments.length} {pendingPayments.length === 1 ? 'booking' : 'bookings'} pending</p>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {pendingPayments.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
+              <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mx-auto mb-4">
+                <CreditCard size={24} className="text-emerald-300" />
+              </div>
+              <p className="text-sm font-medium text-gray-900 mb-1">All clear!</p>
+              <p className="text-xs text-gray-500">No pending payments</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {pendingPayments.map(b => (
+                <div key={b.id} className="bg-white rounded-xl border border-gray-200 p-4 hover:border-gray-300 transition-colors">
+                  {/* Guest Info */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-bold text-gray-900">{b.guest}</p>
+                        <span className={`px-1.5 py-0.5 text-[10px] font-semibold rounded ${
+                          b.payment === 'Pending' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'
+                        }`}>
+                          {b.payment}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-gray-400 mt-0.5">{b.id} · {b.room} #{b.roomNo}</p>
+                    </div>
+                  </div>
+
+                  {/* Payment Grid */}
+                  <div className="grid grid-cols-3 gap-3 text-center">
+                    <div className="bg-gray-50 rounded-lg p-2">
+                      <p className="text-[10px] text-gray-500 mb-0.5">Total</p>
+                      <p className="text-sm font-bold text-gray-900">₹{b.amount.toLocaleString()}</p>
+                    </div>
+                    <div className="bg-emerald-50 rounded-lg p-2">
+                      <p className="text-[10px] text-emerald-600 mb-0.5">Paid</p>
+                      <p className="text-sm font-bold text-emerald-600">₹{b.paidAmount.toLocaleString()}</p>
+                    </div>
+                    <div className="bg-red-50 rounded-lg p-2">
+                      <p className="text-[10px] text-red-500 mb-0.5">Due</p>
+                      <p className="text-sm font-bold text-red-600">₹{b.outstanding.toLocaleString()}</p>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 mt-3">
+                    <button
+                      onClick={async () => {
+                        await updateBooking(b.id, { paidAmount: b.amount, payment: 'Fully Paid' })
+                        toast('success', `Payment cleared for ${b.guest}`)
+                      }}
+                      className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-500 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors"
+                    >
+                      <CreditCard size={13} /> Mark Paid
+                    </button>
+                    <a
+                      href={`https://wa.me/91${b.phone.replace(/\D/g, '').slice(-10)}?text=Hi ${b.guest}, this is a reminder for pending payment of ₹${b.outstanding.toLocaleString()} for your booking ${b.id}. Please complete the payment at your earliest.`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-1.5 px-3 py-2 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition-colors"
+                    >
+                      <MessageSquare size={13} /> WhatsApp
+                    </a>
                   </div>
                 </div>
               ))}
@@ -528,7 +609,10 @@ export function AdminFinancials({ openForm, onFormOpened }: { openForm?: 'bookin
             <form onSubmit={handleIncomeSubmit} className="p-4 pb-6 space-y-3 safe-area-bottom">
               <FormSection title="Income Details">
                 <FormField label="Source *">
-                  <FormInput type="text" required value={incomeForm.source} onChange={e => setIncomeForm({ ...incomeForm, source: e.target.value })} placeholder="e.g. Room - Presidential Suite #301" />
+                  <FormInput type="text" required value={incomeForm.source} onChange={e => setIncomeForm({ ...incomeForm, source: e.target.value })} placeholder="e.g. BK-1042 - John Smith" />
+                </FormField>
+                <FormField label="Description">
+                  <FormInput type="text" value={incomeForm.description || ''} onChange={e => setIncomeForm({ ...incomeForm, description: e.target.value })} placeholder="e.g. Presidential Suite #301 | 4 nights" />
                 </FormField>
                 <FormField label="Amount (₹) *">
                   <div className="relative">

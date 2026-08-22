@@ -31,6 +31,15 @@ function deserializeBooking(booking: Record<string, unknown>) {
   return booking
 }
 
+async function generateBookingId(): Promise<string> {
+  const last = await prisma.booking.findFirst({ orderBy: { createdAt: 'desc' }, select: { id: true } })
+  let nextNum = 1001
+  if (last && last.id && last.id.startsWith('BK-')) {
+    nextNum = parseInt(last.id.replace('BK-', ''), 10) + 1
+  }
+  return `BK-${nextNum}`
+}
+
 export async function GET() {
   if (!prisma) {
     console.error('[Bookings] Prisma client is null - DATABASE_URL may be missing')
@@ -53,7 +62,8 @@ export async function POST(request: Request) {
     if (createData.checkIn) createData.checkIn = toISODateTime(createData.checkIn)
     if (createData.checkOut) createData.checkOut = toISODateTime(createData.checkOut)
     serializeBooking(createData)
-    const booking = await prisma.booking.create({ data: createData })
+    const bookingId = await generateBookingId()
+    const booking = await prisma.booking.create({ data: { id: bookingId, ...createData } })
 
     const user = getUserFromRequest(request)
     if (user) {

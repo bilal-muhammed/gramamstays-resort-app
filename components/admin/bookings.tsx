@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useAdminData } from '@/context/admin-data'
 import { useToast } from '@/context/toast'
 import { useLoading } from '@/components/loading-bar'
-import { Search, Plus, Pencil, Trash2, X, CalendarCheck, Filter, Users, Compass, Flame, UtensilsCrossed, BedDouble, Sparkles, TreePine } from 'lucide-react'
+import { Search, Plus, Pencil, Trash2, X, CalendarCheck, Filter, Users, Compass, Flame, UtensilsCrossed, BedDouble, Sparkles, TreePine, ArrowUpDown } from 'lucide-react'
 import type { Booking } from '@/types/admin'
 import { AppSheet } from './app-sheet'
 import { FormSection, FormField, FormRow, FormInput, FormSelect, FormTextarea, FormSubmit } from './form-parts'
@@ -62,12 +62,13 @@ const emptyBooking = {
   addons: [] as string[], addonNote: '', sendEmail: true, sendWhatsApp: true,
 }
 
-export function AdminBookings({ openForm, onFormOpened }: { openForm?: 'booking' | 'income' | 'expense' | null; onFormOpened?: () => void }) {
+export function AdminBookings({ openForm, onFormOpened, initialFilter }: { openForm?: 'booking' | 'income' | 'expense' | null; onFormOpened?: () => void; initialFilter?: string }) {
   const { bookings, addBooking, updateBooking, deleteBooking, properties } = useAdminData()
   const { toast } = useToast()
   const { isLoading } = useLoading()
-  const [activeFilter, setActiveFilter] = useState('All')
+  const [activeFilter, setActiveFilter] = useState(initialFilter || 'All')
   const [searchQuery, setSearchQuery] = useState('')
+  const [sortOption, setSortOption] = useState('checkIn-asc')
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState(emptyBooking)
@@ -85,12 +86,31 @@ export function AdminBookings({ openForm, onFormOpened }: { openForm?: 'booking'
 
   const filters = ['All', 'Checked In', 'Confirmed', 'Pending', 'Checked Out']
 
+  const sortOptions = [
+    { value: 'checkIn-asc', label: 'Check-in ↑ Earliest' },
+    { value: 'checkIn-desc', label: 'Check-in ↓ Latest' },
+    { value: 'amount-desc', label: 'Amount ↓ High' },
+    { value: 'amount-asc', label: 'Amount ↑ Low' },
+    { value: 'guest-asc', label: 'Guest A→Z' },
+    { value: 'guest-desc', label: 'Guest Z→A' },
+  ]
+
   const filtered = bookings.filter(b => {
     const matchFilter = activeFilter === 'All' || b.status === activeFilter
     const matchSearch = b.guest.toLowerCase().includes(searchQuery.toLowerCase()) ||
       b.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       b.room.toLowerCase().includes(searchQuery.toLowerCase())
     return matchFilter && matchSearch
+  }).sort((a, b) => {
+    switch (sortOption) {
+      case 'checkIn-asc': return a.checkIn.localeCompare(b.checkIn)
+      case 'checkIn-desc': return b.checkIn.localeCompare(a.checkIn)
+      case 'amount-desc': return b.amount - a.amount
+      case 'amount-asc': return a.amount - b.amount
+      case 'guest-asc': return a.guest.localeCompare(b.guest)
+      case 'guest-desc': return b.guest.localeCompare(a.guest)
+      default: return 0
+    }
   })
 
   const filterCounts = {
@@ -164,40 +184,48 @@ export function AdminBookings({ openForm, onFormOpened }: { openForm?: 'booking'
     <div className="space-y-5">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-bold text-gray-900">Bookings</h2>
-          <p className="text-xs text-gray-500 mt-0.5">{filtered.length} of {bookings.length} bookings</p>
-        </div>
+        <p className="text-xs text-gray-500">{filtered.length} of {bookings.length} bookings</p>
         <button onClick={openAdd} disabled={isLoading} className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all min-h-[38px] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
           <Plus size={16} /> New Booking
         </button>
       </div>
 
       {/* Filters + Search */}
-      <div className="bg-white rounded-lg border border-gray-200 p-2.5">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex gap-1 bg-gray-100 rounded-lg p-1 overflow-x-auto no-scrollbar flex-1">
-            {filters.map(f => (
-              <button key={f} onClick={() => setActiveFilter(f)}
-                className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-md transition-all whitespace-nowrap min-h-[36px] ${
-                  activeFilter === f 
-                    ? 'bg-white text-gray-900 shadow-sm' 
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
-                }`}>
-                {f}
-                {filterCounts[f as keyof typeof filterCounts] > 0 && (
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${activeFilter === f ? 'bg-primary/10 text-primary' : 'bg-gray-200 text-gray-500'}`}>
-                    {filterCounts[f as keyof typeof filterCounts]}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-          <div className="relative sm:w-64">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Search bookings..."
-              className="w-full pl-9 pr-3 py-2.5 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+      <div className="sticky top-[var(--header-h)] z-20 bg-[#f0f2f5] pb-3">
+        <div className="bg-white rounded-lg border border-gray-200 p-2.5">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex gap-1 bg-gray-100 rounded-lg p-1 overflow-x-auto no-scrollbar flex-1">
+              {filters.map(f => (
+                <button key={f} onClick={() => setActiveFilter(f)}
+                  className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-md transition-all whitespace-nowrap min-h-[36px] ${
+                    activeFilter === f 
+                      ? 'bg-white text-gray-900 shadow-sm' 
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
+                  }`}>
+                  {f}
+                  {filterCounts[f as keyof typeof filterCounts] > 0 && (
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${activeFilter === f ? 'bg-primary/10 text-primary' : 'bg-gray-200 text-gray-500'}`}>
+                      {filterCounts[f as keyof typeof filterCounts]}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <div className="relative sm:w-48">
+                <ArrowUpDown size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                <select value={sortOption} onChange={e => setSortOption(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2.5 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none bg-white">
+                  {sortOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                </select>
+              </div>
+              <div className="relative sm:w-64">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Search bookings..."
+                  className="w-full pl-9 pr-3 py-2.5 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+              </div>
+            </div>
           </div>
         </div>
       </div>

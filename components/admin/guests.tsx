@@ -49,31 +49,30 @@ export function AdminGuests() {
     <div className="space-y-5">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-bold text-gray-900">Guests</h2>
-          <p className="text-xs text-gray-500 mt-0.5">{filtered.length} of {guests.length} guests</p>
-        </div>
+        <p className="text-xs text-gray-500">{filtered.length} of {guests.length} guests</p>
         <button onClick={openAdd} className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all min-h-[38px] shadow-sm">
           <Plus size={16} /> Add Guest
         </button>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-2.5">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <button onClick={() => setShowVipOnly(!showVipOnly)}
-            className={`flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs font-semibold border transition-all min-h-[36px] ${
-              showVipOnly 
-                ? 'bg-amber-50 border-amber-200 text-amber-700' 
-                : 'bg-gray-100 border-transparent text-gray-500 hover:bg-gray-200'
-            }`}>
-            <Star size={12} className={showVipOnly ? 'fill-amber-400' : ''} />
-            VIP Only
-          </button>
-          <div className="relative flex-1">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search guests..."
-              className="w-full pl-9 pr-3 py-2.5 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+      <div className="sticky top-[var(--header-h)] z-20 bg-[#f0f2f5] pb-3">
+        <div className="bg-white rounded-lg border border-gray-200 p-2.5">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button onClick={() => setShowVipOnly(!showVipOnly)}
+              className={`flex items-center justify-center gap-2 px-3 py-2 rounded-md text-xs font-semibold border transition-all min-h-[36px] ${
+                showVipOnly 
+                  ? 'bg-amber-50 border-amber-200 text-amber-700' 
+                  : 'bg-gray-100 border-transparent text-gray-500 hover:bg-gray-200'
+              }`}>
+              <Star size={12} className={showVipOnly ? 'fill-amber-400' : ''} />
+              VIP Only
+            </button>
+            <div className="relative flex-1">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search guests..."
+                className="w-full pl-9 pr-3 py-2.5 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+            </div>
           </div>
         </div>
       </div>

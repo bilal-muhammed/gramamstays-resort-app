@@ -63,13 +63,13 @@ async function main() {
 
   await prisma.income.createMany({
     data: [
-      { id: 'IN-001', date: 'Jul 18', source: 'Room - The Chedi #301', amount: 850, type: 'Room Revenue' },
+      { id: 'IN-001', date: 'Jul 18', source: 'BK-1042 - Eleanor Whitfield', amount: 850, type: 'Room Revenue', description: 'The Chedi #301 | 4 nights | Check-in: 2026-07-18' },
       { id: 'IN-002', date: 'Jul 18', source: 'Spa - Deep Tissue Massage', amount: 180, type: 'Spa' },
-      { id: 'IN-003', date: 'Jul 17', source: 'Room - British Bungalow #205', amount: 650, type: 'Room Revenue' },
+      { id: 'IN-003', date: 'Jul 17', source: 'BK-1041 - James Chen', amount: 650, type: 'Room Revenue', description: 'British Bungalow #205 | 3 nights | Check-in: 2026-07-17' },
       { id: 'IN-004', date: 'Jul 17', source: 'Dining - Harvest & Hearth', amount: 320, type: 'F&B' },
-      { id: 'IN-005', date: 'Jul 16', source: 'Room - River Resort #108', amount: 550, type: 'Room Revenue' },
+      { id: 'IN-005', date: 'Jul 16', source: 'BK-1040 - Sofia Martinez', amount: 550, type: 'Room Revenue', description: 'River Resort #108 | 2 nights | Check-in: 2026-07-19' },
       { id: 'IN-006', date: 'Jul 16', source: 'Wine Tasting Experience', amount: 120, type: 'Experience' },
-      { id: 'IN-007', date: 'Jul 15', source: 'Room - British Bungalow #206', amount: 650, type: 'Room Revenue' },
+      { id: 'IN-007', date: 'Jul 15', source: 'BK-1038 - David Kim', amount: 650, type: 'Room Revenue', description: 'British Bungalow #206 | 2 nights | Check-in: 2026-07-16' },
       { id: 'IN-008', date: 'Jul 15', source: 'Pool Cabana Rental', amount: 75, type: 'Amenity' },
     ],
   })

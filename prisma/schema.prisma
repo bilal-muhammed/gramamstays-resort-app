@@ -65,12 +65,13 @@ model Guest {
 }
 
 model Income {
-  id        String   @id @default(cuid())
-  date      String
-  source    String
-  amount    Float
-  type      String
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  date        String
+  source      String
+  amount      Float
+  type        String
+  description String?
+  createdAt   DateTime @default(now())
 
   @@index([createdAt])
   @@index([type])

@@ -90,34 +90,33 @@ export function AdminRooms() {
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-bold text-gray-900">Rooms</h2>
-          <p className="text-xs text-gray-500 mt-0.5">{filtered.length} of {rooms.length} rooms</p>
-        </div>
+        <p className="text-xs text-gray-500">{filtered.length} of {rooms.length} rooms</p>
         <button onClick={openAdd} className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all min-h-[38px] shadow-sm">
           <Plus size={16} /> Add Room
         </button>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-2.5">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex gap-1 bg-gray-100 rounded-lg p-1 overflow-x-auto no-scrollbar flex-1">
-            {types.map(t => (
-              <button key={t} onClick={() => setActiveType(t)}
-                className={`px-3 py-2 text-xs font-semibold rounded-md transition-all whitespace-nowrap min-h-[36px] ${
-                  activeType === t 
-                    ? 'bg-white text-gray-900 shadow-sm' 
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
-                }`}>
-                {t}
-              </button>
-            ))}
-          </div>
-          <div className="relative sm:w-64">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search rooms..."
-              className="w-full pl-9 pr-3 py-2.5 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+      <div className="sticky top-[var(--header-h)] z-20 bg-[#f0f2f5] pb-3">
+        <div className="bg-white rounded-lg border border-gray-200 p-2.5">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex gap-1 bg-gray-100 rounded-lg p-1 overflow-x-auto no-scrollbar flex-1">
+              {types.map(t => (
+                <button key={t} onClick={() => setActiveType(t)}
+                  className={`px-3 py-2 text-xs font-semibold rounded-md transition-all whitespace-nowrap min-h-[36px] ${
+                    activeType === t 
+                      ? 'bg-white text-gray-900 shadow-sm' 
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
+                  }`}>
+                  {t}
+                </button>
+              ))}
+            </div>
+            <div className="relative sm:w-64">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Search rooms..."
+                className="w-full pl-9 pr-3 py-2.5 rounded-md border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+            </div>
           </div>
         </div>
       </div>

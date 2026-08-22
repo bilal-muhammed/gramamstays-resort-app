@@ -30,6 +30,7 @@ function AdminContent() {
   const [activeSection, setActiveSection] = useState<AdminSection>('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [openForm, setOpenForm] = useState<'booking' | 'income' | 'expense' | null>(null)
+  const [bookingsFilter, setBookingsFilter] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     if (!loading && !user) router.push(getAdminPath('/login'))
@@ -47,8 +48,8 @@ function AdminContent() {
   const section = useMemo(() => {
     if (!canAccess(activeSection)) return <AdminDashboard onNavigate={setActiveSection} />
     switch (activeSection) {
-      case 'dashboard': return <AdminDashboard onNavigate={setActiveSection} onOpenForm={(form) => { setActiveSection(form === 'booking' ? 'bookings' : 'financials'); setOpenForm(form) }} />
-      case 'bookings': return <AdminBookings openForm={openForm} onFormOpened={() => setOpenForm(null)} />
+      case 'dashboard': return <AdminDashboard onNavigate={setActiveSection} onOpenForm={(form) => { setActiveSection(form === 'booking' ? 'bookings' : 'financials'); setOpenForm(form) }} onNavigateWithFilter={(section, filter) => { setActiveSection(section); setBookingsFilter(filter) }} />
+      case 'bookings': return <AdminBookings openForm={openForm} onFormOpened={() => setOpenForm(null)} initialFilter={bookingsFilter} />
       case 'properties': return <AdminProperties />
       case 'guests': return <AdminGuests />
       case 'financials': return <AdminFinancials openForm={openForm} onFormOpened={() => setOpenForm(null)} />
@@ -57,7 +58,7 @@ function AdminContent() {
       case 'logs': return <AdminActivityLogs />
       case 'testimonials': return <AdminTestimonials />
       case 'inquiries': return <AdminInquiries />
-      default: return <AdminDashboard onNavigate={setActiveSection} onOpenForm={(form) => { setActiveSection(form === 'booking' ? 'bookings' : 'financials'); setOpenForm(form) }} />
+      default: return <AdminDashboard onNavigate={setActiveSection} onOpenForm={(form) => { setActiveSection(form === 'booking' ? 'bookings' : 'financials'); setOpenForm(form) }} onNavigateWithFilter={(section, filter) => { setActiveSection(section); setBookingsFilter(filter) }} />
     }
   }, [activeSection, canAccess])
 

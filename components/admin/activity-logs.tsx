@@ -127,35 +127,34 @@ export function AdminActivityLogs() {
   return (
     <div className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-bold text-gray-900">Activity Logs</h2>
-          <p className="text-xs text-gray-500 mt-0.5">{total} total actions recorded</p>
-        </div>
+        <p className="text-xs text-gray-500">{total} total actions recorded</p>
         <button onClick={fetchLogs} className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all min-h-[38px]">
           <RefreshCw size={14} /> Refresh
         </button>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-2.5">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input type="text" value={searchUser} onChange={e => { setSearchUser(e.target.value); setPage(1) }}
-              placeholder="Filter by user..."
-              className="w-full pl-9 pr-3 py-2 rounded-md border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary min-h-[36px]" />
-          </div>
-          <div className="flex gap-1 overflow-x-auto">
-            {entityFilters.map(f => (
-              <button key={f.value} onClick={() => { setEntityFilter(f.value); setPage(1) }}
-                className={`px-3 py-2 rounded-md text-xs font-semibold whitespace-nowrap border transition-all min-h-[36px] ${
-                  entityFilter === f.value
-                    ? 'bg-primary text-white border-primary'
-                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                }`}>
-                {f.label}
-              </button>
-            ))}
+      <div className="sticky top-[var(--header-h)] z-20 bg-[#f0f2f5] pb-3">
+        <div className="bg-white rounded-lg border border-gray-200 p-2.5">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input type="text" value={searchUser} onChange={e => { setSearchUser(e.target.value); setPage(1) }}
+                placeholder="Filter by user..."
+                className="w-full pl-9 pr-3 py-2 rounded-md border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary min-h-[36px]" />
+            </div>
+            <div className="flex gap-1 overflow-x-auto">
+              {entityFilters.map(f => (
+                <button key={f.value} onClick={() => { setEntityFilter(f.value); setPage(1) }}
+                  className={`px-3 py-2 rounded-md text-xs font-semibold whitespace-nowrap border transition-all min-h-[36px] ${
+                    entityFilter === f.value
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                  }`}>
+                  {f.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

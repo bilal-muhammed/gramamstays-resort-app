@@ -116,7 +116,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       setBookings(prev => [booking, ...prev])
       await api<Activity>('/api/activities', { method: 'POST', body: JSON.stringify({ time: 'Just now', text: `New booking from ${b.guest}` }) })
       if (b.paidAmount > 0) {
-        const incomeEntry = await api<Income>('/api/income', { method: 'POST', body: JSON.stringify({ date: todayStr(), source: `Room - ${b.room} #${b.roomNo}`, amount: b.paidAmount, type: 'Room Revenue' }) })
+        const incomeEntry = await api<Income>('/api/income', { method: 'POST', body: JSON.stringify({ date: todayStr(), source: `${booking.id} - ${b.guest}`, amount: b.paidAmount, type: 'Room Revenue', description: `${b.room} #${b.roomNo} | ${b.nights} nights | Check-in: ${b.checkIn}` }) })
         if (incomeEntry) {
           setIncome(prev => [incomeEntry, ...prev])
           await api<Activity>('/api/activities', { method: 'POST', body: JSON.stringify({ time: 'Just now', text: `Income recorded: ₹${b.paidAmount.toLocaleString()} from ${b.guest}` }) })
@@ -134,7 +134,7 @@ export function AdminDataProvider({ children }: { children: ReactNode }) {
       setBookings(prev => prev.map(item => item.id === id ? updated : item))
       if (original && b.paidAmount !== undefined && updated.paidAmount > original.paidAmount) {
         const additional = updated.paidAmount - original.paidAmount
-        const incomeEntry = await api<Income>('/api/income', { method: 'POST', body: JSON.stringify({ date: todayStr(), source: `Room - ${updated.room} #${updated.roomNo}`, amount: additional, type: 'Room Revenue' }) })
+        const incomeEntry = await api<Income>('/api/income', { method: 'POST', body: JSON.stringify({ date: todayStr(), source: `${updated.id} - ${updated.guest}`, amount: additional, type: 'Room Revenue', description: `${updated.room} #${updated.roomNo} | Partial payment` }) })
         if (incomeEntry) {
           setIncome(prev => [incomeEntry, ...prev])
           await api<Activity>('/api/activities', { method: 'POST', body: JSON.stringify({ time: 'Just now', text: `Payment of ₹${additional.toLocaleString()} from ${updated.guest}` }) })

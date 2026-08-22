@@ -82,31 +82,30 @@ export function AdminStaff() {
     <div className="space-y-5">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-bold text-gray-900">Staff & Roles</h2>
-          <p className="text-xs text-gray-500 mt-0.5">{filtered.length} team members</p>
-        </div>
+        <p className="text-xs text-gray-500">{filtered.length} team members</p>
         <button onClick={openAdd} className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-all min-h-[38px] shadow-sm">
           <Plus size={16} /> Add Staff
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-lg border border-gray-200 p-1 flex gap-1">
-        {([
-          { key: 'staff', label: 'Team Members', icon: Users },
-          { key: 'roles', label: 'Roles & Permissions', icon: Shield },
-        ] as const).map(({ key, label, icon: Icon }) => (
-          <button key={key} onClick={() => setActiveTab(key as 'staff' | 'roles')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold rounded-md transition-all min-h-[40px] ${
-              activeTab === key 
-                ? 'bg-primary text-white shadow-sm' 
-                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-            }`}>
-            <Icon size={14} />
-            {label}
-          </button>
-        ))}
+      <div className="sticky top-[var(--header-h)] z-20 bg-[#f0f2f5] pb-3">
+        <div className="bg-white rounded-lg border border-gray-200 p-1 flex gap-1">
+          {([
+            { key: 'staff', label: 'Team Members', icon: Users },
+            { key: 'roles', label: 'Roles & Permissions', icon: Shield },
+          ] as const).map(({ key, label, icon: Icon }) => (
+            <button key={key} onClick={() => setActiveTab(key as 'staff' | 'roles')}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold rounded-md transition-all min-h-[40px] ${
+                activeTab === key 
+                  ? 'bg-primary text-white shadow-sm' 
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+              }`}>
+              <Icon size={14} />
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Staff Tab */}

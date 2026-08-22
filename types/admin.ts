@@ -48,6 +48,7 @@ export interface Income {
   source: string
   amount: number
   type: string
+  description?: string
 }
 
 export interface Expense {

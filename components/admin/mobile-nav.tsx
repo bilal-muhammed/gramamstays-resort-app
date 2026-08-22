@@ -8,8 +8,6 @@ const allNavItems: { id: AdminSection; label: string; icon: typeof LayoutDashboa
   { id: 'dashboard', label: 'Home', icon: LayoutDashboard },
   { id: 'bookings', label: 'Bookings', icon: CalendarCheck },
   { id: 'properties', label: 'Properties', icon: Home },
-  { id: 'testimonials', label: 'Reviews', icon: MessageSquareQuote },
-  { id: 'inquiries', label: 'Inquiries', icon: Inbox },
   { id: 'financials', label: 'Finance', icon: DollarSign },
 ]
 

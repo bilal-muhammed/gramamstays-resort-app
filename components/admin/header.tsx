@@ -34,7 +34,7 @@ export function AdminHeader({ onMenuToggle, activeSection }: Props) {
   }
 
   return (
-    <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
+    <header style={{ '--header-h': '56px' } as React.CSSProperties} className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-200/50 px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
       <button
         onClick={onMenuToggle}
         className="lg:hidden p-2 rounded-lg -ml-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center"

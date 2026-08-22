@@ -1,19 +1,23 @@
 'use client'
 
+import { useState } from 'react'
 import type { AdminSection } from '@/app/admin/page'
 import { useAuth } from '@/context/auth'
 import Image from 'next/image'
-import { LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog, X, Home, UserPlus, ScrollText, MessageSquareQuote, Inbox } from 'lucide-react'
+import { LayoutDashboard, CalendarCheck, BedDouble, Users, DollarSign, UserCog, X, Home, UserPlus, ScrollText, MessageSquareQuote, Inbox, ChevronDown, MoreHorizontal } from 'lucide-react'
 
-const allNavItems: { id: AdminSection; label: string; icon: typeof LayoutDashboard; minRole?: string }[] = [
+const mainNavItems: { id: AdminSection; label: string; icon: typeof LayoutDashboard; minRole?: string }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'bookings', label: 'Bookings', icon: CalendarCheck },
   { id: 'properties', label: 'Properties', icon: Home },
-  { id: 'testimonials', label: 'Testimonials', icon: MessageSquareQuote },
-  { id: 'inquiries', label: 'Inquiries', icon: Inbox },
   { id: 'financials', label: 'Financials', icon: DollarSign },
   { id: 'logs', label: 'Activity Logs', icon: ScrollText },
   { id: 'register', label: 'User Management', icon: UserPlus, minRole: 'super_admin' },
+]
+
+const moreNavItems: { id: AdminSection; label: string; icon: typeof LayoutDashboard }[] = [
+  { id: 'testimonials', label: 'Reviews', icon: MessageSquareQuote },
+  { id: 'inquiries', label: 'Inquiries', icon: Inbox },
 ]
 
 interface Props {
@@ -25,7 +29,9 @@ interface Props {
 
 export function AdminSidebar({ activeSection, onNavigate, isOpen, onClose }: Props) {
   const { user, canAccess } = useAuth()
-  const navItems = allNavItems.filter(item => !item.minRole || user?.role === item.minRole)
+  const [moreOpen, setMoreOpen] = useState(false)
+  const navItems = mainNavItems.filter(item => !item.minRole || user?.role === item.minRole)
+  const isMoreActive = moreNavItems.some(item => item.id === activeSection)
 
   return (
     <>
@@ -74,6 +80,48 @@ export function AdminSidebar({ activeSection, onNavigate, isOpen, onClose }: Pro
               </button>
             )
           })}
+
+          {/* More Menu */}
+          <div>
+            <button
+              onClick={() => setMoreOpen(!moreOpen)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all min-h-[40px] ${
+                isMoreActive || moreOpen
+                  ? 'bg-white/10 text-white'
+                  : 'text-white/50 hover:text-white hover:bg-white/5 active:bg-white/10'
+              }`}
+            >
+              <MoreHorizontal size={18} strokeWidth={1.5} />
+              More
+              <ChevronDown size={14} className={`ml-auto transition-transform ${moreOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {moreOpen && (
+              <div className="ml-4 mt-1 space-y-1">
+                {moreNavItems.map((item) => {
+                  const Icon = item.icon
+                  const isActive = activeSection === item.id
+                  const accessible = canAccess(item.id)
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => { if (accessible) { onNavigate(item.id); onClose() } }}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all min-h-[36px] ${
+                        isActive
+                          ? 'bg-white/10 text-white'
+                          : accessible
+                            ? 'text-white/50 hover:text-white hover:bg-white/5 active:bg-white/10'
+                            : 'text-white/20 cursor-not-allowed'
+                      }`}
+                      disabled={!accessible}
+                    >
+                      <Icon size={16} strokeWidth={1.5} />
+                      {item.label}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+          </div>
         </nav>
       </aside>
     </>
