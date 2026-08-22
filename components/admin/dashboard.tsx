@@ -101,10 +101,10 @@ export function AdminDashboard({ onNavigate, onOpenForm, onNavigateWithFilter }:
   }))
 
   const stats = [
-    { label: 'Revenue', value: `₹${totalRevenue.toLocaleString()}`, change: revenueChange !== 0 ? `${revenueChange > 0 ? '+' : ''}${revenueChange}%` : '', up: revenueChange >= 0, icon: DollarSign, bgColor: 'bg-emerald-100', textColor: 'text-emerald-600' },
-    { label: 'Occupancy', value: `${occupancyRate}%`, change: '', up: true, icon: BedDouble, bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
-    { label: 'Active', value: String(activeBookings), change: '', up: true, icon: CalendarCheck, bgColor: 'bg-amber-100', textColor: 'text-amber-600' },
-    { label: 'Pending', value: `₹${pendingAmount.toLocaleString()}`, change: '', up: false, icon: Clock, bgColor: 'bg-red-100', textColor: 'text-red-600', filter: 'Pending' },
+    { label: 'Revenue', value: `₹${totalRevenue.toLocaleString()}`, change: revenueChange !== 0 ? `${revenueChange > 0 ? '+' : ''}${revenueChange}%` : '', up: revenueChange >= 0, icon: DollarSign, bgColor: 'bg-emerald-100', textColor: 'text-emerald-600', section: 'financials' as AdminSection },
+    { label: 'Occupancy', value: `${occupancyRate}%`, change: '', up: true, icon: BedDouble, bgColor: 'bg-blue-100', textColor: 'text-blue-600', section: 'properties' as AdminSection },
+    { label: 'Active', value: String(activeBookings), change: '', up: true, icon: CalendarCheck, bgColor: 'bg-amber-100', textColor: 'text-amber-600', section: 'bookings' as AdminSection },
+    { label: 'Pending', value: `₹${pendingAmount.toLocaleString()}`, change: '', up: false, icon: Clock, bgColor: 'bg-red-100', textColor: 'text-red-600', section: 'bookings' as AdminSection, filter: 'Pending' },
   ]
 
   const quickActions = [
@@ -175,12 +175,10 @@ export function AdminDashboard({ onNavigate, onOpenForm, onNavigateWithFilter }:
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
         {stats.map((stat) => {
           const Icon = stat.icon
-          const clickable = 'filter' in stat && stat.filter
-          const Wrapper = clickable ? 'button' : 'div'
           return (
-            <Wrapper key={stat.label} {...(clickable ? { onClick: () => onNavigateWithFilter?.('bookings', stat.filter!) } : {})} className={`text-left w-full bg-white rounded-xl border border-gray-200 p-3 sm:p-4 hover:border-gray-300 transition-all active:scale-[0.98]${clickable ? ' cursor-pointer' : ''}`}>
+            <button key={stat.label} onClick={() => stat.filter ? onNavigateWithFilter?.(stat.section, stat.filter) : onNavigate(stat.section)} className="text-left w-full bg-white rounded-xl border border-gray-200 p-3 sm:p-4 hover:border-gray-300 hover:shadow-sm transition-all active:scale-[0.98] cursor-pointer group">
               <div className="flex items-center gap-2.5 mb-2.5">
-                <div className={`w-9 h-9 ${stat.bgColor} rounded-xl flex items-center justify-center shrink-0`}>
+                <div className={`w-9 h-9 ${stat.bgColor} rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
                   <Icon size={15} className={stat.textColor} />
                 </div>
                 {stat.change && (
@@ -192,7 +190,7 @@ export function AdminDashboard({ onNavigate, onOpenForm, onNavigateWithFilter }:
               </div>
               <p className="text-lg sm:text-2xl font-bold text-gray-900 truncate">{stat.value}</p>
               <p className="text-[10px] sm:text-[11px] text-gray-500 mt-0.5">{stat.label}</p>
-            </Wrapper>
+            </button>
           )
         })}
       </div>
